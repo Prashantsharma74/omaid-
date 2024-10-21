@@ -78,9 +78,9 @@ const ManageProgram = () => {
       <div className="row mb-5">
         <div className="col-md-12 px-5">
           <div className="bt-ad-emp">
-            <Link to='/manage-program/add-program' className="add-btt btn">
+            <a href='#' className="add-btt btn">
               <i className="fa-regular fa-plus"></i> Add Program
-            </Link>
+            </a>
           </div>
         </div>
       </div>
