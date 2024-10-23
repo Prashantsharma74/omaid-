@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import Swal from "sweetalert2";
 
 const DietMeal = () => {
   const [formData, setFormData] = useState({
@@ -9,6 +8,7 @@ const DietMeal = () => {
     food: "",
   });
 
+  const [isAlert, setIsAlert] = useState(false);
   const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
@@ -17,6 +17,7 @@ const DietMeal = () => {
       ...prevData,
       [name]: value,
     }));
+    // Clear error for the changed field
     setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
   };
 
@@ -29,22 +30,16 @@ const DietMeal = () => {
     return newErrors;
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
     }
+    
     console.log(formData);
-    // Show success alert using SweetAlert
-    await Swal.fire({
-      title: "Success!",
-      text: "Diet & Meal Plan added successfully.",
-      icon: "success",
-      confirmButtonText: "Okay",
-    });
-
+    setIsAlert(true);
     // Optionally reset the form after submission
     setFormData({
       week: "",
@@ -78,6 +73,18 @@ const DietMeal = () => {
               <h4 className="mt-2">Add Food</h4>
             </div>
             <div className="tile-body p-3">
+              {isAlert && (
+                <div className="bs-component mb-3">
+                  <div className="alert alert-dismissible alert-success">
+                    <button
+                      className="btn-close"
+                      type="button"
+                      onClick={() => setIsAlert(false)}
+                    ></button>
+                    <strong>Well done!</strong> Diet & Meal Plan added successfully.
+                  </div>
+                </div>
+              )}
               <form onSubmit={handleSubmit}>
                 <div className="row">
                   <div className="mb-3 col-lg-12">
@@ -87,7 +94,7 @@ const DietMeal = () => {
                   </div>
 
                   <div className="mb-3 col-md-6">
-                    <label className="form-label" htmlFor="week">
+                    <label className="form-label">
                       Choose Week
                     </label>
                     <select
@@ -107,7 +114,7 @@ const DietMeal = () => {
                   </div>
 
                   <div className="mb-3 col-md-6">
-                    <label className="form-label" htmlFor="day">
+                    <label className="form-label">
                       Choose Day
                     </label>
                     <select
@@ -130,7 +137,7 @@ const DietMeal = () => {
                   </div>
 
                   <div className="mb-3 col-md-6">
-                    <label className="form-label" htmlFor="meal-type">
+                    <label className="form-label" >
                       Choose Meal Type
                     </label>
                     <select
@@ -150,7 +157,7 @@ const DietMeal = () => {
                   </div>
 
                   <div className="mb-3 col-md-6">
-                    <label className="form-label" htmlFor="food-search">
+                    <label className="form-label" >
                       Search Food
                     </label>
                     <input

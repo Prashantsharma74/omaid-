@@ -23,6 +23,10 @@ import AddSubAdmin from "./components/AddSubAdmin";
 import AddProgram from "./components/AddProgram";
 import ManageProgramSection from "./components/ManageProgramSection";
 import EditIntro from "./components/EditIntro";
+import ApproveNonApprove from "./components/ApproveNonApprove";
+import Diet from "./components/Diet";
+import AddFood from "./components/AddFood";
+import DietMeal from "./components/DietMeal";
 
 function App() {
   return (
@@ -36,8 +40,27 @@ function App() {
           <Route path="/users" element={<Users />} />
           <Route path="/manage-program" element={<ManageProgram />} />
           <Route path="/manage-program/add-program" element={<AddProgram />} />
-          <Route path="/manage-program/manage" element={<ManageProgramSection />} />
-          <Route path="/manage-program/manage/edit-intro" element={<EditIntro />} />
+          <Route
+            path="/manage-program/manage"
+            element={<ManageProgramSection />}
+          />
+          <Route
+            path="/manage-program/manage/edit-intro"
+            element={<EditIntro />}
+          />
+          <Route
+            path="/manage-program/manage/food"
+            element={<ApproveNonApprove />}
+          />
+          <Route
+            path="/manage-program/manage/food/add-food"
+            element={<AddFood />}
+          />
+          <Route path="/manage-program/manage/diet-plan" element={<Diet />} />
+          <Route
+            path="/manage-program/manage/diet-plan/add-diet"
+            element={<DietMeal />}
+          />
           <Route path="/fitzone-manage" element={<FitzoneManagement />} />
           <Route path="/fitzone-manage/add-fitzone" element={<AddFitzone />} />
           <Route path="/cms-manage" element={<CmsManagement />} />

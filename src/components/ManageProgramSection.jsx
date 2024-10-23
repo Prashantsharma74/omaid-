@@ -8,12 +8,11 @@ const ManageProgramSection = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
-  const [openDropdown, setOpenDropdown] = useState(null);
-  const [formData, setFormData] = useState([
-    { id: 1, text: "Introduction" },
-    { id: 2, text: "Approved / Non-Approved Foods" },
-    { id: 3, text: "Diet Plan" },
-  ]);
+  const [openDropdownIndex, setOpenDropdownIndex] = useState(null);
+
+  const handleDropdownToggle = (index) => {
+    setOpenDropdownIndex(openDropdownIndex === index ? null : index);
+  };
 
   const visiblePages = 4;
 
@@ -136,46 +135,33 @@ const ManageProgramSection = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {formData.map((data, index) => (
-                      <tr key={data.id}>
-                        <td>{index + 1 + currentPage * itemsPerPage}</td>
-                        <td>{data.text}</td>
+                    {/* Manually entering data */}
+                    {[
+                      { title: "Introduction", id: 1, url:"/manage-program/manage/edit-intro" },
+                      { title: "Approved / Non-Approved Foods", id: 2,url:"/manage-program/manage/food" },
+                      { title: "Diet Plan", id: 3,url:"/manage-program/manage/diet-plan" }
+                    ].map((user, index) => (
+                      <tr key={user.id}>
+                        <td>{index + 1}</td>
+                        <td>{user.title}</td>
                         <td>
                           <div className="dropdown text-center">
                             <button
                               className="dropdown-button"
-                              onClick={() =>
-                                setOpenDropdown(
-                                  openDropdown === data.id ? null : data.id
-                                )
-                              }
+                              onClick={() => handleDropdownToggle(index)}
                               aria-haspopup="true"
-                              aria-expanded={openDropdown === data.id}
                             >
-                              <i
-                                className={`fa fa-ellipsis-v ${
-                                  openDropdown === data.id ? "rotate-icon" : ""
-                                }`}
-                              ></i>
+                              <i className="fa fa-ellipsis-v"></i>
                             </button>
-                            {openDropdown === data.id && (
+                            {openDropdownIndex === index && (
                               <div className="dropdown-menu show">
-                                <Link to="/manage-program/manage/edit-intro"
+                                <Link
+                                  to={user.url}
                                   className="dropdown-item"
-                                  onClick={() => {
-                                    handleEdit(data.id);
-                                    setOpenDropdown(null);
-                                  }}
                                 >
                                   <i className="fa fa-edit"></i> Edit
                                 </Link>
-                                <a
-                                  className="dropdown-item"
-                                  onClick={() => {
-                                    handleDelete(data.id);
-                                    setOpenDropdown(null);
-                                  }}
-                                >
+                                <a className="dropdown-item" onClick={() => handleDelete(user.id)}>
                                   <i className="fa fa-trash"></i> Delete
                                 </a>
                               </div>
@@ -200,7 +186,7 @@ const ManageProgramSection = () => {
                       (currentPage + 1) * itemsPerPage,
                       filteredData.length
                     )}{" "}
-                    of {filteredData.length} entries
+                    of 1 entries
                   </span>
                   <div>
                     <button
