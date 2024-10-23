@@ -1,37 +1,19 @@
 import React, { useState } from "react";
-import Swal from "sweetalert2";
+import { Link } from "react-router-dom";
 
-const Faq = () => {
-  const [formData, setFormData] = useState([
-    {
-      id: 1,
-      que: "How do I create a profile?",
-      ans: "To create a profile, simply sign up with your email address or phone number.",
-      status: true,
-    },
-    {
-      id: 2,
-      que: "How do I reset my password?",
-      ans: "You can reset your password by clicking on 'Forgot Password' on the login page.",
-      status: true,
-    },
-    {
-      id: 3,
-      que: "How do I update my profile information?",
-      ans: "Go to your profile settings and edit your information.",
-      status: true,
-    },
-  ]);
-
+const ManageProgramSection = () => {
   const DEFAULT_ITEMS_PER_PAGE = 10;
-  const [newQuestion, setNewQuestion] = useState("");
-  const [newAnswer, setNewAnswer] = useState("");
-  const [error, setError] = useState({ question: "", answer: "" });
-  const [editId, setEditId] = useState(null);
   const [itemsPerPage, setItemsPerPage] = useState(DEFAULT_ITEMS_PER_PAGE);
+  const [tableData, setTableData] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
+  const [loading, setLoading] = useState(true);
   const [openDropdown, setOpenDropdown] = useState(null);
+  const [formData, setFormData] = useState([
+    { id: 1, text: "Introduction" },
+    { id: 2, text: "Approved / Non-Approved Foods" },
+    { id: 3, text: "Diet Plan" },
+  ]);
 
   const visiblePages = 4;
 
@@ -66,87 +48,6 @@ const Faq = () => {
     return buttons;
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setError({ question: "", answer: "" });
-
-    if (!newQuestion) {
-      setError((prev) => ({ ...prev, question: "Question is required." }));
-      return;
-    }
-    if (!newAnswer) {
-      setError((prev) => ({ ...prev, answer: "Answer is required." }));
-      return;
-    }
-
-    const editingItem = editId !== null;
-
-    Swal.fire({
-      title: editingItem ? "Update Item?" : "Add New Item?",
-      text: editingItem
-        ? "Are you sure you want to update this item?"
-        : "Are you sure you want to add this item?",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, proceed!",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        if (editingItem) {
-          setFormData((prevData) =>
-            prevData.map((item) =>
-              item.id === editId
-                ? { ...item, que: newQuestion, ans: newAnswer }
-                : item
-            )
-          );
-          Swal.fire("Updated!", "Your item has been updated.", "success");
-        } else {
-          const newId = Date.now();
-          setFormData((prevData) => [
-            ...prevData,
-            { id: newId, que: newQuestion, ans: newAnswer, status: true },
-          ]);
-          Swal.fire("Success!", "Your item has been added.", "success");
-        }
-        resetForm();
-      }
-    });
-  };
-
-  const handleEdit = (id) => {
-    const faqToEdit = formData.find((item) => item.id === id);
-    setNewQuestion(faqToEdit.que);
-    setNewAnswer(faqToEdit.ans);
-    setEditId(id);
-  };
-
-  const handleDelete = (id) => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "This will permanently delete the FAQ!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
-      confirmButtonText: "Yes, delete it!",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        setFormData((prevData) => prevData.filter((item) => item.id !== id));
-        Swal.fire("Deleted!", "Your FAQ has been deleted.", "success");
-      }
-    });
-  };
-
-  const toggleStatus = (id) => {
-    setFormData((prevData) =>
-      prevData.map((item) =>
-        item.id === id ? { ...item, status: !item.status } : item
-      )
-    );
-  };
-
   const handleItemsPerPageChange = (e) => {
     setItemsPerPage(Number(e.target.value));
     setCurrentPage(0);
@@ -161,10 +62,10 @@ const Faq = () => {
     setCurrentPage(page);
   };
 
-  const filteredData = formData.filter(
-    (item) =>
-      item.que.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.ans.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredData = tableData.filter(
+    (user) =>
+      user.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.description.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
@@ -173,85 +74,12 @@ const Faq = () => {
     (currentPage + 1) * itemsPerPage
   );
 
-  const resetForm = () => {
-    setNewQuestion("");
-    setNewAnswer("");
-    setError({ question: "", answer: "" });
-    setEditId(null);
-  };
-
   return (
     <main className="app-content">
       <div className="app-title tile p-3">
         <h1>
-          <span className="mr-4 fw-bold">&nbsp;FAQ</span>
+          <span className="mr-4 fw-bold">&nbsp;Manage</span>
         </h1>
-      </div>
-
-      <div className="row">
-        <div
-          className="col-md-12 mx-auto"
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <div className="tile w-75">
-            <div
-              className="case-status d-flex justify-content-center text-align-center"
-              style={{
-                backgroundColor: "#002538",
-                color: "#fff",
-                height: "50px",
-                borderRadius: "10px 10px 0px 0px",
-                textAlign: "center",
-              }}
-            >
-              <h4 className="mt-2">Add Blogs</h4>
-            </div>
-            <div className="tile-body p-3">
-              <form onSubmit={handleSubmit}>
-                <div className="row">
-                  <div className="col-lg-12 mt-2">
-                    <label className="form-label">Question</label>
-                    <input
-                      className={`form-control mt-2 ${
-                        error.question ? "is-invalid" : ""
-                      }`}
-                      type="text"
-                      placeholder="Question"
-                      value={newQuestion}
-                      onChange={(e) => setNewQuestion(e.target.value)}
-                    />
-                    {error.question && (
-                      <div className="invalid-feedback">{error.question}</div>
-                    )}
-                  </div>
-                  <div className="col-lg-12 mt-3">
-                    <label className="form-label">Answer</label>
-                    <textarea
-                      className={`form-control ${
-                        error.answer ? "is-invalid" : ""
-                      }`}
-                      rows="3"
-                      value={newAnswer}
-                      onChange={(e) => setNewAnswer(e.target.value)}
-                    ></textarea>
-                    {error.answer && (
-                      <div className="invalid-feedback">{error.answer}</div>
-                    )}
-                  </div>
-                  <div className="col-lg-12 mt-3">
-                    <button type="submit" className="btn custom-btn text-white">
-                      Submit
-                    </button>
-                  </div>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
       </div>
 
       <div className="row">
@@ -299,33 +127,19 @@ const Faq = () => {
                     />
                   </div>
                 </div>
-                <table className="table table-bordered table-hover dt-responsive">
+                <table className="table mt-2 table-bordered table-hover dt-responsive">
                   <thead>
                     <tr>
                       <th>S.Num</th>
-                      <th>Question</th>
-                      <th>Answer</th>
-                      <th>Status</th>
+                      <th>Manage</th>
                       <th>Action</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {paginatedData.map((data, index) => (
+                    {formData.map((data, index) => (
                       <tr key={data.id}>
                         <td>{index + 1 + currentPage * itemsPerPage}</td>
-                        <td>{data.que}</td>
-                        <td>{data.ans}</td>
-                        <td>
-                          <div className="form-check form-switch">
-                            <input
-                              className="form-check-input"
-                              type="checkbox"
-                              role="switch"
-                              checked={data.status}
-                              onChange={() => toggleStatus(data.id)}
-                            />
-                          </div>
-                        </td>
+                        <td>{data.text}</td>
                         <td>
                           <div className="dropdown text-center">
                             <button
@@ -346,23 +160,21 @@ const Faq = () => {
                             </button>
                             {openDropdown === data.id && (
                               <div className="dropdown-menu show">
-                                <a
+                                <Link to="/manage-program/manage/edit-intro"
                                   className="dropdown-item"
                                   onClick={() => {
-                                    handleEdit(data.id)
+                                    handleEdit(data.id);
                                     setOpenDropdown(null);
-                                  } 
-                                }
+                                  }}
                                 >
                                   <i className="fa fa-edit"></i> Edit
-                                </a>
+                                </Link>
                                 <a
                                   className="dropdown-item"
                                   onClick={() => {
-                                    handleDelete(data.id)
+                                    handleDelete(data.id);
                                     setOpenDropdown(null);
-                                  } 
-                                }
+                                  }}
                                 >
                                   <i className="fa fa-trash"></i> Delete
                                 </a>
@@ -457,4 +269,4 @@ const Faq = () => {
   );
 };
 
-export default Faq;
+export default ManageProgramSection;

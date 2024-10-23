@@ -12,6 +12,14 @@ const PushNotification = () => {
   const [pageName, setPageName] = useState("");
   const [errors, setErrors] = useState({ pageName: "" });
   const [notifications, setNotifications] = useState([]);
+  const [openDropdown, setOpenDropdown] = useState(null);
+
+  const visiblePages = 4;
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
 
   const fetchData = () => {
     setTimeout(() => {
@@ -21,26 +29,75 @@ const PushNotification = () => {
           createdDate: "10/12/1998",
           message: "I am Prashant Sharma",
         },
+        { srNum: 2, createdDate: "11/15/1999", message: "I am Anjali Verma" },
+        { srNum: 3, createdDate: "12/20/2000", message: "I am Rohit Mehta" },
+        { srNum: 4, createdDate: "01/25/2001", message: "I am Sneha Rao" },
+        { srNum: 5, createdDate: "02/10/2002", message: "I am Vikram Singh" },
+        { srNum: 6, createdDate: "03/05/2003", message: "I am Priya Joshi" },
+        { srNum: 7, createdDate: "04/30/2004", message: "I am Karan Gupta" },
+        { srNum: 8, createdDate: "05/12/2005", message: "I am Neha Bansal" },
+        { srNum: 9, createdDate: "06/18/2006", message: "I am Ankit Agarwal" },
+        { srNum: 10, createdDate: "07/22/2007", message: "I am Kavita Sharma" },
+        { srNum: 11, createdDate: "08/17/2008", message: "I am Suresh Nair" },
         {
-          srNum: 2,
-          createdDate: "10/12/1998",
-          message: "I am Prashant Sharma",
+          srNum: 12,
+          createdDate: "09/10/2009",
+          message: "I am Pooja Choudhury",
         },
+        { srNum: 13, createdDate: "10/15/2010", message: "I am Ramesh Iyer" },
+        { srNum: 14, createdDate: "11/23/2011", message: "I am Simran Kaur" },
         {
-          srNum: 2,
-          createdDate: "10/12/1998",
-          message: "I am Prashant Sharma",
+          srNum: 15,
+          createdDate: "12/30/2012",
+          message: "I am Abhishek Patel",
         },
+        { srNum: 16, createdDate: "01/29/2013", message: "I am Tanvi Desai" },
+        { srNum: 17, createdDate: "02/11/2014", message: "I am Nikhil Reddy" },
+        { srNum: 18, createdDate: "03/03/2015", message: "I am Riya Sethi" },
+        { srNum: 19, createdDate: "04/28/2016", message: "I am Manish Kumar" },
+        { srNum: 20, createdDate: "05/19/2017", message: "I am Aditi Sharma" },
+        { srNum: 21, createdDate: "06/15/2018", message: "I am Deepak Singh" },
+        { srNum: 22, createdDate: "07/23/2019", message: "I am Meera Gupta" },
+        { srNum: 23, createdDate: "08/29/2020", message: "I am Sameer Joshi" },
+        { srNum: 24, createdDate: "09/30/2021", message: "I am Kavya Rao" },
+        { srNum: 25, createdDate: "10/18/2022", message: "I am Ashish Kumar" },
+        { srNum: 26, createdDate: "11/27/2023", message: "I am Soniya Verma" },
+        { srNum: 27, createdDate: "12/05/2024", message: "I am Rohan Mehta" },
+        { srNum: 28, createdDate: "01/10/2025", message: "I am Gaurav Yadav" },
+        { srNum: 29, createdDate: "02/14/2026", message: "I am Neetu Sethi" },
         {
-          srNum: 2,
-          createdDate: "10/12/1998",
-          message: "I am Prashant Sharma",
+          srNum: 30,
+          createdDate: "03/22/2027",
+          message: "I am Prateek Sharma",
         },
+        { srNum: 31, createdDate: "04/17/2028", message: "I am Isha Singh" },
+        { srNum: 32, createdDate: "05/25/2029", message: "I am Amit Bansal" },
+        { srNum: 33, createdDate: "06/29/2030", message: "I am Rina Iyer" },
+        { srNum: 34, createdDate: "07/30/2031", message: "I am Sanjay Rao" },
+        { srNum: 35, createdDate: "08/18/2032", message: "I am Vidya Joshi" },
+        { srNum: 36, createdDate: "09/12/2033", message: "I am Mohit Gupta" },
         {
-          srNum: 2,
-          createdDate: "10/12/1998",
-          message: "I am Prashant Sharma",
+          srNum: 37,
+          createdDate: "10/20/2034",
+          message: "I am Tina Choudhury",
         },
+        { srNum: 38, createdDate: "11/15/2035", message: "I am Harsh Nair" },
+        { srNum: 39, createdDate: "12/05/2036", message: "I am Snehal Patel" },
+        { srNum: 40, createdDate: "01/22/2037", message: "I am Ravi Sharma" },
+        { srNum: 41, createdDate: "02/16/2038", message: "I am Pallavi Verma" },
+        { srNum: 42, createdDate: "03/11/2039", message: "I am Jatin Singh" },
+        { srNum: 43, createdDate: "04/09/2040", message: "I am Sheetal Reddy" },
+        { srNum: 44, createdDate: "05/03/2041", message: "I am Anu Gupta" },
+        { srNum: 45, createdDate: "06/25/2042", message: "I am Akshay Iyer" },
+        { srNum: 46, createdDate: "07/14/2043", message: "I am Neha Bansal" },
+        { srNum: 47, createdDate: "08/29/2044", message: "I am Nitin Kumar" },
+        { srNum: 48, createdDate: "09/22/2045", message: "I am Kavita Rao" },
+        {
+          srNum: 49,
+          createdDate: "10/30/2046",
+          message: "I am Ramesh Choudhury",
+        },
+        { srNum: 50, createdDate: "11/16/2047", message: "I am Simran Mehta" },
       ];
       setNotifications(users);
       setLoading(false);
@@ -51,6 +108,10 @@ const PushNotification = () => {
     fetchData();
   }, []);
 
+  const toggleDropdown = (srNum) => {
+    setOpenDropdown(openDropdown === srNum ? null : srNum);
+  };
+
   const handleItemsPerPageChange = (e) => {
     setItemsPerPage(Number(e.target.value));
     setCurrentPage(0);
@@ -59,10 +120,6 @@ const PushNotification = () => {
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
     setCurrentPage(0);
-  };
-
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
   };
 
   const filteredData = notifications.filter((user) =>
@@ -122,6 +179,54 @@ const PushNotification = () => {
         Swal.fire("Deleted!", "Notification has been deleted.", "success");
       }
     });
+  };
+
+  const handleEditNotification = (srNum) => {
+    const notificationToEdit = notifications.find((n) => n.srNum === srNum);
+    const newMessage = prompt(
+      "Edit notification message:",
+      notificationToEdit.message
+    );
+    if (newMessage !== null && newMessage.trim()) {
+      const updatedNotifications = notifications.map((notification) =>
+        notification.srNum === srNum
+          ? { ...notification, message: newMessage }
+          : notification
+      );
+      setNotifications(updatedNotifications);
+      Swal.fire("Updated!", "Notification has been updated.", "success");
+    }
+  };
+
+  const getPaginationButtons = () => {
+    const buttons = [];
+    let startPage = Math.max(0, currentPage - Math.floor(visiblePages / 2));
+    let endPage = Math.min(totalPages - 1, startPage + visiblePages - 1);
+
+    if (endPage - startPage < visiblePages - 1) {
+      startPage = Math.max(0, endPage - visiblePages + 1);
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      const isActive = i === currentPage;
+      buttons.push(
+        <button
+          key={i}
+          style={{
+            padding: "7px 10px",
+            backgroundColor: isActive ? "#002538" : "#e9ecef",
+            color: isActive ? "white" : "#002538",
+            border: "1px solid lightgrey",
+          }}
+          className={`page-btn ${isActive ? "active" : ""}`}
+          onClick={() => handlePageChange(i)}
+        >
+          {i + 1}
+        </button>
+      );
+    }
+
+    return buttons;
   };
 
   return (
@@ -283,7 +388,7 @@ const PushNotification = () => {
                         {paginatedData.length > 0 ? (
                           paginatedData.map((row, index) => (
                             <tr key={index}>
-                              <td>{index + 1}</td>
+                              <td>{index + 1 + currentPage * itemsPerPage}</td>
                               <td>{row.createdDate}</td>
                               <td>
                                 {row.message.length > 10
@@ -291,43 +396,45 @@ const PushNotification = () => {
                                   : row.message}
                               </td>
                               <td>
-                                <div className="more">
-                                  <input
-                                    style={{ display: "none" }}
-                                    type="checkbox"
-                                    id="more-menu-toggle"
-                                  />
-                                  <label
-                                    htmlFor="more-menu-toggle"
-                                    className="more-btn"
+                                <div className="dropdown text-center">
+                                  <button
+                                    className="dropdown-button"
+                                    onClick={() => toggleDropdown(row.srNum)}
+                                    aria-haspopup="true"
+                                    aria-expanded={openDropdown === row.srNum}
                                   >
-                                    <span className="more-dot"></span>
-                                    <span className="more-dot"></span>
-                                    <span className="more-dot"></span>
-                                  </label>
-                                  <div className="more-menu">
-                                    <div className="more-menu-caret">
-                                      <div className="more-menu-caret-outer"></div>
-                                      <div className="more-menu-caret-inner"></div>
+                                    <i
+                                      className={`fa fa-ellipsis-v ${
+                                        openDropdown === row.srNum
+                                          ? "rotate-icon"
+                                          : ""
+                                      }`}
+                                    ></i>
+                                  </button>
+                                  {openDropdown === row.srNum && (
+                                    <div className="dropdown-menu show">
+                                      <a
+                                        className="dropdown-item"
+                                        onClick={() => {
+                                          handleEditNotification(row.srNum);
+                                          setOpenDropdown(null);
+                                        }}
+                                      >
+                                        <i className="fa fa-edit"></i>
+                                        Edit
+                                      </a>
+                                      <a
+                                        className="dropdown-item"
+                                        onClick={() => {
+                                          handleDeleteNotification(row.srNum);
+                                          setOpenDropdown(null);
+                                        }}
+                                      >
+                                        <i className="fa fa-trash"></i>
+                                        Delete
+                                      </a>
                                     </div>
-                                    <ul className="more-menu-items">
-                                      <li className="more-menu-item">
-                                        <button className="more-menu-btn">
-                                          <i className="fa-regular fa-pen"></i>
-                                          Edit
-                                        </button>
-                                      </li>
-                                      <li className="more-menu-item">
-                                        <button
-                                          className="more-menu-btn d-flex w-100"
-                                          style={{ display: "flex" }}
-                                        >
-                                          <i className="fa-solid fa-trash"></i>
-                                          Delete
-                                        </button>
-                                      </li>
-                                    </ul>
-                                  </div>
+                                  )}
                                 </div>
                               </td>
                             </tr>
@@ -383,23 +490,7 @@ const PushNotification = () => {
                         >
                           &#x3c;
                         </button>
-                        {Array.from({ length: totalPages }, (_, index) => (
-                          <button
-                            style={{
-                              padding: "7px 10px",
-                              backgroundColor: "#e9ecef",
-                              color: "#002538",
-                              border: "1px solid lightgrey",
-                            }}
-                            key={index}
-                            className={`page-btn ${
-                              index === currentPage ? "active" : ""
-                            }`}
-                            onClick={() => handlePageChange(index)}
-                          >
-                            {index + 1}
-                          </button>
-                        ))}
+                        {getPaginationButtons()}
                         <button
                           style={{
                             padding: "7px 10px",

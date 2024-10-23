@@ -16,20 +16,66 @@ const CmsManagement = () => {
   const [editorContent, setEditorContent] = useState("");
   const [editingItem, setEditingItem] = useState(null);
   const [errors, setErrors] = useState({ pageName: "", editorContent: "" });
+  const [openDropdown, setOpenDropdown] = useState(null);
 
   const fetchData = () => {
     setTimeout(() => {
       const users = [
-        {
-          srNum: 1,
-          title: "About us",
-          status: "Active",
-        },
-        {
-          srNum: 2,
-          title: "Terms & Conditions",
-          status: "Inactive",
-        },
+        { srNum: 1, title: "About us", status: "Active" },
+        { srNum: 2, title: "Terms & Conditions", status: "Inactive" },
+        { srNum: 3, title: "Privacy Policy", status: "Active" },
+        { srNum: 4, title: "FAQ", status: "Active" },
+        { srNum: 5, title: "Contact Us", status: "Active" },
+        { srNum: 6, title: "Support", status: "Inactive" },
+        { srNum: 7, title: "Careers", status: "Active" },
+        { srNum: 8, title: "Blog", status: "Active" },
+        { srNum: 9, title: "Our Team", status: "Inactive" },
+        { srNum: 10, title: "Testimonials", status: "Active" },
+        { srNum: 11, title: "Pricing", status: "Active" },
+        { srNum: 12, title: "User Guide", status: "Inactive" },
+        { srNum: 13, title: "Features", status: "Active" },
+        { srNum: 14, title: "Integrations", status: "Inactive" },
+        { srNum: 15, title: "Security", status: "Active" },
+        { srNum: 16, title: "Updates", status: "Active" },
+        { srNum: 17, title: "Feedback", status: "Inactive" },
+        { srNum: 18, title: "Community", status: "Active" },
+        { srNum: 19, title: "Events", status: "Inactive" },
+        { srNum: 20, title: "Webinars", status: "Active" },
+        { srNum: 21, title: "Affiliate Program", status: "Active" },
+        { srNum: 22, title: "Partnerships", status: "Inactive" },
+        { srNum: 23, title: "Case Studies", status: "Active" },
+        { srNum: 24, title: "Roadmap", status: "Inactive" },
+        { srNum: 25, title: "Changelog", status: "Active" },
+        { srNum: 26, title: "Media Kit", status: "Active" },
+        { srNum: 27, title: "Sitemap", status: "Inactive" },
+        { srNum: 28, title: "Accessibility", status: "Active" },
+        { srNum: 29, title: "Legal", status: "Inactive" },
+        { srNum: 30, title: "Downloads", status: "Active" },
+        { srNum: 31, title: "Feedback Form", status: "Active" },
+        { srNum: 32, title: "Newsletter", status: "Inactive" },
+        { srNum: 33, title: "Announcements", status: "Active" },
+        { srNum: 34, title: "Help Center", status: "Active" },
+        { srNum: 35, title: "Documentation", status: "Inactive" },
+        { srNum: 36, title: "Service Status", status: "Active" },
+        { srNum: 37, title: "API Reference", status: "Active" },
+        { srNum: 38, title: "Getting Started", status: "Inactive" },
+        { srNum: 39, title: "Workshops", status: "Active" },
+        { srNum: 40, title: "User Stories", status: "Active" },
+        { srNum: 41, title: "Media Coverage", status: "Inactive" },
+        { srNum: 42, title: "Press Releases", status: "Active" },
+        { srNum: 43, title: "Investors", status: "Active" },
+        { srNum: 44, title: "Vision & Mission", status: "Inactive" },
+        { srNum: 45, title: "Corporate Responsibility", status: "Active" },
+        { srNum: 46, title: "Product Updates", status: "Active" },
+        { srNum: 47, title: "User Community", status: "Inactive" },
+        { srNum: 48, title: "B2B Solutions", status: "Active" },
+        { srNum: 49, title: "B2C Solutions", status: "Inactive" },
+        { srNum: 50, title: "API Documentation", status: "Active" },
+        { srNum: 51, title: "Support Resources", status: "Active" },
+        { srNum: 52, title: "Customer Support", status: "Inactive" },
+        { srNum: 53, title: "User Research", status: "Active" },
+        { srNum: 54, title: "Quality Assurance", status: "Active" },
+        { srNum: 55, title: "Terms of Use", status: "Inactive" },
       ];
       setTableData(users);
       setLoading(false);
@@ -39,6 +85,39 @@ const CmsManagement = () => {
   useEffect(() => {
     fetchData();
   }, []);
+
+  const visiblePages = 4;
+
+  const getPaginationButtons = () => {
+    const buttons = [];
+    let startPage = Math.max(0, currentPage - Math.floor(visiblePages / 2));
+    let endPage = Math.min(totalPages - 1, startPage + visiblePages - 1);
+
+    if (endPage - startPage < visiblePages - 1) {
+      startPage = Math.max(0, endPage - visiblePages + 1);
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      const isActive = i === currentPage;
+      buttons.push(
+        <button
+          key={i}
+          style={{
+            padding: "7px 10px",
+            backgroundColor: isActive ? "#002538" : "#e9ecef",
+            color: isActive ? "white" : "#002538",
+            border: "1px solid lightgrey",
+          }}
+          className={`page-btn ${isActive ? "active" : ""}`}
+          onClick={() => handlePageChange(i)}
+        >
+          {i + 1}
+        </button>
+      );
+    }
+
+    return buttons;
+  };
 
   const handleItemsPerPageChange = (e) => {
     setItemsPerPage(Number(e.target.value));
@@ -337,7 +416,7 @@ const CmsManagement = () => {
                         {paginatedData?.length > 0 ? (
                           paginatedData?.map((row, index) => (
                             <tr key={index}>
-                              <td>{index + 1}</td>
+                              <td>{index + 1 + currentPage * itemsPerPage}</td>
                               <td>{row.title}</td>
                               <td>
                                 <div className="form-check form-switch">
@@ -351,48 +430,49 @@ const CmsManagement = () => {
                                 </div>
                               </td>
                               <td>
-                                <div className="more">
-                                  <input style={{display:"none"}}
-                                    type="checkbox"
-                                    id="more-menu-toggle"
-                                  />
-                                  <label
-                                    htmlFor="more-menu-toggle"
-                                    className="more-btn"
+                                <div className="dropdown text-center">
+                                  <button
+                                    className="dropdown-button"
+                                    onClick={() =>
+                                      setOpenDropdown(
+                                        openDropdown === row.srNum ? null : row.srNum
+                                      )
+                                    }
+                                    aria-haspopup="true"
+                                    aria-expanded={openDropdown === row.srNum}
                                   >
-                                    <span className="more-dot"></span>
-                                    <span className="more-dot"></span>
-                                    <span className="more-dot"></span>
-                                  </label>
-                                  <div className="more-menu">
-                                    <div className="more-menu-caret">
-                                      <div className="more-menu-caret-outer"></div>
-                                      <div className="more-menu-caret-inner"></div>
+                                    <i
+                                      className={`fa fa-ellipsis-v ${
+                                        openDropdown === row.srNum
+                                          ? "rotate-icon"
+                                          : ""
+                                      }`}
+                                    ></i>
+                                  </button>
+                                  {openDropdown === row.srNum && (
+                                    <div className="dropdown-menu show">
+                                      <a
+                                        className="dropdown-item"
+                                        onClick={() => {
+                                          handleEdit(data.srNum)
+                                          setOpenDropdown(null);
+                                        } 
+                                      }
+                                      >
+                                        <i className="fa fa-edit"></i> Edit
+                                      </a>
+                                      <a
+                                        className="dropdown-item"
+                                        onClick={() => {
+                                          handleDelete(data.srNum)
+                                          setOpenDropdown(null);
+                                        } 
+                                      }
+                                      >
+                                        <i className="fa fa-trash"></i> Delete
+                                      </a>
                                     </div>
-                                    <ul className="more-menu-items">
-                                      <li className="more-menu-item">
-                                        <button
-                                          className="more-menu-btn"
-                                          onClick={() => handleEdit(row)}
-                                        >
-                                          <i className="fa-regular fa-pen"></i>
-                                          Edit
-                                        </button>
-                                      </li>
-                                      <li className="more-menu-item">
-                                        <button
-                                          className="more-menu-btn d-flex w-100"
-                                          onClick={() =>
-                                            handleDelete(row.srNum)
-                                          }
-                                          style={{ display: "flex" }}
-                                        >
-                                          <i className="fa-solid fa-trash"></i>
-                                          Delete
-                                        </button>
-                                      </li>
-                                    </ul>
-                                  </div>
+                                  )}
                                 </div>
                               </td>
                             </tr>
@@ -448,23 +528,7 @@ const CmsManagement = () => {
                         >
                           &#x3c;
                         </button>
-                        {Array.from({ length: totalPages }, (_, index) => (
-                          <button
-                            style={{
-                              padding: "7px 10px",
-                              backgroundColor: "#e9ecef",
-                              color: "#002538",
-                              border: "1px solid lightgrey",
-                            }}
-                            key={index}
-                            className={`page-btn ${
-                              index === currentPage ? "active" : ""
-                            }`}
-                            onClick={() => handlePageChange(index)}
-                          >
-                            {index + 1}
-                          </button>
-                        ))}
+                        {getPaginationButtons()}
                         <button
                           style={{
                             padding: "7px 10px",

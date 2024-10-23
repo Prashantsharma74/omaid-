@@ -40,7 +40,7 @@ const Dashboard = () => {
         <div className="col-lg-8">
           <div className="row">
             <div className="col-md-6 col-lg-6">
-              <Link className="text-decoration-none">
+              <Link className="text-decoration-none" to="/users">
                 <div className="widget-small ctm-bg-4 coloured-icon">
                   <i className="icon fa-sharp fa-light fa-users"></i>
                   <div className="info">
@@ -52,8 +52,8 @@ const Dashboard = () => {
                 </div>
               </Link>
             </div>
-            <div className="col-md-6 col-lg-6">
-              <Link className="text-decoration-none">
+            <div className="col-md-6 col-lg-6" >
+              <Link className="text-decoration-none" to="/sub-admin">
                 <div className="widget-small ctm-bg-2 coloured-icon">
                   <i className="icon  fa-light fa-user-group"></i>
                   <div className="info">
@@ -66,7 +66,7 @@ const Dashboard = () => {
               </Link>
             </div>
             <div className="col-md-6 col-lg-6">
-              <Link className="text-decoration-none">
+              <Link className="text-decoration-none" to="/fitzone-manage">
                 <div className="widget-small ctm-bg-1 coloured-icon">
                   <i className="icon fa-light fa-rocket"></i>
                   <div className="info">
@@ -79,7 +79,7 @@ const Dashboard = () => {
               </Link>
             </div>
             <div className="col-md-6 col-lg-6">
-              <Link className="text-decoration-none">
+              <Link className="text-decoration-none" to="/blogs/manage-blogs">
                 <div className="widget-small ctm-bg-1 coloured-icon">
                   <i className="icon fa-thin fa-file-lines"></i>
                   <div className="info">
@@ -92,7 +92,7 @@ const Dashboard = () => {
               </Link>
             </div>
             <div className="col-md-6 col-lg-6">
-              <Link className="text-decoration-none">
+              <Link className="text-decoration-none" to="/manage-program">
                 <div className="widget-small ctm-bg-1 coloured-icon">
                   <i className="icon fa-light fa-file-chart-column"></i>
                   <div className="info">

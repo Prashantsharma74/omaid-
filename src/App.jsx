@@ -21,6 +21,8 @@ import AddDiet from "./components/AddDiet";
 import AddFitzone from "./components/AddFitzone";
 import AddSubAdmin from "./components/AddSubAdmin";
 import AddProgram from "./components/AddProgram";
+import ManageProgramSection from "./components/ManageProgramSection";
+import EditIntro from "./components/EditIntro";
 
 function App() {
   return (
@@ -34,6 +36,8 @@ function App() {
           <Route path="/users" element={<Users />} />
           <Route path="/manage-program" element={<ManageProgram />} />
           <Route path="/manage-program/add-program" element={<AddProgram />} />
+          <Route path="/manage-program/manage" element={<ManageProgramSection />} />
+          <Route path="/manage-program/manage/edit-intro" element={<EditIntro />} />
           <Route path="/fitzone-manage" element={<FitzoneManagement />} />
           <Route path="/fitzone-manage/add-fitzone" element={<AddFitzone />} />
           <Route path="/cms-manage" element={<CmsManagement />} />
