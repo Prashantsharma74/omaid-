@@ -27,6 +27,7 @@ import ApproveNonApprove from "./components/ApproveNonApprove";
 import Diet from "./components/Diet";
 import AddFood from "./components/AddFood";
 import DietMeal from "./components/DietMeal";
+import AddUser from "./components/AddUser";
 
 function App() {
   return (
@@ -36,8 +37,9 @@ function App() {
         <Route element={<ProtectedRoute />}>
           <Route path="/" element={<Dashboard />} />
           <Route path="/sub-admin" element={<SubAdmin />} />
-          <Route path="/sub-admin/add-sub-admin" element={<AddSubAdmin />} />
+          <Route path="/sub-admin/add-subadmin" element={<AddSubAdmin />} />
           <Route path="/users" element={<Users />} />
+          <Route path="/users/add-user" element={<AddUser />} />
           <Route path="/manage-program" element={<ManageProgram />} />
           <Route path="/manage-program/add-program" element={<AddProgram />} />
           <Route

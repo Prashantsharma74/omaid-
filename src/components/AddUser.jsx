@@ -268,7 +268,7 @@ const AddUser = () => {
                       <div className="invalid-feedback">{errors.password}</div>
                     )}
                   </div>
-                  <div className="mb-3 col-lg-12 col-sm-12">
+                  {/* <div className="mb-3 col-lg-12 col-sm-12">
                     <h5 className="mt-3 mb-3">
                       <strong>Add Insight</strong>
                     </h5>
@@ -305,7 +305,7 @@ const AddUser = () => {
                         </label>
                       </div>
                     </div>
-                  </div>
+                  </div> */}
                   <div className="mb-3 col-lg-12 text-center">
                     <button
                       className="btn custom-btn text-white w-50"

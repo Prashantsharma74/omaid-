@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const Users = () => {
   const DEFAULT_ITEMS_PER_PAGE = 10;
@@ -153,6 +154,24 @@ const Users = () => {
     (currentPage + 1) * itemsPerPage
   );
 
+  const handleDelete = (id) => {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        setTableData((prevData) => prevData.filter(user => user.id !== id));
+        Swal.fire('Deleted!', 'The user has been deleted.', 'success');
+      }
+    });
+  };
+
   return (
     <main className="app-content">
       <div className="app-title tile p-3">
@@ -236,7 +255,7 @@ const Users = () => {
                         <tr>
                           <th>S.No</th>
                           <th>User Id</th>
-                          <th>Username </th>
+                          <th>User Name </th>
                           <th>Email ID</th>
                           <th>Phone Number</th>
                           <th>Sub Admin Name</th>

@@ -1,13 +1,19 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const ManageProgramSection = () => {
   const DEFAULT_ITEMS_PER_PAGE = 10;
+  const initialData = [
+    { title: "Introduction", id: 1, url: "/manage-program/manage/edit-intro" },
+    { title: "Approved / Non-Approved Foods", id: 2, url: "/manage-program/manage/food" },
+    { title: "Diet Plan", id: 3, url: "/manage-program/manage/diet-plan" },
+  ];
+  
   const [itemsPerPage, setItemsPerPage] = useState(DEFAULT_ITEMS_PER_PAGE);
-  const [tableData, setTableData] = useState([]);
+  const [tableData, setTableData] = useState(initialData);
   const [currentPage, setCurrentPage] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
-  const [loading, setLoading] = useState(true);
   const [openDropdownIndex, setOpenDropdownIndex] = useState(null);
 
   const handleDropdownToggle = (index) => {
@@ -36,7 +42,6 @@ const ManageProgramSection = () => {
             color: isActive ? "white" : "#002538",
             border: "1px solid lightgrey",
           }}
-          className={`page-btn ${isActive ? "active" : ""}`}
           onClick={() => handlePageChange(i)}
         >
           {i + 1}
@@ -63,8 +68,7 @@ const ManageProgramSection = () => {
 
   const filteredData = tableData.filter(
     (user) =>
-      user.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.description.toLowerCase().includes(searchTerm.toLowerCase())
+      user.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
@@ -73,6 +77,24 @@ const ManageProgramSection = () => {
     (currentPage + 1) * itemsPerPage
   );
 
+  const handleDelete = (id) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "This action cannot be undone!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        setTableData((prevData) => prevData.filter((item) => item.id !== id));
+        Swal.fire("Deleted!", "Your program has been deleted.", "success");
+      }
+    });
+    setOpenDropdownIndex(false)
+  };
+
   return (
     <main className="app-content">
       <div className="app-title tile p-3">
@@ -80,7 +102,6 @@ const ManageProgramSection = () => {
           <span className="mr-4 fw-bold">&nbsp;Manage</span>
         </h1>
       </div>
-
       <div className="row">
         <div className="col-md-12 px-5">
           <div className="tile p-3">
@@ -135,14 +156,9 @@ const ManageProgramSection = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {/* Manually entering data */}
-                    {[
-                      { title: "Introduction", id: 1, url:"/manage-program/manage/edit-intro" },
-                      { title: "Approved / Non-Approved Foods", id: 2,url:"/manage-program/manage/food" },
-                      { title: "Diet Plan", id: 3,url:"/manage-program/manage/diet-plan" }
-                    ].map((user, index) => (
+                    {paginatedData.map((user, index) => (
                       <tr key={user.id}>
-                        <td>{index + 1}</td>
+                        <td>{currentPage * itemsPerPage + index + 1}</td>
                         <td>{user.title}</td>
                         <td>
                           <div className="dropdown text-center">
@@ -155,13 +171,13 @@ const ManageProgramSection = () => {
                             </button>
                             {openDropdownIndex === index && (
                               <div className="dropdown-menu show">
-                                <Link
-                                  to={user.url}
-                                  className="dropdown-item"
-                                >
+                                <Link to={user.url} className="dropdown-item">
                                   <i className="fa fa-edit"></i> Edit
                                 </Link>
-                                <a className="dropdown-item" onClick={() => handleDelete(user.id)}>
+                                <a
+                                  className="dropdown-item"
+                                  onClick={() => handleDelete(user.id)}
+                                >
                                   <i className="fa fa-trash"></i> Delete
                                 </a>
                               </div>
@@ -186,7 +202,7 @@ const ManageProgramSection = () => {
                       (currentPage + 1) * itemsPerPage,
                       filteredData.length
                     )}{" "}
-                    of 1 entries
+                    of {filteredData.length} entries
                   </span>
                   <div>
                     <button

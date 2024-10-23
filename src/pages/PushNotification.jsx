@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import send from "../assets/images/send.png";
 
@@ -13,13 +13,14 @@ const PushNotification = () => {
   const [errors, setErrors] = useState({ pageName: "" });
   const [notifications, setNotifications] = useState([]);
   const [openDropdown, setOpenDropdown] = useState(null);
+  //   const [isEditing, setIsEditing] = useState(false);
+  // const [editingId, setEditingId] = useState(null);
 
   const visiblePages = 4;
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
-
 
   const fetchData = () => {
     setTimeout(() => {
@@ -179,23 +180,6 @@ const PushNotification = () => {
         Swal.fire("Deleted!", "Notification has been deleted.", "success");
       }
     });
-  };
-
-  const handleEditNotification = (srNum) => {
-    const notificationToEdit = notifications.find((n) => n.srNum === srNum);
-    const newMessage = prompt(
-      "Edit notification message:",
-      notificationToEdit.message
-    );
-    if (newMessage !== null && newMessage.trim()) {
-      const updatedNotifications = notifications.map((notification) =>
-        notification.srNum === srNum
-          ? { ...notification, message: newMessage }
-          : notification
-      );
-      setNotifications(updatedNotifications);
-      Swal.fire("Updated!", "Notification has been updated.", "success");
-    }
   };
 
   const getPaginationButtons = () => {
@@ -413,16 +397,15 @@ const PushNotification = () => {
                                   </button>
                                   {openDropdown === row.srNum && (
                                     <div className="dropdown-menu show">
-                                      <a
+                                      {/* <a
                                         className="dropdown-item"
                                         onClick={() => {
-                                          handleEditNotification(row.srNum);
                                           setOpenDropdown(null);
                                         }}
                                       >
                                         <i className="fa fa-edit"></i>
                                         Edit
-                                      </a>
+                                      </a> */}
                                       <a
                                         className="dropdown-item"
                                         onClick={() => {

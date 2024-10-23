@@ -57,7 +57,7 @@ const Dashboard = () => {
                 <div className="widget-small ctm-bg-2 coloured-icon">
                   <i className="icon  fa-light fa-user-group"></i>
                   <div className="info">
-                    <h4> Total Vendors</h4>
+                    <h4> Total Sub-Amin</h4>
                     <p>
                       <b>12</b>
                     </p>

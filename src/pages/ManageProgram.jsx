@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const ManageProgram = () => {
   const DEFAULT_ITEMS_PER_PAGE = 10;
@@ -85,27 +86,7 @@ const ManageProgram = () => {
         { srNum: 37, title: "Title 37", status: "Active" },
         { srNum: 38, title: "Title 38", status: "Inactive" },
         { srNum: 39, title: "Title 39", status: "Active" },
-        { srNum: 40, title: "Title 40", status: "Inactive" },
-        { srNum: 41, title: "Title 41", status: "Active" },
-        { srNum: 42, title: "Title 42", status: "Inactive" },
-        { srNum: 43, title: "Title 43", status: "Active" },
-        { srNum: 44, title: "Title 44", status: "Inactive" },
-        { srNum: 45, title: "Title 45", status: "Active" },
-        { srNum: 46, title: "Title 46", status: "Inactive" },
-        { srNum: 47, title: "Title 47", status: "Active" },
-        { srNum: 48, title: "Title 48", status: "Inactive" },
-        { srNum: 49, title: "Title 49", status: "Active" },
-        { srNum: 50, title: "Title 50", status: "Inactive" },
-        { srNum: 51, title: "Title 51", status: "Active" },
-        { srNum: 52, title: "Title 52", status: "Inactive" },
-        { srNum: 53, title: "Title 53", status: "Active" },
-        { srNum: 54, title: "Title 54", status: "Inactive" },
-        { srNum: 55, title: "Title 55", status: "Active" },
-        { srNum: 56, title: "Title 56", status: "Inactive" },
-        { srNum: 57, title: "Title 57", status: "Active" },
-        { srNum: 58, title: "Title 58", status: "Inactive" },
-        { srNum: 59, title: "Title 59", status: "Active" },
-        { srNum: 60, title: "Title 60", status: "Inactive" },
+        { srNum: 40, title: "Title 40", status: "Inactive" }
       ];
       setTableData(users);
       setLoading(false);
@@ -117,9 +98,22 @@ const ManageProgram = () => {
   }, []);
 
   const handleDelete = (srNum) => {
-    setTableData((prevData) => prevData.filter((item) => item.srNum !== srNum));
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'You will not be able to recover this program!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        setTableData((prevData) => prevData.filter((item) => item.srNum !== srNum));
+        Swal.fire('Deleted!', 'Your program has been deleted.', 'success');
+      }
+    });
   };
-
+  
   const handleItemsPerPageChange = (e) => {
     setItemsPerPage(Number(e.target.value));
     setCurrentPage(0);

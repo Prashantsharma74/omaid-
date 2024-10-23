@@ -208,7 +208,7 @@ const Faq = () => {
                 textAlign: "center",
               }}
             >
-              <h4 className="mt-2">Add Blogs</h4>
+              <h4 className="mt-2">Add FAQ</h4>
             </div>
             <div className="tile-body p-3">
               <form onSubmit={handleSubmit}>

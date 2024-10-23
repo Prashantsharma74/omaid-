@@ -7,51 +7,53 @@ import BlogDropDown from "./BlogDropDown";
 const Headers = ({ isSideBarOpen, setIsSideBarOpen }) => {
   useEffect(() => {
     const treeviewMenu = $(".app-menu");
+    
+    // Click event for treeview toggles
     $("[data-toggle='treeview']").click(function (event) {
       event.preventDefault();
-      if ($(this).parent().hasClass("is-expanded")) {
-        treeviewMenu
-          .find("[data-toggle='treeview']")
-          .parent()
-          .removeClass("is-expanded");
-      } else {
-        treeviewMenu
-          .find("[data-toggle='treeview']")
-          .parent()
-          .addClass("is-expanded");
-      }
+      const $parent = $(this).parent();
+  
+      // Close all other open treeviews
+      treeviewMenu.find(".is-expanded").not($parent).removeClass("is-expanded");
+      
+      // Toggle the clicked treeview
+      $parent.toggleClass("is-expanded");
     });
-
+  
     const currentUrl = window.location.href;
     let isAnyExpanded = false;
+  
+    // Expand the relevant treeview based on the current URL
     $(".app-menu a").each(function () {
       if (this.href === currentUrl) {
         $(this).parent().parent().prev().click();
       }
     });
+  
     $(".treeview-menu a").each(function () {
       if (this.href === currentUrl) {
         $(this).parent().parent().prev().click();
-
         $(this).closest(".treeview").addClass("is-expanded");
         isAnyExpanded = true;
       }
     });
+  
     if (isAnyExpanded) {
-      treeviewMenu
-        .find("[data-toggle='treeview']")
-        .parent()
-        .addClass("is-expanded");
+      treeviewMenu.find("[data-toggle='treeview']").parent().addClass("is-expanded");
     }
+  
+    // Sidebar toggle
     $('[data-toggle="sidebar"]').click(function (event) {
       event.preventDefault();
       $(".app").toggleClass("sidenav-toggled");
     });
+  
     return () => {
       $("[data-toggle='treeview']").off("click");
       $('[data-toggle="sidebar"]').off("click");
     };
   }, []);
+  
 
   const handleToggle = () => {
     setIsSideBarOpen(prev => !prev);

@@ -1,71 +1,84 @@
 import React, { useState } from "react";
 import Swal from "sweetalert2";
 
-const DietMeal = () => {
+const AddSubAdmin = () => {
   const [formData, setFormData] = useState({
-    week: "",
-    day: "",
-    meal: "",
-    food: "",
+    name: "",
+    email: "",
+    hospital: "",
+    location: "",
+    phone: "",
+    designation: "",
+    password: "",
   });
-
+  const [isAlert, setIsAlert] = useState(false);
   const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-    setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
+    const { id, value } = e.target;
+    setFormData({ ...formData, [id]: value });
+    setErrors({ ...errors, [id]: "" }); // Clear the error for the input being changed
   };
 
-  const validate = () => {
+  const validateForm = () => {
     const newErrors = {};
-    if (!formData.week) newErrors.week = "Week is required.";
-    if (!formData.day) newErrors.day = "Day is required.";
-    if (!formData.meal) newErrors.meal = "Meal type is required.";
-    if (!formData.food) newErrors.food = "Food name is required.";
-    return newErrors;
+    if (!formData.name) newErrors.name = "Name is required.";
+    if (!formData.email) newErrors.email = "Email is required.";
+    if (!formData.hospital)
+      newErrors.hospital = "Hospital/Clinic name is required.";
+    if (!formData.location) newErrors.location = "Location is required.";
+    if (!formData.phone) newErrors.phone = "Phone number is required.";
+    if (!formData.designation)
+      newErrors.designation = "Designation is required.";
+    if (!formData.password) newErrors.password = "Password is required.";
+    if (formData.phone && !/^\d+$/.test(formData.phone))
+      newErrors.phone = "Phone number must be numeric.";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    const validationErrors = validate();
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      return;
-    }
-    console.log(formData);
-    // Show success alert using SweetAlert
-    await Swal.fire({
-      title: "Success!",
-      text: "Diet & Meal Plan added successfully.",
+
+    if (!validateForm()) return;
+
+    Swal.fire({
+      title: "Sub-Admin Added!",
+      text: `Sub-Admin added successfully`,
       icon: "success",
-      confirmButtonText: "Okay",
+      confirmButtonText: "OK",
     });
 
-    // Optionally reset the form after submission
+    console.log("Form Data:", formData);
     setFormData({
-      week: "",
-      day: "",
-      meal: "",
-      food: "",
+      name: "",
+      email: "",
+      hospital: "",
+      location: "",
+      phone: "",
+      designation: "",
+      password: "",
     });
+    setIsAlert(true);
+  };
+
+  const handleToggle = () => {
+    setIsAlert(false);
   };
 
   return (
     <main className="app-content">
       <div className="app-title tile p-3">
-        <h1>
-          <span className="mr-4 fw-bold">&nbsp; Add Diet Meal Plan</span>
+        <h1 className="">
+          <span className="mr-4 fw-bold">&nbsp;Add Sub-Admin</span>
         </h1>
       </div>
       <div className="row justify-content-center">
-        <div className="col-md-10 px-5">
+        <div className="col-md-8 px-5">
           <div className="tile">
             <div
-              className="case-status d-flex justify-content-center"
+              className="case-status d-flex justify-content-center text-align-center"
               style={{
                 backgroundColor: "#002538",
                 color: "#fff",
@@ -75,109 +88,145 @@ const DietMeal = () => {
                 width: "100%",
               }}
             >
-              <h4 className="mt-2">Add Food</h4>
+              <h4 className="mt-2">Add Sub-Admin</h4>
             </div>
             <div className="tile-body p-3">
+              <div className="bs-component mb-3">
+                {isAlert && (
+                  <div className="alert alert-dismissible alert-success">
+                    <button
+                      className="btn-close"
+                      type="button"
+                      data-bs-dismiss="alert"
+                      onClick={handleToggle}
+                    ></button>
+                    <strong>Well done!</strong> Sub-Admin added successfully.
+                  </div>
+                )}
+              </div>
               <form onSubmit={handleSubmit}>
                 <div className="row">
-                  <div className="mb-3 col-lg-12">
-                    <h5 className="mt-3 mb-3">
-                      <strong>Diet Meal</strong>
-                    </h5>
-                  </div>
-
                   <div className="mb-3 col-md-6">
-                    <label className="form-label" htmlFor="week">
-                      Choose Week
-                    </label>
-                    <select
-                      className={`form-select ${errors.week ? "is-invalid" : ""}`}
-                      id="week"
-                      name="week"
-                      value={formData.week}
-                      onChange={handleChange}
-                    >
-                      <option value="">Select Week</option>
-                      <option value="week1">Week 1</option>
-                      <option value="week2">Week 2</option>
-                      <option value="week3">Week 3</option>
-                      <option value="week4">Week 4</option>
-                    </select>
-                    {errors.week && <div className="invalid-feedback">{errors.week}</div>}
-                  </div>
-
-                  <div className="mb-3 col-md-6">
-                    <label className="form-label" htmlFor="day">
-                      Choose Day
-                    </label>
-                    <select
-                      className={`form-select ${errors.day ? "is-invalid" : ""}`}
-                      id="day"
-                      name="day"
-                      value={formData.day}
-                      onChange={handleChange}
-                    >
-                      <option value="">Select Day</option>
-                      <option value="monday">Monday</option>
-                      <option value="tuesday">Tuesday</option>
-                      <option value="wednesday">Wednesday</option>
-                      <option value="thursday">Thursday</option>
-                      <option value="friday">Friday</option>
-                      <option value="saturday">Saturday</option>
-                      <option value="sunday">Sunday</option>
-                    </select>
-                    {errors.day && <div className="invalid-feedback">{errors.day}</div>}
-                  </div>
-
-                  <div className="mb-3 col-md-6">
-                    <label className="form-label" htmlFor="meal-type">
-                      Choose Meal Type
-                    </label>
-                    <select
-                      className={`form-select ${errors.meal ? "is-invalid" : ""}`}
-                      id="meal-type"
-                      name="meal"
-                      value={formData.meal}
-                      onChange={handleChange}
-                    >
-                      <option value="">Select Meal</option>
-                      <option value="breakfast">Breakfast</option>
-                      <option value="lunch">Lunch</option>
-                      <option value="dinner">Dinner</option>
-                      <option value="snacks">Snacks</option>
-                    </select>
-                    {errors.meal && <div className="invalid-feedback">{errors.meal}</div>}
-                  </div>
-
-                  <div className="mb-3 col-md-6">
-                    <label className="form-label" htmlFor="food-search">
-                      Search Food
-                    </label>
+                    <label className="form-label">Name</label>
                     <input
-                      className={`form-control ${errors.food ? "is-invalid" : ""}`}
-                      id="food-search"
+                      className={`form-control ${
+                        errors.name ? "is-invalid" : ""
+                      }`}
+                      id="name"
                       type="text"
-                      placeholder="Enter food name"
-                      list="food-suggestions"
-                      name="food"
-                      value={formData.food}
+                      placeholder="Enter Name"
+                      value={formData.name}
                       onChange={handleChange}
                     />
-                    <datalist id="food-suggestions">
-                      <option value="Apple"></option>
-                      <option value="Banana"></option>
-                      <option value="Chicken Salad"></option>
-                      <option value="Oatmeal"></option>
-                    </datalist>
-                    {errors.food && <div className="invalid-feedback">{errors.food}</div>}
+                    {errors.name && (
+                      <div className="invalid-feedback">{errors.name}</div>
+                    )}
                   </div>
-
-                  <div className="mb-3 col-lg-12 text-center mt-3">
+                  <div className="mb-3 col-md-6">
+                    <label className="form-label">Email address</label>
+                    <input
+                      className={`form-control ${
+                        errors.email ? "is-invalid" : ""
+                      }`}
+                      id="email"
+                      type="email"
+                      placeholder="Enter email"
+                      value={formData.email}
+                      onChange={handleChange}
+                    />
+                    {errors.email && (
+                      <div className="invalid-feedback">{errors.email}</div>
+                    )}
+                  </div>
+                  <div className="mb-3 col-md-6">
+                    <label className="form-label">Hospital/Clinic Name</label>
+                    <input
+                      className={`form-control ${
+                        errors.hospital ? "is-invalid" : ""
+                      }`}
+                      id="hospital"
+                      type="text"
+                      placeholder="Enter Hospital/Clinic name"
+                      value={formData.hospital}
+                      onChange={handleChange}
+                    />
+                    {errors.hospital && (
+                      <div className="invalid-feedback">{errors.hospital}</div>
+                    )}
+                  </div>
+                  <div className="mb-3 col-md-6">
+                    <label className="form-label">Location</label>
+                    <input
+                      className={`form-control ${
+                        errors.location ? "is-invalid" : ""
+                      }`}
+                      id="location"
+                      type="text"
+                      placeholder="Enter Location"
+                      value={formData.location}
+                      onChange={handleChange}
+                    />
+                    {errors.location && (
+                      <div className="invalid-feedback">{errors.location}</div>
+                    )}
+                  </div>
+                  <div className="mb-3 col-md-6">
+                    <label className="form-label">Phone Number</label>
+                    <input
+                      className={`form-control ${
+                        errors.phone ? "is-invalid" : ""
+                      }`}
+                      id="phone"
+                      type="number"
+                      placeholder="Enter Number"
+                      value={formData.phone}
+                      onChange={handleChange}
+                    />
+                    {errors.phone && (
+                      <div className="invalid-feedback">{errors.phone}</div>
+                    )}
+                  </div>
+                  <div className="mb-3 col-md-6">
+                    <label className="form-label">Designation</label>
+                    <input
+                      className={`form-control ${
+                        errors.designation ? "is-invalid" : ""
+                      }`}
+                      id="designation"
+                      type="text"
+                      placeholder="Enter Designation"
+                      value={formData.designation}
+                      onChange={handleChange}
+                    />
+                    {errors.designation && (
+                      <div className="invalid-feedback">
+                        {errors.designation}
+                      </div>
+                    )}
+                  </div>
+                  <div className="mb-3 col-md-6">
+                    <label className="form-label">Password</label>
+                    <input
+                      className={`form-control ${
+                        errors.password ? "is-invalid" : ""
+                      }`}
+                      id="password"
+                      type="password"
+                      placeholder="Enter Password"
+                      value={formData.password}
+                      onChange={handleChange}
+                    />
+                    {errors.password && (
+                      <div className="invalid-feedback">{errors.password}</div>
+                    )}
+                  </div>
+                  <div className="mb-3 col-lg-12 text-center">
                     <button
                       className="btn custom-btn text-white w-50"
                       type="submit"
+                      
                     >
-                      <i className="fa-thin fa-paper-plane"></i> &nbsp; Submit
+                      <i className="fa-thin fa-paper-plane"></i> &nbsp; Submit{" "}
                     </button>
                   </div>
                 </div>
@@ -190,4 +239,4 @@ const DietMeal = () => {
   );
 };
 
-export default DietMeal;
+export default AddSubAdmin;
