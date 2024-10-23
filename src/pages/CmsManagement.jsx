@@ -352,7 +352,7 @@ const CmsManagement = () => {
                               </td>
                               <td>
                                 <div className="more">
-                                  <input
+                                  <input style={{display:"none"}}
                                     type="checkbox"
                                     id="more-menu-toggle"
                                   />

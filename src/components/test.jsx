@@ -1,128 +1,155 @@
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import profile from "../assets/images/profile.png";
-import $ from "jquery";
+import React, { useState } from "react";
+import Swal from "sweetalert2"; // Import SweetAlert
 
-const Headers = () => {
-  const [isDataManagementOpen, setIsDataManagementOpen] = useState(false);
-  const [isBlogSectionOpen, setIsBlogSectionOpen] = useState(false);
+const AddSubAdmin = () => {
+  const [isAlert, setIsAlert] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    hospital: "",
+    location: "",
+    phone: "",
+    designation: "",
+    password: "",
+  });
 
-  const toggleDataManagement = () => {
-    setIsDataManagementOpen(!isDataManagementOpen);
-    setIsBlogSectionOpen(false); // Close the Blog Section dropdown if it's open
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
+    setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
   };
 
-  const toggleBlogSection = () => {
-    setIsBlogSectionOpen(!isBlogSectionOpen);
-    setIsDataManagementOpen(false); // Close the Data Management dropdown if it's open
+  const validate = () => {
+    const newErrors = {};
+    if (!formData.name) newErrors.name = "Name is required.";
+    if (!formData.email) newErrors.email = "Email is required.";
+    else if (!/\S+@\S+\.\S+/.test(formData.email))
+      newErrors.email = "Email is invalid.";
+    if (!formData.hospital)
+      newErrors.hospital = "Hospital/Clinic name is required.";
+    if (!formData.location) newErrors.location = "Location is required.";
+    if (!formData.phone) newErrors.phone = "Phone number is required.";
+    else if (formData.phone.length < 10)
+      newErrors.phone = "Phone number must be at least 10 digits.";
+    if (!formData.designation)
+      newErrors.designation = "Designation is required.";
+    if (!formData.password) newErrors.password = "Password is required.";
+
+    return newErrors;
   };
 
-  useEffect(() => {
-    const treeviewMenu = $(".app-menu");
-    const currentUrl = window.location.href;
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const newErrors = validate();
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
 
-    // Highlight active menu item based on the current URL
-    $(".app-menu a").each(function () {
-      if (this.href === currentUrl) {
-        $(this).addClass("active");
-        $(this).parent().addClass("active");
-        $(this).parent().parent().prev().addClass("active");
-        $(this).parent().parent().prev().click();
+    // SweetAlert confirmation dialog
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You are about to add a new Sub-Admin!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, add it!',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Form submission logic here
+        console.log(formData);
+        setIsAlert(true);
+        // Optionally reset the form
+        setFormData({
+          name: "",
+          email: "",
+          hospital: "",
+          location: "",
+          phone: "",
+          designation: "",
+          password: "",
+        });
       }
     });
+  };
 
-    // Toggle sidebar functionality
-    $('[data-toggle="sidebar"]').click(function (event) {
-      event.preventDefault();
-      $(".app").toggleClass("sidenav-toggled");
-    });
-
-    return () => {
-      $('[data-toggle="sidebar"]').off("click");
-    };
-  }, []);
+  const handleCross = () => {
+    setIsAlert(false);
+  };
 
   return (
-    <>
-      <header className="app-header">
-        <Link className="app-header__logo" to="/">
-          <p className="mb-0">Fitness App</p>
-        </Link>
-        <a
-          className="app-sidebar__toggle"
-          to="#"
-          data-toggle="sidebar"
-          aria-label="Hide Sidebar"
-        ></a>
-      </header>
-
-      {/* Sidebar menu */}
-      <div className="app-sidebar__overlay" data-toggle="sidebar"></div>
-      <aside className="app-sidebar">
-        <div className="app-sidebar__user">
-          <img
-            className="app-sidebar__user-avatar"
-            src={profile}
-            alt="User Image"
-          />
-          <div>
-            <p className="app-sidebar__user-name text-white">Fitness</p>
-            <p className="app-sidebar__user-designation text-white">Admin Master</p>
+    <main className="app-content">
+      <div className="app-title tile p-3">
+        <h1>
+          <span className="mr-4 fw-bold">&nbsp;Add Sub-Admin</span>
+        </h1>
+      </div>
+      <div className="row justify-content-center">
+        <div className="col-md-8 px-5">
+          <div className="tile">
+            <div
+              className="case-status d-flex justify-content-center"
+              style={{
+                backgroundColor: "#002538",
+                color: "#fff",
+                height: "50px",
+                borderRadius: "10px 10px 0px 0px",
+                textAlign: "center",
+                width: "100%",
+              }}
+            >
+              <h4 className="mt-2">Add Sub-Admin</h4>
+            </div>
+            <div className="tile-body p-3">
+              <div className="bs-component">
+                {isAlert && (
+                  <div className="alert alert-dismissible alert-success">
+                    <button
+                      className="btn-close"
+                      type="button"
+                      onClick={handleCross}
+                    ></button>
+                    <strong>Well done!</strong> Sub-Admin added successfully.
+                  </div>
+                )}
+              </div>
+              <form onSubmit={handleSubmit}>
+                <div className="row">
+                  {/* Form Fields */}
+                  {/* Repeat the field structure for each input */}
+                  <div className="mb-3 col-md-6">
+                    <label className="form-label">Name</label>
+                    <input
+                      className={`form-control ${errors.name ? "is-invalid" : ""}`}
+                      name="name"
+                      type="text"
+                      placeholder="Enter Name"
+                      value={formData.name}
+                      onChange={handleChange}
+                    />
+                    {errors.name && (
+                      <div className="invalid-feedback">{errors.name}</div>
+                    )}
+                  </div>
+                  {/* Add other input fields here... */}
+                  <div className="mb-3 col-lg-12 text-center">
+                    <button
+                      className="btn custom-btn text-white w-50"
+                      type="submit"
+                    >
+                      <i className="fa-thin fa-paper-plane"></i> &nbsp; Submit
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
-        <ul className="app-menu">
-          {/* Other menu items here */}
-          <li className="treeview">
-            <div className="app-menu__item" onClick={toggleDataManagement}>
-              <i className="app-menu__icon fa-sharp fa-light fa-clipboard-list-check"></i>
-              <span className="app-menu__label">Data Management</span>
-              <i className={`treeview-indicator bi bi-chevron-${isDataManagementOpen ? 'down' : 'right'}`}></i>
-            </div>
-            {isDataManagementOpen && (
-              <ul className="treeview-menu">
-                <li>
-                  <Link to="/data-manage/nutrition-food" className="treeview-item">
-                    <i className="app-menu__icon fa-sharp fa-light fa-avocado"></i>
-                    <span className="app-menu__label">Nutrition Food</span>
-                  </Link>
-                </li>
-                <li>
-                  <Link className="treeview-item" to="/data-manage/diet-plan">
-                    <i className="fa-sharp fa-light app-menu__icon fa-salad"></i>
-                    <span className="app-menu__label">Diet Plan</span>
-                  </Link>
-                </li>
-              </ul>
-            )}
-          </li>
-          <li className="treeview">
-            <div className="app-menu__item" onClick={toggleBlogSection}>
-              <i className="fa-sharp fa-light fa-blog app-menu__icon pr-1"></i>
-              <span className="app-menu__label">Blog Section</span>
-              <i className={`treeview-indicator bi bi-chevron-${isBlogSectionOpen ? 'down' : 'right'}`}></i>
-            </div>
-            {isBlogSectionOpen && (
-              <ul className="treeview-menu">
-                <li>
-                  <Link to="/blogs/manage-category" className="treeview-item">
-                    <i className="app-menu__icon fa-sharp fa-light fa-list"></i>
-                    <span className="app-menu__label">Manage Category</span>
-                  </Link>
-                </li>
-                <li>
-                  <Link className="treeview-item" to="/blogs/manage-blogs">
-                    <i className="fa-sharp fa-light app-menu__icon fa-square-rss"></i>
-                    <span className="app-menu__label">Manage Blogs</span>
-                  </Link>
-                </li>
-              </ul>
-            )}
-          </li>
-          {/* Other menu items here */}
-        </ul>
-      </aside>
-    </>
+      </div>
+    </main>
   );
 };
 
-export default Headers;
+export default AddSubAdmin;

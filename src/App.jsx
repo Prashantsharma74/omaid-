@@ -6,7 +6,6 @@ import SubAdmin from "./pages/SubAdmin";
 import Users from "./pages/Users";
 import ManageProgram from "./pages/ManageProgram";
 import FitzoneManagement from "./pages/FitzoneManagement";
-import BlogSection from "./pages/BlogSection";
 import CmsManagement from "./pages/CmsManagement";
 import Faq from "./pages/Faq";
 import AccountSettings from "./pages/AccountSettings";
@@ -16,7 +15,6 @@ import DietPlan from "./pages/DietPlan";
 import ManageBlogsCategory from "./pages/ManageBlogsCategory";
 import ManageBlogs from "./pages/ManageBlogs";
 import AddCategory from "./components/AddCategory";
-import AddUser from "./components/AddUser";
 import AddBlogs from "./components/AddBlogs";
 import AddNutrition from "./components/AddNutrition";
 import AddDiet from "./components/AddDiet";
@@ -34,7 +32,6 @@ function App() {
           <Route path="/sub-admin" element={<SubAdmin />} />
           <Route path="/sub-admin/add-sub-admin" element={<AddSubAdmin />} />
           <Route path="/users" element={<Users />} />
-          <Route path="/users/add-user" element={<AddUser />} />
           <Route path="/manage-program" element={<ManageProgram />} />
           <Route path="/manage-program/add-program" element={<AddProgram />} />
           <Route path="/fitzone-manage" element={<FitzoneManagement />} />

@@ -358,10 +358,24 @@ td.dt-type-date {
 
 .widget-small {
   min-height: 150px;
-  /* Adjust based on your design */
   display: flex;
   align-items: center;
-  /* Center content vertically */
   justify-content: space-between;
-  /* Adjust as needed */
+}
+
+@media (max-width: 768px) {
+  .switch-button{
+    width: 100%;
+  }
+  .switch-item {
+    flex: 1; 
+    width: 100%;
+  }
+}
+
+@media (max-width: 576px) {
+  .switch-item {
+    padding: 8px 15px;
+    font-size: 14px;
+  }
 }

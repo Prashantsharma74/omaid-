@@ -6,11 +6,11 @@ const Layout = () => {
 
   return (
     <div
-      className={`app sidebar-mini modal-open ${
+      className={`app sidebar-mini ${
         isSideBarOpen ? " sidenav-toggled" : ""
       }`}
     >
-      <Headers />
+      <Headers isSideBarOpen={isSideBarOpen} setIsSideBarOpen={setIsSideBarOpen}/>
     </div>
   );
 };

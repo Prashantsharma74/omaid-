@@ -167,9 +167,9 @@ const FitzoneManagement = () => {
       <div className="row mb-5">
         <div className="col-md-12 px-5">
           <div className="bt-ad-emp">
-            <a href="#" className="add-btt btn">
+            <Link to="/fitzone-manage/add-fitzone" className="add-btt btn">
               <i className="fa-regular fa-plus"></i> Add Fitzone
-            </a>
+            </Link>
           </div>
         </div>
       </div>

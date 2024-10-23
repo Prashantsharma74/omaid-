@@ -134,7 +134,7 @@ const PushNotification = () => {
         </div>
       </div>
       <div
-        className="row w-100"
+        className="row p-3"
         style={{
           display: "flex",
           alignItems: "center",
@@ -293,6 +293,7 @@ const PushNotification = () => {
                               <td>
                                 <div className="more">
                                   <input
+                                    style={{ display: "none" }}
                                     type="checkbox"
                                     id="more-menu-toggle"
                                   />

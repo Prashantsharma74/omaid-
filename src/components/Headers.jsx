@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import profile from "../assets/images/profile.png";
 import $ from "jquery";
 import BlogDropDown from "./BlogDropDown";
 
-const Headers = () => {
+const Headers = ({ isSideBarOpen, setIsSideBarOpen }) => {
   useEffect(() => {
     const treeviewMenu = $(".app-menu");
     $("[data-toggle='treeview']").click(function (event) {
@@ -26,17 +26,11 @@ const Headers = () => {
     let isAnyExpanded = false;
     $(".app-menu a").each(function () {
       if (this.href === currentUrl) {
-        // $(this).addClass("active");
-        // $(this).parent().addClass("active");
-        // $(this).parent().parent().prev().addClass("active");
         $(this).parent().parent().prev().click();
       }
     });
     $(".treeview-menu a").each(function () {
       if (this.href === currentUrl) {
-        // $(this).addClass("active");
-        // $(this).parent().addClass("active");
-        // $(this).parent().parent().prev().addClass("active");
         $(this).parent().parent().prev().click();
 
         $(this).closest(".treeview").addClass("is-expanded");
@@ -59,6 +53,10 @@ const Headers = () => {
     };
   }, []);
 
+  const handleToggle = () => {
+    setIsSideBarOpen(prev => !prev);
+  };
+
   return (
     <>
       <header className="app-header d-lg-none d-sm-block d-md-none d-xl-none d-xs-block">
@@ -70,11 +68,12 @@ const Headers = () => {
           to="#"
           data-toggle="sidebar"
           aria-label="Hide Sidebar"
+          onClick={handleToggle}
         ></a>
       </header>
 
       {/* Sidebar menu */}
-      <div className="app-sidebar__overlay" data-toggle="sidebar"></div>
+      <div className="app-sidebar__overlay"></div>
       <aside className="app-sidebar">
         <div className="app-sidebar__user">
           <img
@@ -239,7 +238,10 @@ const Headers = () => {
           </li>
         </ul>
         <div className="text-center develop mt-5">
-          <p className="d-flex align-items-center" style={{ margin: 0,fontSize:"11px" }}>
+          <p
+            className="d-flex align-items-center"
+            style={{ margin: 0, fontSize: "11px" }}
+          >
             <span style={{ color: "red" }}>&#10084;</span>
             <span>&nbsp;Developed By</span>
             <span style={{ color: "red" }}>&nbsp;Developer</span>

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { format } from "date-fns";
 
 const SubAdmin = () => {
   const DEFAULT_ITEMS_PER_PAGE = 5;
@@ -13,114 +14,94 @@ const SubAdmin = () => {
     setTimeout(() => {
       const users = [
         {
-          id: 1,
-          username: "john_doe",
-          email: "john.doe@example.com",
-          hospital: "City Hospital",
-          location: "New York, NY",
+          createdAt: "2023-01-01",
+          username: "user1",
+          email: "user1@example.com",
+          hospital: "Hospital A",
+          location: "Location A",
           phone: "123-456-7890",
           designation: "Doctor",
-          password: "password123",
-          status: "Active",
         },
         {
-          id: 2,
-          username: "jane_smith",
-          email: "jane.smith@example.com",
-          hospital: "General Clinic",
-          location: "Los Angeles, CA",
-          phone: "234-567-8901",
+          createdAt: "2023-01-02",
+          username: "user2",
+          email: "user2@example.com",
+          hospital: "Hospital B",
+          location: "Location B",
+          phone: "123-456-7891",
           designation: "Nurse",
-          password: "password234",
-          status: "Inactive",
         },
         {
-          id: 3,
-          username: "alice_jones",
-          email: "alice.jones@example.com",
-          hospital: "Care Center",
-          location: "Chicago, IL",
-          phone: "345-678-9012",
-          designation: "Receptionist",
-          password: "password345",
-          status: "Active",
-        },
-        {
-          id: 4,
-          username: "bob_brown",
-          email: "bob.brown@example.com",
-          hospital: "Health Clinic",
-          location: "Houston, TX",
-          phone: "456-789-0123",
+          createdAt: "2023-01-03",
+          username: "user3",
+          email: "user3@example.com",
+          hospital: "Hospital C",
+          location: "Location C",
+          phone: "123-456-7892",
           designation: "Surgeon",
-          password: "password456",
-          status: "Active",
         },
         {
-          id: 5,
-          username: "charlie_white",
-          email: "charlie.white@example.com",
-          hospital: "Wellness Center",
-          location: "Phoenix, AZ",
-          phone: "567-890-1234",
-          designation: "Therapist",
-          password: "password567",
-          status: "Inactive",
+          createdAt: "2023-01-04",
+          username: "user4",
+          email: "user4@example.com",
+          hospital: "Hospital D",
+          location: "Location D",
+          phone: "123-456-7893",
+          designation: "Technician",
         },
         {
-          id: 6,
-          username: "david_black",
-          email: "david.black@example.com",
-          hospital: "City Hospital",
-          location: "Philadelphia, PA",
-          phone: "678-901-2345",
-          designation: "Physician",
-          password: "password678",
-          status: "Active",
+          createdAt: "2023-01-05",
+          username: "user5",
+          email: "user5@example.com",
+          hospital: "Hospital E",
+          location: "Location E",
+          phone: "123-456-7894",
+          designation: "Administrator",
         },
         {
-          id: 7,
-          username: "emma_green",
-          email: "emma.green@example.com",
-          hospital: "General Clinic",
-          location: "San Antonio, TX",
-          phone: "789-012-3456",
+          createdAt: "2023-01-06",
+          username: "user6",
+          email: "user6@example.com",
+          hospital: "Hospital F",
+          location: "Location F",
+          phone: "123-456-7895",
           designation: "Pharmacist",
-          password: "password789",
-          status: "Inactive",
         },
         {
-          id: 8,
-          username: "frank_yellow",
-          email: "frank.yellow@example.com",
-          hospital: "Care Center",
-          location: "San Diego, CA",
-          phone: "890-123-4567",
-          designation: "Radiologist",
-          password: "password890",
-          status: "Active",
+          createdAt: "2023-01-07",
+          username: "user7",
+          email: "user7@example.com",
+          hospital: "Hospital G",
+          location: "Location G",
+          phone: "123-456-7896",
+          designation: "Counselor",
         },
         {
-          id: 9,
-          username: "grace_purple",
-          email: "grace.purple@example.com",
-          hospital: "Health Clinic",
-          location: "Dallas, TX",
-          phone: "901-234-5678",
-          designation: "Surgeon",
-          password: "password901",
-          status: "Active",
+          createdAt: "2023-01-08",
+          username: "user8",
+          email: "user8@example.com",
+          hospital: "Hospital H",
+          location: "Location H",
+          phone: "123-456-7897",
+          designation: "Researcher",
         },
         {
-          id: 10,
-          username: "henry_orange",
-          email: "henry.orange@example.com",
-          hospital: "Wellness Center",
-          location: "Austin, TX",
-          phone: "012-345-6789",
-          designation: "Nurse",
-          password: "password012",
-          status: "Inactive",
+          createdAt: "2023-01-09",
+          username: "user9",
+          email: "user9@example.com",
+          hospital: "Hospital I",
+          location: "Location I",
+          phone: "123-456-7898",
+          designation: "Receptionist",
+        },
+        {
+          createdAt: "2023-01-10",
+          username: "user10",
+          email: "user10@example.com",
+          hospital: "Hospital J",
+          location: "Location J",
+          phone: "123-456-7899",
+          designation: "Support Staff",
         },
       ];
       setTableData(users);
@@ -250,13 +231,13 @@ const SubAdmin = () => {
                       <thead>
                         <tr>
                           <th>S.No</th>
+                          <th>Created At </th>
                           <th>Username </th>
                           <th>Email ID</th>
                           <th>Hospital/Clinic Name</th>
                           <th>Location</th>
                           <th>Phone Number</th>
                           <th>Designation</th>
-                          <th>Password</th>
                           <th>Status</th>
                           <th>Action</th>
                         </tr>
@@ -265,13 +246,18 @@ const SubAdmin = () => {
                         {paginatedData.map((user, index) => (
                           <tr key={user.id}>
                             <td>{index + 1 + currentPage * itemsPerPage}</td>
+                            <td>
+                              {format(
+                                new Date(user.createdAt),
+                                "dd MMMM yyyy"
+                              )}
+                            </td>
                             <td>{user.username}</td>
                             <td>{user.email}</td>
                             <td>{user.hospital}</td>
                             <td>{user.location}</td>
                             <td>{user.phone}</td>
                             <td>{user.designation}</td>
-                            <td>{user.password}</td>
                             <td>
                               <div className="form-check form-switch">
                                 <input
@@ -285,8 +271,9 @@ const SubAdmin = () => {
                               </div>
                             </td>
                             <td>
-                              <div className="more">
+                              <div className="more mt-2">
                                 <input
+                                  style={{ display: "none" }}
                                   type="checkbox"
                                   id={`more-menu-toggle-${user.id}`}
                                 />

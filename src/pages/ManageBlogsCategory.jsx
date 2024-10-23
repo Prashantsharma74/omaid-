@@ -189,8 +189,8 @@ const ManageBlogsCategory = () => {
                             </td>
                             <td>
                               <div className="more">
-                                <input type="checkbox" id="more-menu-toggle" />
-                                <label
+                                <input style={{display:"none"}} type="checkbox" id="more-menu-toggle" />
+                                <label 
                                   htmlFor="more-menu-toggle"
                                   className="more-btn"
                                 >

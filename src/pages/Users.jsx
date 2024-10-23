@@ -218,7 +218,7 @@ const Users = () => {
                             </td>
                             <td>
                               <div className="more">
-                                <input type="checkbox" id="more-menu-toggle" />
+                                <input type="checkbox" id="more-menu-toggle" style={{display:"none"}} />
                                 <label
                                   htmlFor="more-menu-toggle"
                                   className="more-btn"

@@ -116,7 +116,7 @@ const DietPlan = () => {
         <div className="col-md-12 px-5">
           <div className="bt-ad-emp">
             <Link to="/data-manage/diet-plan/add-diet" className="add-btt btn">
-              <i className="fa-regular fa-plus"></i> Add Fitzone
+              <i className="fa-regular fa-plus"></i> Add Diet
             </Link>
             <a className="add-btt btn" style={{ marginLeft: "30px" }}>
               <label htmlFor="upload-excel">

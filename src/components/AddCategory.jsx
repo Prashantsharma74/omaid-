@@ -1,13 +1,22 @@
-import React, { useEffect } from "react";
-import "dropify/dist/css/dropify.css"; // Import Dropify CSS
-import $ from "jquery"; // Import jQuery for Dropify initialization
-import "dropify"; // Import Dropify JS
+import React, { useEffect, useState } from "react";
+import "dropify/dist/css/dropify.css";
+import $ from "jquery";
+import "dropify";
 
 const AddCategory = () => {
+  const [isAlert, setIsAlert] = useState(false);
+
   useEffect(() => {
-    // Initialize Dropify
-    $('.dropify').dropify();
+    $(".dropify").dropify();
   }, []);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+  };
+
+  const handleCross = () => {
+    setIsAlert(false);
+  };
 
   return (
     <main className="app-content">
@@ -28,7 +37,7 @@ const AddCategory = () => {
             justifyContent: "center",
           }}
         >
-          <div className="tile w-50">
+          <div className="tile w-75">
             <div
               className="case-status d-flex justify-content-center text-align-center"
               style={{
@@ -43,17 +52,20 @@ const AddCategory = () => {
               <h4 className="mt-2">Add Category</h4>
             </div>
             <div className="tile-body p-3">
-              <div className="bs-component mb-3">
-                <div className="alert alert-dismissible alert-success">
-                  <button
-                    className="btn-close"
-                    type="button"
-                    data-bs-dismiss="alert"
-                  ></button>
-                  <strong>Well done!</strong> Category added successfully.
+              {isAlert && (
+                <div className="bs-component mb-3">
+                  <div className="alert alert-dismissible alert-success">
+                    <button
+                      className="btn-close"
+                      type="button"
+                      data-bs-dismiss="alert"
+                      onClick={handleCross}
+                    ></button>
+                    <strong>Well done!</strong> Category added successfully.
+                  </div>
                 </div>
-              </div>
-              <form>
+              )}
+              <form onSubmit={handleSubmit}>
                 <div className="mb-3 col-lg-12 col-sm-12 col-xs-12 col-md-12">
                   <h5 className="mt-3 mb-3">
                     <strong>Add Category</strong>
@@ -73,13 +85,12 @@ const AddCategory = () => {
                   <div className="mb-3 col-md-6 col-sm-12 col-xs-12 col-lg-6 w-100">
                     <label className="form-label">Description</label>
                     <textarea
-                    rows={6}
+                      rows={6}
                       className="form-control"
                       placeholder="Enter food name"
                     ></textarea>
                   </div>
                 </div>
-
                 <div className="form-group mb-0 pb-0">
                   <label className="form-label">Upload Document</label>
                   <input

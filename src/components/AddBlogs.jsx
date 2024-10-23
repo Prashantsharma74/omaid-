@@ -1,6 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 
 const AddBlogs = () => {
+  const [isAlert, setIsAlert] = useState(false);
+
+  const handleCross = () => {
+    setIsAlert(false);
+  };
+
   return (
     <main className="app-content">
       <div className="app-title tile p-3">
@@ -20,7 +26,7 @@ const AddBlogs = () => {
             justifyContent: "center",
           }}
         >
-          <div className="tile w-50">
+          <div className="tile w-75">
             <div
               className="case-status d-flex justify-content-center text-align-center"
               style={{
@@ -36,14 +42,17 @@ const AddBlogs = () => {
             </div>
             <div className="tile-body p-3">
               <div className="bs-component mb-3">
-                <div className="alert alert-dismissible alert-success">
-                  <button
-                    className="btn-close"
-                    type="button"
-                    data-bs-dismiss="alert"
-                  ></button>
-                  <strong>Well done!</strong> Blog added successfully .
-                </div>
+                {isAlert && (
+                  <div className="alert alert-dismissible alert-success">
+                    <button
+                      className="btn-close"
+                      type="button"
+                      data-bs-dismiss="alert"
+                      onClick={handleCross}
+                    ></button>
+                    <strong>Well done!</strong> Blog added successfully .
+                  </div>
+                )}
               </div>
               <form>
                 <div>

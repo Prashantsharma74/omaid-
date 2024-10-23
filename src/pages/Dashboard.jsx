@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import dashSide from "../assets/images/dash-side.png";
+import dashSide from "../assets/images/dash.jpg";
 
 const Dashboard = () => {
   const [time, setTime] = useState(new Date());
@@ -11,7 +11,7 @@ const Dashboard = () => {
     let seconds = date.getSeconds();
     const ampm = hours >= 12 ? "PM" : "AM";
     hours = hours % 12;
-    hours = hours ? hours : 12; // the hour '0' should be '12'
+    hours = hours ? hours : 12;
     minutes = minutes < 10 ? "0" + minutes : minutes;
     seconds = seconds < 10 ? "0" + seconds : seconds;
     return { hours, minutes, seconds, ampm };
@@ -22,7 +22,7 @@ const Dashboard = () => {
       setTime(new Date());
     }, 1000);
 
-    return () => clearInterval(intervalId); // Clean up the interval on component unmount
+    return () => clearInterval(intervalId);
   }, []);
 
   const { hours, minutes, seconds, ampm } = formatTime(time);
@@ -136,7 +136,11 @@ const Dashboard = () => {
                     <p>
                       <i className="fa-sharp fa-regular fa-clock unit fa-xl pt-3"></i>
                     </p>
-                    <p className="unit dots" id="hours" style={{ marginLeft: "10px" }}>
+                    <p
+                      className="unit dots"
+                      id="hours"
+                      style={{ marginLeft: "10px" }}
+                    >
                       {hours}
                     </p>
                     <p className="unit dots" id="minutes">
@@ -158,10 +162,13 @@ const Dashboard = () => {
                     dive right in!
                   </h6>
                 </div>
-
-                <div className="col-lg-12 text-end">
-                  <img src={dashSide} alt="Dashboard Side" style={{ width: "235px" }} />
-                </div>
+              </div>
+              <div className="col-lg-12 text-end">
+                <img
+                  src={dashSide}
+                  alt="Dashboard Side"
+                  style={{ width: "350px" }}
+                />
               </div>
             </div>
           </div>

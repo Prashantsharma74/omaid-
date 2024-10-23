@@ -14045,7 +14045,7 @@ fieldset:disabled .btn {
     margin-left: 0;
   }
   .app.sidenav-toggled .app-sidebar {
-    left: -230px;
+    left: 230px;
   }
   .app.sidenav-toggled .app-sidebar__overlay {
     visibility: hidden;
@@ -14056,7 +14056,8 @@ fieldset:disabled .btn {
     overflow-x: hidden;
   }
   .app .app-sidebar {
-    left: -230px;
+    margin-top: 35px;
+    left: -275px;
   }
   .app .app-sidebar__overlay {
     visibility: hidden;
@@ -14672,6 +14673,7 @@ ul.app-menu li {
     padding: 20px;
     -webkit-box-orient: vertical;
     -webkit-box-direction: normal;
+    margin: 0px 0px 0px 0px;
     -ms-flex-direction: column;
     flex-direction: column;
     -webkit-box-align: start;
@@ -14724,6 +14726,7 @@ ul.app-menu li {
   -webkit-transition: all 0.3s ease-in-out;
   transition: all 0.3s ease-in-out;
 }
+
 @media print {
   .tile {
     border: 1px solid #ddd;
@@ -15824,7 +15827,7 @@ a.add-btt {
   position: relative;
 }
 input[type="checkbox"] {
-  display: none;
+  /* display: none; */
 }
 .more-btn {
   background: none;
@@ -15928,10 +15931,9 @@ input[type="checkbox"]:checked + .more-btn + .more-menu {
   top: 6px;
 }
 
-.develop{
+.develop {
   color: white;
 }
-
 
 .icon-box-content h5 {
   margin: 0 0 5px;
@@ -15998,4 +16000,30 @@ input[type="checkbox"]:checked + .more-btn + .more-menu {
   border-color: #000 #0000;
   animation: l1 1s infinite;
 }
-@keyframes l1 {to{transform: rotate(.5turn)}}
+@keyframes l1 {
+  to {
+    transform: rotate(0.5turn);
+  }
+}
+
+.flex-wrap-reverse {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap-reverse;
+}
+
+/* Custom Styles for Buttons */
+@media (max-width: 576px) {
+  .bt-ad-emp {
+    width: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+  }
+
+  .add-btt {
+    width: 50%;
+    /* margin-right: 80px; */
+  }
+}
