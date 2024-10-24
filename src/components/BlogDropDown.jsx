@@ -5,57 +5,59 @@ import $ from "jquery";
 const BlogDropDown = () => {
   useEffect(() => {
     const treeviewMenu = $(".app-menu");
+  
     $("[data-toggle='treeview1']").click(function (event) {
       event.preventDefault();
-      if ($(this).parent().hasClass("is-expanded")) {
-        treeviewMenu
-          .find("[data-toggle='treeview1']")
-          .parent()
-          .removeClass("is-expanded");
-      } else {
-        treeviewMenu
-          .find("[data-toggle='treeview1']")
-          .parent()
-          .addClass("is-expanded");
-      }
+      const $parent = $(this).parent();
+  
+      // Close all expanded treeviews except the one being clicked
+      treeviewMenu.find(".is-expanded").not($parent).removeClass("is-expanded");
+  
+      // Toggle the current treeview
+      $parent.toggleClass("is-expanded");
     });
-
+  
     const currentUrl = window.location.href;
     let isAnyExpanded = false;
+  
+    // Expand the parent if the current URL matches any link
     $(".app-menu a").each(function () {
       if (this.href === currentUrl) {
-        // $(this).addClass("active");
-        // $(this).parent().addClass("active");
-        // $(this).parent().parent().prev().addClass("active");
         $(this).parent().parent().prev().click();
       }
     });
+  
     $(".treeview-menu a").each(function () {
       if (this.href === currentUrl) {
-        // $(this).addClass("active");
-        // $(this).parent().addClass("active");
-        // $(this).parent().parent().prev().addClass("active");
         $(this).parent().parent().prev().click();
-
         $(this).closest(".treeview1").addClass("is-expanded");
         isAnyExpanded = true;
       }
     });
+  
     if (isAnyExpanded) {
-      treeviewMenu
-        .find("[data-toggle='treeview1']")
-        .parent()
-        .addClass("is-expanded");
+      treeviewMenu.find("[data-toggle='treeview1']").parent().addClass("is-expanded");
     }
+  
+    // Handle sidebar toggle
     $('[data-toggle="sidebar"]').click(function (event) {
       event.preventDefault();
       $(".app").toggleClass("sidenav-toggled");
     });
+  
+    // Cleanup function
     return () => {
-      $("[data-toggle='treeview1']").off("click");
-      $('[data-toggle="sidebar"]').off("click");
+      // Safely remove click event handlers if the elements exist
+      if ($("[data-toggle='treeview1']").length) {
+        $("[data-toggle='treeview1']").off("click");
+      }
+  
+      if ($('[data-toggle="sidebar"]').length) {
+        $('[data-toggle="sidebar"]').off("click");
+      }
     };
   }, []);
+  
 
   return (
     <li className="treeview">

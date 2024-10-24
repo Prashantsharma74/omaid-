@@ -7,23 +7,23 @@ import BlogDropDown from "./BlogDropDown";
 const Headers = ({ isSideBarOpen, setIsSideBarOpen }) => {
   useEffect(() => {
     const treeviewMenu = $(".app-menu");
-    
-    // Click event for treeview toggles
+  
+    // Handle click event for treeview toggles
     $("[data-toggle='treeview']").click(function (event) {
       event.preventDefault();
       const $parent = $(this).parent();
   
-      // Close all other open treeviews
+      // Close all expanded treeviews except the one being clicked
       treeviewMenu.find(".is-expanded").not($parent).removeClass("is-expanded");
-      
-      // Toggle the clicked treeview
+  
+      // Toggle the current treeview
       $parent.toggleClass("is-expanded");
     });
   
     const currentUrl = window.location.href;
     let isAnyExpanded = false;
   
-    // Expand the relevant treeview based on the current URL
+    // Expand the parent if the current URL matches any link
     $(".app-menu a").each(function () {
       if (this.href === currentUrl) {
         $(this).parent().parent().prev().click();
@@ -42,17 +42,25 @@ const Headers = ({ isSideBarOpen, setIsSideBarOpen }) => {
       treeviewMenu.find("[data-toggle='treeview']").parent().addClass("is-expanded");
     }
   
-    // Sidebar toggle
+    // Handle sidebar toggle
     $('[data-toggle="sidebar"]').click(function (event) {
       event.preventDefault();
       $(".app").toggleClass("sidenav-toggled");
     });
   
+    // Cleanup function
     return () => {
-      $("[data-toggle='treeview']").off("click");
-      $('[data-toggle="sidebar"]').off("click");
+      // Safely remove click event handlers if the elements exist
+      if ($("[data-toggle='treeview']").length) {
+        $("[data-toggle='treeview']").off("click");
+      }
+  
+      if ($('[data-toggle="sidebar"]').length) {
+        $('[data-toggle="sidebar"]').off("click");
+      }
     };
   }, []);
+  
   
 
   const handleToggle = () => {
@@ -74,7 +82,6 @@ const Headers = ({ isSideBarOpen, setIsSideBarOpen }) => {
         ></a>
       </header>
 
-      {/* Sidebar menu */}
       <div className="app-sidebar__overlay"></div>
       <aside className="app-sidebar">
         <div className="app-sidebar__user">

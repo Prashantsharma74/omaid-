@@ -23,7 +23,6 @@ const ChangeEmail = () => {
       return;
     }
 
-    // Simulate sending OTP
     const newOtp = Math.floor(100000 + Math.random() * 900000).toString();
     setGeneratedOtp(newOtp);
     console.log(`OTP sent to ${email}: ${newOtp}`);
@@ -32,14 +31,14 @@ const ChangeEmail = () => {
 
   const handleOtpSubmit = (e) => {
     e.preventDefault();
-    setOtpError(""); // Reset previous error
+    setOtpError("");
     if (otp.length !== 6) {
       setOtpError("OTP must be 6 digits long.");
       return;
     }
 
     if (otp === generatedOtp) {
-      console.log("OTP verified. Redirecting to login..."); // Replace with actual logout logic
+      console.log("OTP verified. Redirecting to login...");
       navigate("/login");
     } else {
       setOtpError("Invalid OTP. Please try again.");

@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
+import { useLocation } from "react-router-dom";
 
 const AddSubAdmin = () => {
   const [formData, setFormData] = useState({
@@ -11,33 +12,49 @@ const AddSubAdmin = () => {
     designation: "",
     password: "",
   });
-  const [isAlert, setIsAlert] = useState(false);
   const [errors, setErrors] = useState({});
+  const location = useLocation();  
+  const [isEditMode, setIsEditMode] = useState(false); 
 
+  useEffect(() => {
+    if (location.state?.user) {
+      setFormData({
+        name: location.state.user.username,
+        email: location.state.user.email,
+        hospital: location.state.user.hospital,
+        location: location.state.user.location,
+        phone: location.state.user.phone,
+        designation: location.state.user.designation,
+        password: "",  // Keep password empty if not updating it
+      });
+      setIsEditMode(true);  // Switch to edit mode
+    }
+  }, [location.state]);
+
+  // Function to handle form field changes
   const handleChange = (e) => {
     const { id, value } = e.target;
     setFormData({ ...formData, [id]: value });
-    setErrors({ ...errors, [id]: "" }); // Clear the error for the input being changed
+    setErrors({ ...errors, [id]: "" });  // Clear the error for the field being changed
   };
 
+  // Function to validate form data
   const validateForm = () => {
     const newErrors = {};
     if (!formData.name) newErrors.name = "Name is required.";
     if (!formData.email) newErrors.email = "Email is required.";
-    if (!formData.hospital)
-      newErrors.hospital = "Hospital/Clinic name is required.";
+    if (!formData.hospital) newErrors.hospital = "Hospital/Clinic name is required.";
     if (!formData.location) newErrors.location = "Location is required.";
     if (!formData.phone) newErrors.phone = "Phone number is required.";
-    if (!formData.designation)
-      newErrors.designation = "Designation is required.";
-    if (!formData.password) newErrors.password = "Password is required.";
-    if (formData.phone && !/^\d+$/.test(formData.phone))
-      newErrors.phone = "Phone number must be numeric.";
+    if (!formData.designation) newErrors.designation = "Designation is required.";
+    if (!formData.password && !isEditMode) newErrors.password = "Password is required.";  // Password required only in create mode
+    if (formData.phone && !/^\d+$/.test(formData.phone)) newErrors.phone = "Phone number must be numeric.";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
+  // Function to handle form submission for creation
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -51,6 +68,8 @@ const AddSubAdmin = () => {
     });
 
     console.log("Form Data:", formData);
+
+    // Reset form after submission
     setFormData({
       name: "",
       email: "",
@@ -60,18 +79,43 @@ const AddSubAdmin = () => {
       designation: "",
       password: "",
     });
-    setIsAlert(true);
   };
 
-  const handleToggle = () => {
-    setIsAlert(false);
+  // Function to handle form submission for updating
+  const handleUpdate = (e) => {
+    e.preventDefault();
+
+    if (!validateForm()) return;
+
+    Swal.fire({
+      title: "Sub-Admin Updated!",
+      text: `Sub-Admin details updated successfully`,
+      icon: "success",
+      confirmButtonText: "OK",
+    });
+
+    console.log("Updated Data:", formData);
+
+    // Reset form and edit mode after updating
+    setFormData({
+      name: "",
+      email: "",
+      hospital: "",
+      location: "",
+      phone: "",
+      designation: "",
+      password: "",
+    });
+    setIsEditMode(false);
   };
 
   return (
     <main className="app-content">
       <div className="app-title tile p-3">
         <h1 className="">
-          <span className="mr-4 fw-bold">&nbsp;Add Sub-Admin</span>
+          <span className="mr-4 fw-bold">
+            &nbsp;{isEditMode ? "Edit" : "Add"} Sub-Admin
+          </span>
         </h1>
       </div>
       <div className="row justify-content-center">
@@ -88,30 +132,15 @@ const AddSubAdmin = () => {
                 width: "100%",
               }}
             >
-              <h4 className="mt-2">Add Sub-Admin</h4>
+              <h4 className="mt-2">Sub-Admin</h4>
             </div>
             <div className="tile-body p-3">
-              <div className="bs-component mb-3">
-                {isAlert && (
-                  <div className="alert alert-dismissible alert-success">
-                    <button
-                      className="btn-close"
-                      type="button"
-                      data-bs-dismiss="alert"
-                      onClick={handleToggle}
-                    ></button>
-                    <strong>Well done!</strong> Sub-Admin added successfully.
-                  </div>
-                )}
-              </div>
-              <form onSubmit={handleSubmit}>
+              <form onSubmit={isEditMode ? handleUpdate : handleSubmit}>
                 <div className="row">
                   <div className="mb-3 col-md-6">
                     <label className="form-label">Name</label>
                     <input
-                      className={`form-control ${
-                        errors.name ? "is-invalid" : ""
-                      }`}
+                      className={`form-control ${errors.name ? "is-invalid" : ""}`}
                       id="name"
                       type="text"
                       placeholder="Enter Name"
@@ -125,9 +154,7 @@ const AddSubAdmin = () => {
                   <div className="mb-3 col-md-6">
                     <label className="form-label">Email address</label>
                     <input
-                      className={`form-control ${
-                        errors.email ? "is-invalid" : ""
-                      }`}
+                      className={`form-control ${errors.email ? "is-invalid" : ""}`}
                       id="email"
                       type="email"
                       placeholder="Enter email"
@@ -141,9 +168,7 @@ const AddSubAdmin = () => {
                   <div className="mb-3 col-md-6">
                     <label className="form-label">Hospital/Clinic Name</label>
                     <input
-                      className={`form-control ${
-                        errors.hospital ? "is-invalid" : ""
-                      }`}
+                      className={`form-control ${errors.hospital ? "is-invalid" : ""}`}
                       id="hospital"
                       type="text"
                       placeholder="Enter Hospital/Clinic name"
@@ -157,9 +182,7 @@ const AddSubAdmin = () => {
                   <div className="mb-3 col-md-6">
                     <label className="form-label">Location</label>
                     <input
-                      className={`form-control ${
-                        errors.location ? "is-invalid" : ""
-                      }`}
+                      className={`form-control ${errors.location ? "is-invalid" : ""}`}
                       id="location"
                       type="text"
                       placeholder="Enter Location"
@@ -173,9 +196,7 @@ const AddSubAdmin = () => {
                   <div className="mb-3 col-md-6">
                     <label className="form-label">Phone Number</label>
                     <input
-                      className={`form-control ${
-                        errors.phone ? "is-invalid" : ""
-                      }`}
+                      className={`form-control ${errors.phone ? "is-invalid" : ""}`}
                       id="phone"
                       type="number"
                       placeholder="Enter Number"
@@ -189,9 +210,7 @@ const AddSubAdmin = () => {
                   <div className="mb-3 col-md-6">
                     <label className="form-label">Designation</label>
                     <input
-                      className={`form-control ${
-                        errors.designation ? "is-invalid" : ""
-                      }`}
+                      className={`form-control ${errors.designation ? "is-invalid" : ""}`}
                       id="designation"
                       type="text"
                       placeholder="Enter Designation"
@@ -207,9 +226,7 @@ const AddSubAdmin = () => {
                   <div className="mb-3 col-md-6">
                     <label className="form-label">Password</label>
                     <input
-                      className={`form-control ${
-                        errors.password ? "is-invalid" : ""
-                      }`}
+                      className={`form-control ${errors.password ? "is-invalid" : ""}`}
                       id="password"
                       type="password"
                       placeholder="Enter Password"
@@ -221,12 +238,8 @@ const AddSubAdmin = () => {
                     )}
                   </div>
                   <div className="mb-3 col-lg-12 text-center">
-                    <button
-                      className="btn custom-btn text-white w-50"
-                      type="submit"
-                      
-                    >
-                      <i className="fa-thin fa-paper-plane"></i> &nbsp; Submit{" "}
+                    <button className="btn custom-btn text-white w-50" type="submit">
+                      {isEditMode ? "Update Sub-Admin" : "Submit"}
                     </button>
                   </div>
                 </div>

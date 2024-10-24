@@ -21,61 +21,12 @@ const CmsManagement = () => {
   const fetchData = () => {
     setTimeout(() => {
       const users = [
-        { srNum: 1, title: "About us", status: "Active" },
-        { srNum: 2, title: "Terms & Conditions", status: "Inactive" },
-        { srNum: 3, title: "Privacy Policy", status: "Active" },
-        { srNum: 4, title: "FAQ", status: "Active" },
-        { srNum: 5, title: "Contact Us", status: "Active" },
-        { srNum: 6, title: "Support", status: "Inactive" },
-        { srNum: 7, title: "Careers", status: "Active" },
-        { srNum: 8, title: "Blog", status: "Active" },
-        { srNum: 9, title: "Our Team", status: "Inactive" },
-        { srNum: 10, title: "Testimonials", status: "Active" },
-        { srNum: 11, title: "Pricing", status: "Active" },
-        { srNum: 12, title: "User Guide", status: "Inactive" },
-        { srNum: 13, title: "Features", status: "Active" },
-        { srNum: 14, title: "Integrations", status: "Inactive" },
-        { srNum: 15, title: "Security", status: "Active" },
-        { srNum: 16, title: "Updates", status: "Active" },
-        { srNum: 17, title: "Feedback", status: "Inactive" },
-        { srNum: 18, title: "Community", status: "Active" },
-        { srNum: 19, title: "Events", status: "Inactive" },
-        { srNum: 20, title: "Webinars", status: "Active" },
-        { srNum: 21, title: "Affiliate Program", status: "Active" },
-        { srNum: 22, title: "Partnerships", status: "Inactive" },
-        { srNum: 23, title: "Case Studies", status: "Active" },
-        { srNum: 24, title: "Roadmap", status: "Inactive" },
-        { srNum: 25, title: "Changelog", status: "Active" },
-        { srNum: 26, title: "Media Kit", status: "Active" },
-        { srNum: 27, title: "Sitemap", status: "Inactive" },
-        { srNum: 28, title: "Accessibility", status: "Active" },
-        { srNum: 29, title: "Legal", status: "Inactive" },
-        { srNum: 30, title: "Downloads", status: "Active" },
-        { srNum: 31, title: "Feedback Form", status: "Active" },
-        { srNum: 32, title: "Newsletter", status: "Inactive" },
-        { srNum: 33, title: "Announcements", status: "Active" },
-        { srNum: 34, title: "Help Center", status: "Active" },
-        { srNum: 35, title: "Documentation", status: "Inactive" },
-        { srNum: 36, title: "Service Status", status: "Active" },
-        { srNum: 37, title: "API Reference", status: "Active" },
-        { srNum: 38, title: "Getting Started", status: "Inactive" },
-        { srNum: 39, title: "Workshops", status: "Active" },
-        { srNum: 40, title: "User Stories", status: "Active" },
-        { srNum: 41, title: "Media Coverage", status: "Inactive" },
-        { srNum: 42, title: "Press Releases", status: "Active" },
-        { srNum: 43, title: "Investors", status: "Active" },
-        { srNum: 44, title: "Vision & Mission", status: "Inactive" },
-        { srNum: 45, title: "Corporate Responsibility", status: "Active" },
-        { srNum: 46, title: "Product Updates", status: "Active" },
-        { srNum: 47, title: "User Community", status: "Inactive" },
-        { srNum: 48, title: "B2B Solutions", status: "Active" },
-        { srNum: 49, title: "B2C Solutions", status: "Inactive" },
-        { srNum: 50, title: "API Documentation", status: "Active" },
-        { srNum: 51, title: "Support Resources", status: "Active" },
-        { srNum: 52, title: "Customer Support", status: "Inactive" },
-        { srNum: 53, title: "User Research", status: "Active" },
-        { srNum: 54, title: "Quality Assurance", status: "Active" },
-        { srNum: 55, title: "Terms of Use", status: "Inactive" },
+        {
+          srNum: 1,
+          title: "About us",
+          content: "cfvjknvgbkjbg",
+          status: "Active",
+        },
       ];
       setTableData(users);
       setLoading(false);
@@ -167,7 +118,6 @@ const CmsManagement = () => {
       newErrors.pageName = "Page Name is required.";
     }
 
-    // Check if editorContent is empty
     if (!editorContent || editorContent.trim() === "") {
       newErrors.editorContent = "Page Content is required.";
     }
@@ -177,7 +127,6 @@ const CmsManagement = () => {
       return;
     }
 
-    // Show confirmation dialog
     Swal.fire({
       title: editingItem ? "Update Item?" : "Add New Item?",
       text: editingItem
@@ -185,9 +134,6 @@ const CmsManagement = () => {
         : "Are you sure you want to add this item?",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, proceed!",
     }).then((result) => {
       if (result.isConfirmed) {
         if (editingItem) {
@@ -217,7 +163,8 @@ const CmsManagement = () => {
   const handleEdit = (item) => {
     setEditingItem(item);
     setPageName(item.title);
-    setEditorContent(item.content || "");
+    setEditorContent(item.content);
+    setOpenDropdown(null);
   };
 
   const handleDelete = (srNum) => {
@@ -243,6 +190,7 @@ const CmsManagement = () => {
     setPageName("");
     setEditorContent("");
     setErrors({ pageName: "", editorContent: "" });
+    setEditingItem(null);
   };
 
   return (
@@ -250,7 +198,7 @@ const CmsManagement = () => {
       <div className="app-title tile p-3">
         <div>
           <h1>
-            <span className="mr-4 fw-bold">&nbsp;Add Cms</span>
+            <span className="mr-4 fw-bold">&nbsp;Add CMS</span>
           </h1>
         </div>
       </div>
@@ -435,7 +383,9 @@ const CmsManagement = () => {
                                     className="dropdown-button"
                                     onClick={() =>
                                       setOpenDropdown(
-                                        openDropdown === row.srNum ? null : row.srNum
+                                        openDropdown === row.srNum
+                                          ? null
+                                          : row.srNum
                                       )
                                     }
                                     aria-haspopup="true"
@@ -454,20 +404,18 @@ const CmsManagement = () => {
                                       <a
                                         className="dropdown-item"
                                         onClick={() => {
-                                          handleEdit(data.srNum)
+                                          handleEdit(row);
                                           setOpenDropdown(null);
-                                        } 
-                                      }
+                                        }}
                                       >
                                         <i className="fa fa-edit"></i> Edit
                                       </a>
                                       <a
                                         className="dropdown-item"
                                         onClick={() => {
-                                          handleDelete(data.srNum)
+                                          handleDelete(row.srNum);
                                           setOpenDropdown(null);
-                                        } 
-                                      }
+                                        }}
                                       >
                                         <i className="fa fa-trash"></i> Delete
                                       </a>
@@ -478,7 +426,9 @@ const CmsManagement = () => {
                             </tr>
                           ))
                         ) : (
-                          <h1>No Data Found....</h1>
+                          <tr>
+                            <h1 className="text-center">No Data Found</h1>{" "}
+                          </tr>
                         )}
                       </tbody>
                     </table>

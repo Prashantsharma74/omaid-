@@ -39,7 +39,7 @@ function App() {
           <Route path="/sub-admin" element={<SubAdmin />} />
           <Route path="/sub-admin/add-subadmin" element={<AddSubAdmin />} />
           <Route path="/users" element={<Users />} />
-          <Route path="/users/add-user" element={<AddUser />} />
+          <Route path="/users/edit-user" element={<AddUser />} />
           <Route path="/manage-program" element={<ManageProgram />} />
           <Route path="/manage-program/add-program" element={<AddProgram />} />
           <Route

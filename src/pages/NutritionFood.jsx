@@ -9,7 +9,6 @@ const NutritionFood = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
-  const [openDropdown, setOpenDropdown] = useState(null);
 
   const visiblePages = 4;
 
@@ -285,7 +284,7 @@ const NutritionFood = () => {
                       <thead>
                         <tr>
                           <th>Sr. num</th>
-                          <th>Title</th>
+                          <th>Food</th>
                           <th>Description</th>
                           <th>Status</th>
                         </tr>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import Swal from "sweetalert2";
 
@@ -11,6 +11,8 @@ const SubAdmin = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
   const [openDropdown, setOpenDropdown] = useState(null);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const navigate = useNavigate();
 
   const visiblePages = 4;
 
@@ -117,23 +119,29 @@ const SubAdmin = () => {
 
   const handleDelete = (srNum) => {
     Swal.fire({
-      title: 'Are you sure?',
+      title: "Are you sure?",
       text: "You won't be able to revert this!",
-      icon: 'warning',
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
-      confirmButtonText: 'Yes, delete it!'
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
     }).then((result) => {
       if (result.isConfirmed) {
-        setTableData((prevData) => prevData.filter(user => user.srNum !== srNum));
-        Swal.fire(
-          'Deleted!',
-          'Your user has been deleted.',
-          'success'
+        setTableData((prevData) =>
+          prevData.filter((user) => user.srNum !== srNum)
         );
+        Swal.fire("Deleted!", "Your user has been deleted.", "success");
       }
     });
+  };
+
+  const handleEdit = (srNum) => {
+    const user = tableData.find((u) => u.srNum === srNum);
+    if (user) {
+      setSelectedUser(user);
+      navigate("/sub-admin/add-subadmin", { state: { user } });
+    }
   };
 
   const filteredData = tableData.filter((user) =>
@@ -232,8 +240,6 @@ const SubAdmin = () => {
                           <th>Email ID</th>
                           <th>Hospital/Clinic Name</th>
                           <th>Location</th>
-                          <th>Phone Number</th>
-                          <th>Designation</th>
                           <th>Status</th>
                           <th>Action</th>
                         </tr>
@@ -249,8 +255,6 @@ const SubAdmin = () => {
                             <td>{user.email}</td>
                             <td>{user.hospital}</td>
                             <td>{user.location}</td>
-                            <td>{user.phone}</td>
-                            <td>{user.designation}</td>
                             <td>
                               <div className="form-check form-switch">
                                 <input

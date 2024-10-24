@@ -1,6 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const AddUser = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { user } = location.state || { user: {} }; // Access the user data
+
   const [formData, setFormData] = useState({
     name: "",
     userId: "",
@@ -16,59 +21,49 @@ const AddUser = () => {
     waterTracking: false,
   });
 
-  const [errors, setErrors] = useState({});
-  const [isAlert, setIsAlert] = useState(false);
+  useEffect(() => {
+    // Check if user data exists and update formData
+    if (user) {
+      setFormData({
+        name: user.username || "",
+        userId: user.accountId || "",
+        email: user.email || "",
+        phone: user.phone || "",
+        assignSubAdmin: user.assignSubAdmin || "", // Assuming these fields exist in user
+        dob: user.dob || "", // Assuming these fields exist in user
+        height: user.height || "", // Assuming these fields exist in user
+        weight: user.weight || "", // Assuming these fields exist in user
+        gender: user.gender || "", // Assuming these fields exist in user
+        nutrition: user.nutrition || "", // Assuming these fields exist in user
+        waterTracking: user.waterTracking || false, // Assuming this field exists in user
+      });
+    }
+  }, [user]); // Only run this effect when user changes
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-    setErrors((prevErrors) => ({ ...prevErrors, [name]: "" })); // Clear the error when user types
+    const { id, value } = e.target;
+    setFormData((prevData) => ({ ...prevData, [id]: value }));
   };
 
-  const validate = () => {
-    const newErrors = {};
-    if (!formData.name) newErrors.name = "Name is required.";
-    if (!formData.userId) newErrors.userId = "User Default ID is required.";
-    if (!formData.email) newErrors.email = "Email is required.";
-    else if (!/\S+@\S+\.\S+/.test(formData.email))
-      newErrors.email = "Email is invalid.";
-    if (!formData.phone) newErrors.phone = "Phone number is required.";
-    else if (formData.phone.toString().length < 10)
-      newErrors.phone = "Phone number must be at least 10 digits.";
-    if (!formData.assignSubAdmin)
-      newErrors.assignSubAdmin = "Please select a Sub-Admin.";
-    if (!formData.dob) newErrors.dob = "Date of Birth is required.";
-    if (!formData.height) newErrors.height = "Height is required.";
-    if (!formData.weight) newErrors.weight = "Weight is required.";
-    if (!formData.gender) newErrors.gender = "Gender is required.";
-    if (!formData.password) newErrors.password = "Password is required.";
-
-    return newErrors;
+  const handleCheckboxChange = (e) => {
+    const { id, checked } = e.target;
+    setFormData((prevData) => ({ ...prevData, [id]: checked }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const newErrors = validate();
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
-    }
-    console.log(formData);
-    setIsAlert(true);
-  };
+    // Logic to update the user details, e.g., send a request to the API
+    console.log("Updated User Data:", formData);
 
-  const handleCross = () => {
-    setIsAlert(false);
+    // Redirect back to users list or show a success message
+    navigate("/users"); // Adjust as needed
   };
 
   return (
     <main className="app-content">
       <div className="app-title tile p-3">
         <h1 className="">
-          <span className="mr-4 fw-bold">&nbsp;Add User</span>
+          <span className="mr-4 fw-bold">&nbsp;Edit User</span>
         </h1>
       </div>
       <div className="row justify-content-center">
@@ -85,162 +80,106 @@ const AddUser = () => {
                 width: "100%",
               }}
             >
-              <h4 className="mt-2">Add User</h4>
+              <h4 className="mt-2">Edit User</h4>
             </div>
             <div className="tile-body p-3">
-              <div className="bs-component mb-3">
-                {isAlert && (
-                  <div className="alert alert-dismissible alert-success">
-                    <button
-                      className="btn-close"
-                      type="button"
-                      onClick={handleCross}
-                    ></button>
-                    <strong>Well done!</strong> User added successfully.
-                  </div>
-                )}
-              </div>
               <form onSubmit={handleSubmit}>
                 <div className="row">
                   <div className="mb-3 col-md-6 col-sm-12">
                     <label className="form-label">Name</label>
                     <input
-                      className={`form-control ${
-                        errors.name ? "is-invalid" : ""
-                      }`}
-                      name="name"
+                      className="form-control"
+                      id="name"
                       type="text"
                       placeholder="Enter Name"
-                      value={formData.name}
+                      value={formData.name} // Controlled input
                       onChange={handleChange}
                     />
-                    {errors.name && (
-                      <div className="invalid-feedback">{errors.name}</div>
-                    )}
                   </div>
                   <div className="mb-3 col-md-6 col-sm-12">
                     <label className="form-label">User Default ID</label>
                     <input
-                      className={`form-control ${
-                        errors.userId ? "is-invalid" : ""
-                      }`}
-                      name="userId"
+                      className="form-control"
+                      id="userId"
                       type="text"
                       placeholder="User Default ID"
-                      value={formData.userId}
+                      value={formData.userId} // Controlled input
                       onChange={handleChange}
                     />
-                    {errors.userId && (
-                      <div className="invalid-feedback">{errors.userId}</div>
-                    )}
                   </div>
                   <div className="mb-3 col-md-6 col-sm-12">
                     <label className="form-label">Email address</label>
                     <input
-                      className={`form-control ${
-                        errors.email ? "is-invalid" : ""
-                      }`}
-                      name="email"
+                      className="form-control"
+                      id="email"
                       type="email"
                       placeholder="Enter email"
-                      value={formData.email}
+                      value={formData.email} // Controlled input
                       onChange={handleChange}
                     />
-                    {errors.email && (
-                      <div className="invalid-feedback">{errors.email}</div>
-                    )}
                   </div>
                   <div className="mb-3 col-md-6 col-sm-12">
                     <label className="form-label">Phone Number</label>
                     <input
-                      className={`form-control ${
-                        errors.phone ? "is-invalid" : ""
-                      }`}
-                      name="phone"
+                      className="form-control"
+                      id="phone"
                       type="number"
                       placeholder="Enter Number"
-                      value={formData.phone}
+                      value={formData.phone} // Controlled input
                       onChange={handleChange}
                     />
-                    {errors.phone && (
-                      <div className="invalid-feedback">{errors.phone}</div>
-                    )}
                   </div>
                   <div className="mb-3 col-md-6 col-sm-12">
                     <label className="form-label">Assign Sub-Admin/List</label>
                     <select
-                      className={`form-select ${
-                        errors.assignSubAdmin ? "is-invalid" : ""
-                      }`}
-                      name="assignSubAdmin"
-                      value={formData.assignSubAdmin}
+                      className="form-select"
+                      id="assignSubAdmin"
+                      value={formData.assignSubAdmin} // Controlled input
                       onChange={handleChange}
                     >
                       <option value="">Select Sub-Admin</option>
                       <option value="subadmin1">Sub-Admin 1</option>
                       <option value="subadmin2">Sub-Admin 2</option>
                     </select>
-                    {errors.assignSubAdmin && (
-                      <div className="invalid-feedback">
-                        {errors.assignSubAdmin}
-                      </div>
-                    )}
                   </div>
                   <div className="mb-3 col-md-6 col-sm-12">
                     <label className="form-label">Date of Birth</label>
                     <input
-                      className={`form-control ${
-                        errors.dob ? "is-invalid" : ""
-                      }`}
-                      name="dob"
+                      className="form-control"
+                      id="dob"
                       type="date"
-                      value={formData.dob}
+                      value={formData.dob} // Controlled input
                       onChange={handleChange}
                     />
-                    {errors.dob && (
-                      <div className="invalid-feedback">{errors.dob}</div>
-                    )}
                   </div>
                   <div className="mb-3 col-md-6 col-sm-12">
                     <label className="form-label">Height (cm)</label>
                     <input
-                      className={`form-control ${
-                        errors.height ? "is-invalid" : ""
-                      }`}
-                      name="height"
+                      className="form-control"
+                      id="height"
                       type="number"
                       placeholder="Enter Height in cm"
-                      value={formData.height}
+                      value={formData.height} // Controlled input
                       onChange={handleChange}
                     />
-                    {errors.height && (
-                      <div className="invalid-feedback">{errors.height}</div>
-                    )}
                   </div>
                   <div className="mb-3 col-md-6 col-sm-12">
                     <label className="form-label">Weight (kg)</label>
                     <input
-                      className={`form-control ${
-                        errors.weight ? "is-invalid" : ""
-                      }`}
-                      name="weight"
+                      className="form-control"
+                      id="weight"
                       type="number"
                       placeholder="Enter Weight in kg"
-                      value={formData.weight}
+                      value={formData.weight} // Controlled input
                       onChange={handleChange}
                     />
-                    {errors.weight && (
-                      <div className="invalid-feedback">{errors.weight}</div>
-                    )}
                   </div>
                   <div className="mb-3 col-md-6 col-sm-12">
                     <label className="form-label">Gender</label>
                     <select
-                      className={`form-select ${
-                        errors.gender ? "is-invalid" : ""
-                      }`}
-                      name="gender"
-                      value={formData.gender}
+                      className="form-select"
+                      id="gender"
+                      value={formData.gender} // Controlled input
                       onChange={handleChange}
                     >
                       <option value="">Select Gender</option>
@@ -248,70 +187,22 @@ const AddUser = () => {
                       <option value="female">Female</option>
                       <option value="other">Other</option>
                     </select>
-                    {errors.gender && (
-                      <div className="invalid-feedback">{errors.gender}</div>
-                    )}
                   </div>
                   <div className="mb-3 col-md-6 col-sm-12">
                     <label className="form-label">Password</label>
                     <input
-                      className={`form-control ${
-                        errors.password ? "is-invalid" : ""
-                      }`}
-                      name="password"
+                      className="form-control"
+                      id="password"
                       type="password"
                       placeholder="Enter Password"
-                      value={formData.password}
-                      onChange={handleChange}
                     />
-                    {errors.password && (
-                      <div className="invalid-feedback">{errors.password}</div>
-                    )}
                   </div>
-                  {/* <div className="mb-3 col-lg-12 col-sm-12">
-                    <h5 className="mt-3 mb-3">
-                      <strong>Add Insight</strong>
-                    </h5>
-                    <div className="mb-3 mt-3">
-                      <label className="form-label">Nutrition Taken</label>
-                      <textarea
-                        className="form-control"
-                        name="nutrition"
-                        rows="6"
-                        placeholder="Enter nutrition details"
-                        value={formData.nutrition}
-                        onChange={handleChange}
-                      ></textarea>
-                    </div>
-                    <div className="mb-3">
-                      <label className="form-label">Water Tracking</label>
-                      <div
-                        className="form-check d-flex w-100"
-                        style={{
-                          alignItems: "flex-start",
-                          justifyContent: "flex-start",
-                        }}
-                      >
-                        <input
-                          className="form-check-input"
-                          type="checkbox"
-                          name="waterTracking"
-                          checked={formData.waterTracking}
-                          onChange={handleChange}
-                          style={{ display: "block" }}
-                        />
-                        <label className="form-check-label">
-                          &nbsp;&nbsp;&nbsp;Track daily water intake
-                        </label>
-                      </div>
-                    </div>
-                  </div> */}
                   <div className="mb-3 col-lg-12 text-center">
                     <button
                       className="btn custom-btn text-white w-50"
                       type="submit"
                     >
-                      <i className="fa-thin fa-paper-plane"></i> &nbsp; Submit
+                      <i className="fa-thin fa-paper-plane"></i> &nbsp; Submit{" "}
                     </button>
                   </div>
                 </div>

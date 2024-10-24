@@ -137,6 +137,7 @@ const Faq = () => {
         Swal.fire("Deleted!", "Your FAQ has been deleted.", "success");
       }
     });
+    setTable
   };
 
   const toggleStatus = (id) => {
