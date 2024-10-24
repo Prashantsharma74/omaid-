@@ -419,7 +419,6 @@ td.dt-type-date {
 
 }
 
-
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -448,3 +447,23 @@ td.dt-type-date {
   font-size: 35px;
   color: white;
 }
+
+/* Dashboard Image CSS */
+
+.responsive-image {
+  width: 100%;
+  height: auto;
+}
+
+@media (max-width: 768px) {
+  .responsive-image {
+    width: 80%;
+  }
+}
+
+@media (max-width: 576px) {
+  .responsive-image {
+    width: 90%;
+  }
+}
+

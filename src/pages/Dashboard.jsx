@@ -52,7 +52,7 @@ const Dashboard = () => {
                 </div>
               </Link>
             </div>
-            <div className="col-md-6 col-lg-6" >
+            <div className="col-md-6 col-lg-6">
               <Link className="text-decoration-none" to="/sub-admin">
                 <div className="widget-small ctm-bg-2 coloured-icon">
                   <i className="icon  fa-light fa-user-group"></i>
@@ -164,11 +164,13 @@ const Dashboard = () => {
                 </div>
               </div>
               <div className="col-lg-12 text-end">
-                <img
-                  src={dashSide}
-                  alt="Dashboard Side"
-                  style={{ width: "350px" }}
-                />
+                <div className="col-lg-12 text-end">
+                  <img
+                    src={dashSide}
+                    alt="Dashboard Side"
+                    className="responsive-image"
+                  />
+                </div>
               </div>
             </div>
           </div>

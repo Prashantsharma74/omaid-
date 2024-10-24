@@ -25,9 +25,11 @@ const AddSubAdmin = () => {
         location: location.state.user.location,
         phone: location.state.user.phone,
         designation: location.state.user.designation,
-        password: "",  // Keep password empty if not updating it
+        password:location.state.user.password, 
       });
-      setIsEditMode(true);  // Switch to edit mode
+      console.log(formData);
+      
+      setIsEditMode(true);
     }
   }, [location.state]);
 
@@ -48,7 +50,11 @@ const AddSubAdmin = () => {
     if (!formData.phone) newErrors.phone = "Phone number is required.";
     if (!formData.designation) newErrors.designation = "Designation is required.";
     if (!formData.password && !isEditMode) newErrors.password = "Password is required.";  // Password required only in create mode
-    if (formData.phone && !/^\d+$/.test(formData.phone)) newErrors.phone = "Phone number must be numeric.";
+
+    // Validate phone number format (numeric)
+    if (formData.phone && !/^\d{10}$/.test(formData.phone.replace(/[-\s]/g, ''))) {
+      newErrors.phone = "Phone number must be a 10-digit numeric value.";
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -198,7 +204,7 @@ const AddSubAdmin = () => {
                     <input
                       className={`form-control ${errors.phone ? "is-invalid" : ""}`}
                       id="phone"
-                      type="number"
+                      type="text" // Change to text to allow dashes and spaces
                       placeholder="Enter Number"
                       value={formData.phone}
                       onChange={handleChange}
