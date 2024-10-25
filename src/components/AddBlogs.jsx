@@ -1,10 +1,110 @@
 import React, { useState } from "react";
+import Swal from "sweetalert2"; // Import SweetAlert2
 
 const AddBlogs = () => {
   const [isAlert, setIsAlert] = useState(false);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [image, setImage] = useState(null); // to store uploaded image
+  const [isImageAdded, setIsImageAdded] = useState(false); // to track if image is added
+  const [categories, setCategories] = useState(["Tech", "Health", "Lifestyle"]); // predefined categories
+  const [selectedCategory, setSelectedCategory] = useState(""); // user selection
+  const [newCategory, setNewCategory] = useState(""); // new category input
+  const [status, setStatus] = useState("Public");
+  const [showModal, setShowModal] = useState(false); // track modal visibility
+  const [errors, setErrors] = useState({}); // state for storing field-specific errors
 
-  const handleCross = () => {
-    setIsAlert(false);
+  // Validate form function
+  const validateForm = () => {
+    let formErrors = {};
+
+    // Validate title
+    if (!title.trim()) {
+      formErrors.title = "Title is required.";
+    }
+
+    // Validate description
+    if (!description.trim()) {
+      formErrors.description = "Description is required.";
+    }
+
+    // Validate selected category
+    if (!selectedCategory) {
+      formErrors.selectedCategory = "Please select a category.";
+    }
+
+    setErrors(formErrors);
+
+    // If formErrors is empty, validation is successful
+    return Object.keys(formErrors).length === 0;
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    // Validate the form fields
+    if (!validateForm()) {
+      return;
+    }
+
+    // Success alert using SweetAlert
+    Swal.fire({
+      icon: "success",
+      title: "Blog added successfully",
+      text: "Your blog has been submitted!",
+    });
+
+    // Console log form data
+    const formData = {
+      title,
+      description,
+      image,
+      category: selectedCategory,
+      status,
+    };
+
+    console.log("Form data:", formData);
+
+    // Reset form
+    setIsAlert(true);
+    setTitle("");
+    setDescription("");
+    setImage(null);
+    setSelectedCategory("");
+    setNewCategory("");
+    setIsImageAdded(false); // Reset image status after submission
+    setErrors({}); // Clear errors after successful submission
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImage(URL.createObjectURL(file)); // Store image URL for preview
+      setIsImageAdded(true); // Mark image as added
+    }
+  };
+
+  const handleSaveCategory = () => {
+    if (newCategory && !categories.includes(newCategory)) {
+      setCategories([...categories, newCategory]);
+      setSelectedCategory(newCategory);
+      setNewCategory(""); // Clear the input after saving
+
+      // Show success alert for category addition
+      Swal.fire({
+        icon: "success",
+        title: "Category added",
+        text: `The category "${newCategory}" has been added successfully.`,
+      });
+    } else if (!newCategory) {
+      // Show error alert for empty category
+      Swal.fire({
+        icon: "error",
+        title: "Category is empty",
+        text: "Please enter a valid category name!",
+      });
+    }
+    setShowModal(false); // Close the modal after handling
   };
 
   return (
@@ -14,7 +114,6 @@ const AddBlogs = () => {
           <h1>
             <span className="mr-4">&nbsp; Add Blogs</span>
           </h1>
-          <p></p>
         </div>
       </div>
       <div className="row">
@@ -28,7 +127,7 @@ const AddBlogs = () => {
         >
           <div className="tile w-75">
             <div
-              className="case-status d-flex justify-content-center text-align-center"
+              className="case-status d-flex justify-content-center"
               style={{
                 backgroundColor: "#002538",
                 color: "#fff",
@@ -41,134 +140,236 @@ const AddBlogs = () => {
               <h4 className="mt-2">Add Blogs</h4>
             </div>
             <div className="tile-body p-3">
-              <div className="bs-component mb-3">
-                {isAlert && (
-                  <div className="alert alert-dismissible alert-success">
-                    <button
-                      className="btn-close"
-                      type="button"
-                      data-bs-dismiss="alert"
-                      onClick={handleCross}
-                    ></button>
-                    <strong>Well done!</strong> Blog added successfully .
-                  </div>
-                )}
-              </div>
-              <form>
+              <form onSubmit={handleSubmit}>
                 <div>
-                  <div className="mb-3 col-md-6 col-sm-12 col-xs-12 col-lg-6 w-100">
+                  <div className="mb-3 w-100">
                     <label className="form-label">Title</label>
                     <input
-                      className="form-control"
-                      id="food-search"
+                      className={`form-control ${errors.title ? "is-invalid" : ""
+                        }`}
                       type="text"
                       placeholder="Enter Title Here"
-                      list="food-suggestions"
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
                     />
+                    {errors.title && (
+                      <div className="invalid-feedback">{errors.title}</div>
+                    )}
                   </div>
 
-                  <div className="mb-3 col-md-6 col-sm-12 col-xs-12 col-lg-6 w-100">
+                  <div className="mb-3 w-100">
                     <label className="form-label">Description</label>
                     <textarea
-                      className="form-control"
-                      id="food-search"
-                      type="text"
+                      className={`form-control ${errors.description ? "is-invalid" : ""
+                        }`}
                       rows={6}
-                      placeholder="Enter food name"
-                      list="food-suggestions"
+                      placeholder="Enter Description"
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
                     ></textarea>
+                    {errors.description && (
+                      <div className="invalid-feedback">
+                        {errors.description}
+                      </div>
+                    )}
                   </div>
 
-                  <div className="form-group mb-0 pb-0">
+                  <div className="form-group">
                     <label className="form-label">Upload Image</label>
-                    <div
-                      className="dropify-wrapper"
-                      style={{ height: "110px" }}
-                    >
-                      <div className="dropify-message">
-                        <span className="file-icon"></span>{" "}
-                        <p>Drag Or Upload Your Document Here</p>
-                        <p className="dropify-error">
-                          Incorrect file type. Please attach a PDF file.
+                    {!isImageAdded ? (
+                      <div
+                        className="dropify-wrapper"
+                        style={{ height: "110px" }}
+                      >
+                        <input
+                          type="file"
+                          className="dropify"
+                          onChange={handleImageChange}
+                          accept=".jpg,.jpeg,.png,.gif,.webp"
+                        />
+                      </div>
+                    ) : (
+                      <div className="mt-3">
+                        <p className="text-success">
+                          Image added successfully.
                         </p>
                       </div>
-                      <div className="dropify-loader"></div>
-                      <div className="dropify-errors-container">
-                        <ul></ul>
-                      </div>
-                      <input
-                        name="pdf_file[]"
-                        id="pdf_file"
-                        type="file"
-                        className="dropify"
-                        data-height="100"
-                        required=""
-                        multiple=""
-                        accept=".jpg,.jpeg,.png,.gif,.webp,.pdf"
-                      />
+                    )}
+                  </div>
+
+                  {/* Category Dropdown and Add Category Button */}
+                  <div className="mb-3 col-lg-12 col-sm-12 col-xs-12 col-md-12">
+                    <label className="form-label" htmlFor="category">
+                      Category
+                    </label>
+                    <div className="d-flex align-items-center">
+                      <select
+                        className={`form-select ${errors.selectedCategory ? "is-invalid" : ""
+                          }`}
+                        id="category"
+                        value={selectedCategory}
+                        onChange={(e) => setSelectedCategory(e.target.value)}
+                      >
+                        <option value="" disabled>
+                          Select a category
+                        </option>
+                        {categories.map((category, index) => (
+                          <option key={index} value={category}>
+                            {category}
+                          </option>
+                        ))}
+                      </select>
+                      {/* Add New Category Button */}
                       <button
                         type="button"
-                        className="dropify-clear"
-                        style={{ display: "none" }}
+                        className="btn btn-outline-primary ms-2"
+                        onClick={() => setShowModal(true)} // Trigger modal on button click
                       >
-                        Remove
+                        <i className="fa fa-plus"></i>
                       </button>
-                      <div className="dropify-preview">
-                        <span className="dropify-render"></span>
-                        <div className="dropify-infos">
-                          <div className="dropify-infos-inner">
-                            <p className="dropify-filename">
-                              <span className="file-icon"></span>{" "}
-                              <span className="dropify-filename-inner"></span>
-                            </p>
-                            <p className="dropify-infos-message">
-                              Drag and drop or click to replace
-                            </p>
-                          </div>
-                        </div>
-                      </div>
                     </div>
+                  </div>
+                  {errors.selectedCategory && (
+                    <div className="invalid-feedback">
+                      {errors.selectedCategory}
+                    </div>
+                  )}
 
-                    <small className="form-text text-muted upload-info mt-2 mb-2">
-                      {" "}
-                      Maximum Document Size : Up to 6MB per upload{" "}
-                    </small>
-                  </div>
-                  <div className="mt-3 col-md-6 col-sm-12 col-xs-12 col-lg-6 w-100">
-                    <label className="form-label">Category</label>
-                    <select
-                      className="form-control"
-                      id="food-search"
-                      type="text"
-                      placeholder="Enter food name"
-                      list="food-suggestions"
-                    ></select>
-                  </div>
-                  <div className="mt-3 col-md-6 col-sm-12 col-xs-12 col-lg-6 w-100 d-flex">
+                  <div className="mt-3 w-100">
                     <label className="form-label">Status</label>
-                    <span className="d-flex">
-                      <input type="radio" />
-                      <p>Public</p>
-                    </span>
-                    <span className="d-flex align-items-start justify-content-start">
-                      <input type="radio" />
-                      <p>Private</p>
-                    </span>
+                    <div className="d-flex">
+                      <label className="mr-3">
+                        <input
+                          type="radio"
+                          value="Public"
+                          checked={status === "Public"}
+                          onChange={(e) => setStatus(e.target.value)}
+                        />{" "}
+                        Public
+                      </label>
+                      <label>
+                        <input
+                          type="radio"
+                          value="Private"
+                          checked={status === "Private"}
+                          onChange={(e) => setStatus(e.target.value)}
+                        />{" "}
+                        Private
+                      </label>
+                    </div>
                   </div>
-                </div>
-                <div className="mb-3 col-lg-12 col-sm-12 col-xs-12 col-md-12 text-center mt-3">
-                  <button
-                    className="btn custom-btn text-white w-50"
-                    type="submit"
-                  >
-                    <i className="fa-thin fa-paper-plane"></i> &nbsp; Submit
-                  </button>
+
+                  <div className="mb-3 text-center mt-3">
+                    <button
+                      className="btn custom-btn text-white w-50"
+                      type="submit"
+                    >
+                      Submit
+                    </button>
+                  </div>
                 </div>
               </form>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Add New Category Modal */}
+      {showModal && (
+        <div className="modal-overlay">
+          <div className="modal-content animated-modal">
+            <div className="modal-header">
+              <h5 className="modal-title">Add New Category</h5>
+              <button
+                type="button"
+                className="btn-close"
+                onClick={() => setShowModal(false)} // Close modal
+              ></button>
+            </div>
+            <div className="modal-body">
+              <div className="mb-3">
+                <label htmlFor="newCategory" className="form-label">
+                  Category Name
+                </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="newCategory"
+                  placeholder="Enter new category name"
+                  value={newCategory}
+                  onChange={(e) => setNewCategory(e.target.value)}
+                />
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={() => setShowModal(false)} // Close modal
+              >
+                Close
+              </button>
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={handleSaveCategory} // Save new category and close modal
+              >
+                Save Category
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* CSS for modal, overlay, and animation */}
+      <style jsx>{`
+        .modal-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(0, 0, 0, 0.5);
+          display: flex;
+          justify-content: center;
+          align-items: flex-start;
+          padding-top: 50px; /* Space from the top */
+          z-index: 1000;
+        }
+        .modal-content {
+          background: white;
+          border-radius: 8px;
+          padding: 20px;
+          max-width: 500px;
+          width: 100%;
+        }
+        .modal-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+        .btn-close {
+          background: none;
+          border: none;
+          font-size: 1.5rem;
+        }
+
+        /* Keyframe for slide-down animation */
+        @keyframes slideDown {
+          0% {
+            transform: translateY(-100%);
+            opacity: 0;
+          }
+          100% {
+            transform: translateY(0);
+            opacity: 1;
+          }
+        }
+
+        .animated-modal {
+          animation: slideDown 0.5s ease-in-out;
+        }
+      `}</style>
     </main>
   );
 };

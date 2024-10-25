@@ -467,3 +467,32 @@ td.dt-type-date {
   }
 }
 
+/* Slide-in animation from the top */
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Apply the animation to the modal when it opens */
+.modal.fade .modal-dialog {
+  animation: slideDown 0.4s ease-out;
+}
+
+span.badge.badge-success {
+  background: radial-gradient(#43c53b, #1a930d);
+  font-size: 15px;
+  padding: 5px 25px;
+  font-weight: 600;
+}
+
+span.badge.badge-warning {
+  background: radial-gradient(#c54e3b, #93270d);
+  font-size: 15px;
+  font-weight: 600;
+}

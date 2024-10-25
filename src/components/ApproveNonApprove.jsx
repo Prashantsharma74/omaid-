@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 
 const ApproveNonApprove = () => {
@@ -10,6 +10,8 @@ const ApproveNonApprove = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
   const [openDropdownIndex, setOpenDropdownIndex] = useState(null);
+
+  const navigate = useNavigate();
 
   const handleDropdownToggle = (index) => {
     setOpenDropdownIndex(openDropdownIndex === index ? null : index);
@@ -56,6 +58,7 @@ const ApproveNonApprove = () => {
           SNo: 1,
           LastEdit: "2024-10-01",
           FoodCategory: "Fruits",
+          FoodType: "Citrus",
           Approved: "Approved",
           Status: "Active",
         },
@@ -63,351 +66,9 @@ const ApproveNonApprove = () => {
           SNo: 2,
           LastEdit: "2024-10-02",
           FoodCategory: "Vegetables",
-          Approved: "Approved",
-          Status: "Active",
-        },
-        {
-          SNo: 3,
-          LastEdit: "2024-10-03",
-          FoodCategory: "Dairy",
-          Approved: "Non approved",
-          Status: "Pending",
-        },
-        {
-          SNo: 4,
-          LastEdit: "2024-10-04",
-          FoodCategory: "Meat",
-          Approved: "Approved",
+          FoodType: "Root",
+          Approved: "Non Approved",
           Status: "Inactive",
-        },
-        {
-          SNo: 5,
-          LastEdit: "2024-10-05",
-          FoodCategory: "Grains",
-          Approved: "Non approved",
-          Status: "Pending",
-        },
-        {
-          SNo: 6,
-          LastEdit: "2024-10-06",
-          FoodCategory: "Snacks",
-          Approved: "Approved",
-          Status: "Active",
-        },
-        {
-          SNo: 7,
-          LastEdit: "2024-10-07",
-          FoodCategory: "Beverages",
-          Approved: "Approved",
-          Status: "Active",
-        },
-        {
-          SNo: 8,
-          LastEdit: "2024-10-08",
-          FoodCategory: "Sweets",
-          Approved: "Non approved",
-          Status: "Inactive",
-        },
-        {
-          SNo: 9,
-          LastEdit: "2024-10-09",
-          FoodCategory: "Seafood",
-          Approved: "Approved",
-          Status: "Active",
-        },
-        {
-          SNo: 10,
-          LastEdit: "2024-10-10",
-          FoodCategory: "Condiments",
-          Approved: "Non approved",
-          Status: "Pending",
-        },
-        {
-          SNo: 11,
-          LastEdit: "2024-10-11",
-          FoodCategory: "Fruits",
-          Approved: "Approved",
-          Status: "Active",
-        },
-        {
-          SNo: 12,
-          LastEdit: "2024-10-12",
-          FoodCategory: "Vegetables",
-          Approved: "Approved",
-          Status: "Active",
-        },
-        {
-          SNo: 13,
-          LastEdit: "2024-10-13",
-          FoodCategory: "Dairy",
-          Approved: "Non approved",
-          Status: "Pending",
-        },
-        {
-          SNo: 14,
-          LastEdit: "2024-10-14",
-          FoodCategory: "Meat",
-          Approved: "Approved",
-          Status: "Inactive",
-        },
-        {
-          SNo: 15,
-          LastEdit: "2024-10-15",
-          FoodCategory: "Grains",
-          Approved: "Non approved",
-          Status: "Pending",
-        },
-        {
-          SNo: 16,
-          LastEdit: "2024-10-16",
-          FoodCategory: "Snacks",
-          Approved: "Approved",
-          Status: "Active",
-        },
-        {
-          SNo: 17,
-          LastEdit: "2024-10-17",
-          FoodCategory: "Beverages",
-          Approved: "Approved",
-          Status: "Active",
-        },
-        {
-          SNo: 18,
-          LastEdit: "2024-10-18",
-          FoodCategory: "Sweets",
-          Approved: "Non approved",
-          Status: "Inactive",
-        },
-        {
-          SNo: 19,
-          LastEdit: "2024-10-19",
-          FoodCategory: "Seafood",
-          Approved: "Approved",
-          Status: "Active",
-        },
-        {
-          SNo: 20,
-          LastEdit: "2024-10-20",
-          FoodCategory: "Condiments",
-          Approved: "Non approved",
-          Status: "Pending",
-        },
-        {
-          SNo: 21,
-          LastEdit: "2024-10-21",
-          FoodCategory: "Fruits",
-          Approved: "Approved",
-          Status: "Active",
-        },
-        {
-          SNo: 22,
-          LastEdit: "2024-10-22",
-          FoodCategory: "Vegetables",
-          Approved: "Approved",
-          Status: "Active",
-        },
-        {
-          SNo: 23,
-          LastEdit: "2024-10-23",
-          FoodCategory: "Dairy",
-          Approved: "Non approved",
-          Status: "Pending",
-        },
-        {
-          SNo: 24,
-          LastEdit: "2024-10-24",
-          FoodCategory: "Meat",
-          Approved: "Approved",
-          Status: "Inactive",
-        },
-        {
-          SNo: 25,
-          LastEdit: "2024-10-25",
-          FoodCategory: "Grains",
-          Approved: "Non approved",
-          Status: "Pending",
-        },
-        {
-          SNo: 26,
-          LastEdit: "2024-10-26",
-          FoodCategory: "Snacks",
-          Approved: "Approved",
-          Status: "Active",
-        },
-        {
-          SNo: 27,
-          LastEdit: "2024-10-27",
-          FoodCategory: "Beverages",
-          Approved: "Approved",
-          Status: "Active",
-        },
-        {
-          SNo: 28,
-          LastEdit: "2024-10-28",
-          FoodCategory: "Sweets",
-          Approved: "Non approved",
-          Status: "Inactive",
-        },
-        {
-          SNo: 29,
-          LastEdit: "2024-10-29",
-          FoodCategory: "Seafood",
-          Approved: "Approved",
-          Status: "Active",
-        },
-        {
-          SNo: 30,
-          LastEdit: "2024-10-30",
-          FoodCategory: "Condiments",
-          Approved: "Non approved",
-          Status: "Pending",
-        },
-        {
-          SNo: 31,
-          LastEdit: "2024-10-31",
-          FoodCategory: "Fruits",
-          Approved: "Approved",
-          Status: "Active",
-        },
-        {
-          SNo: 32,
-          LastEdit: "2024-11-01",
-          FoodCategory: "Vegetables",
-          Approved: "Approved",
-          Status: "Active",
-        },
-        {
-          SNo: 33,
-          LastEdit: "2024-11-02",
-          FoodCategory: "Dairy",
-          Approved: "Non approved",
-          Status: "Pending",
-        },
-        {
-          SNo: 34,
-          LastEdit: "2024-11-03",
-          FoodCategory: "Meat",
-          Approved: "Approved",
-          Status: "Inactive",
-        },
-        {
-          SNo: 35,
-          LastEdit: "2024-11-04",
-          FoodCategory: "Grains",
-          Approved: "Non approved",
-          Status: "Pending",
-        },
-        {
-          SNo: 36,
-          LastEdit: "2024-11-05",
-          FoodCategory: "Snacks",
-          Approved: "Approved",
-          Status: "Active",
-        },
-        {
-          SNo: 37,
-          LastEdit: "2024-11-06",
-          FoodCategory: "Beverages",
-          Approved: "Approved",
-          Status: "Active",
-        },
-        {
-          SNo: 38,
-          LastEdit: "2024-11-07",
-          FoodCategory: "Sweets",
-          Approved: "Non approved",
-          Status: "Inactive",
-        },
-        {
-          SNo: 39,
-          LastEdit: "2024-11-08",
-          FoodCategory: "Seafood",
-          Approved: "Approved",
-          Status: "Active",
-        },
-        {
-          SNo: 40,
-          LastEdit: "2024-11-09",
-          FoodCategory: "Condiments",
-          Approved: "Non approved",
-          Status: "Pending",
-        },
-        {
-          SNo: 41,
-          LastEdit: "2024-11-10",
-          FoodCategory: "Fruits",
-          Approved: "Approved",
-          Status: "Active",
-        },
-        {
-          SNo: 42,
-          LastEdit: "2024-11-11",
-          FoodCategory: "Vegetables",
-          Approved: "Approved",
-          Status: "Active",
-        },
-        {
-          SNo: 43,
-          LastEdit: "2024-11-12",
-          FoodCategory: "Dairy",
-          Approved: "Non approved",
-          Status: "Pending",
-        },
-        {
-          SNo: 44,
-          LastEdit: "2024-11-13",
-          FoodCategory: "Meat",
-          Approved: "Approved",
-          Status: "Inactive",
-        },
-        {
-          SNo: 45,
-          LastEdit: "2024-11-14",
-          FoodCategory: "Grains",
-          Approved: "Non approved",
-          Status: "Pending",
-        },
-        {
-          SNo: 46,
-          LastEdit: "2024-11-15",
-          FoodCategory: "Snacks",
-          Approved: "Approved",
-          Status: "Active",
-        },
-        {
-          SNo: 47,
-          LastEdit: "2024-11-16",
-          FoodCategory: "Beverages",
-          Approved: "Approved",
-          Status: "Active",
-        },
-        {
-          SNo: 48,
-          LastEdit: "2024-11-17",
-          FoodCategory: "Sweets",
-          Approved: "Non approved",
-          Status: "Inactive",
-        },
-        {
-          SNo: 49,
-          LastEdit: "2024-11-18",
-          FoodCategory: "Seafood",
-          Approved: "Approved",
-          Status: "Active",
-        },
-        {
-          SNo: 50,
-          LastEdit: "2024-11-19",
-          FoodCategory: "Condiments",
-          Approved: "Non approved",
-          Status: "Pending",
-        },
-        {
-          SNo: 51,
-          LastEdit: "2024-11-20",
-          FoodCategory: "Fruits",
-          Approved: "Approved",
-          Status: "Active",
         },
       ];
 
@@ -455,6 +116,10 @@ const ApproveNonApprove = () => {
           : item
       )
     );
+  };
+
+  const handleEdit = (user) => {
+    navigate("/manage-program/manage/food/add-food", { state: { user } });
   };
 
   return (
@@ -543,6 +208,7 @@ const ApproveNonApprove = () => {
                           <th>S.No</th>
                           <th>Last Edit</th>
                           <th>Food Category</th>
+                          <th>Food Type</th>
                           <th>Approved / Non approved</th>
                           <th>Status</th>
                           <th>Action</th>
@@ -556,6 +222,7 @@ const ApproveNonApprove = () => {
                               {format(new Date(user.LastEdit), "dd-MM-yyyy")}
                             </td>
                             <td>{user.FoodCategory}</td>
+                            <td>{user.FoodType}</td>
                             <td>
                               <span
                                 className={`badge ${
@@ -589,9 +256,12 @@ const ApproveNonApprove = () => {
                                 </button>
                                 {openDropdownIndex === index && (
                                   <div className="dropdown-menu show">
-                                    <Link to="#" className="dropdown-item">
+                                    <button
+                                      className="dropdown-item"
+                                      onClick={() => handleEdit(user)}
+                                    >
                                       <i className="fa fa-edit"></i> Edit
-                                    </Link>
+                                    </button>
                                     <a
                                       className="dropdown-item"
                                       onClick={() => handleDelete(user.SNo)}
@@ -619,8 +289,7 @@ const ApproveNonApprove = () => {
                         {Math.min(
                           (currentPage + 1) * itemsPerPage,
                           filteredData.length
-                        )}{" "}
-                        of {filteredData.length} entries
+                        )} of {filteredData.length} entries
                       </span>
                       <div>
                         <button

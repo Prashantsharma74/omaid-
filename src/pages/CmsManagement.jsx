@@ -18,13 +18,26 @@ const CmsManagement = () => {
   const [errors, setErrors] = useState({ pageName: "", editorContent: "" });
   const [openDropdown, setOpenDropdown] = useState(null);
 
+  // Simulating data fetching (using static data)
   const fetchData = () => {
     setTimeout(() => {
       const users = [
         {
           srNum: 1,
           title: "About us",
-          content: "cfvjknvgbkjbg",
+          content: "This is the content of the About us page.",
+          status: "Active",
+        },
+        {
+          srNum: 2,
+          title: "Privacy Policy",
+          content: "This is the Privacy Policy page content.",
+          status: "Inactive",
+        },
+        {
+          srNum: 3,
+          title: "Terms and Conditions",
+          content: "Here are the terms and conditions.",
           status: "Active",
         },
       ];
@@ -84,6 +97,7 @@ const CmsManagement = () => {
     setCurrentPage(page);
   };
 
+  // Toggle status between Active and Inactive
   const toggleStatus = (srNum) => {
     setTableData((prevData) =>
       prevData.map((item) =>
@@ -97,10 +111,11 @@ const CmsManagement = () => {
     );
   };
 
+  // Filter data based on search term
   const filteredData = tableData.filter(
     (user) =>
       user.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.description.toLowerCase().includes(searchTerm.toLowerCase())
+      user.content.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
@@ -109,6 +124,7 @@ const CmsManagement = () => {
     (currentPage + 1) * itemsPerPage
   );
 
+  // Handle form submission for adding/editing a CMS page
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -144,7 +160,6 @@ const CmsManagement = () => {
                 : item
             )
           );
-          setEditingItem(null);
         } else {
           const newItem = {
             srNum: tableData.length + 1,
@@ -160,13 +175,18 @@ const CmsManagement = () => {
     });
   };
 
+  // Edit CMS page
   const handleEdit = (item) => {
     setEditingItem(item);
     setPageName(item.title);
-    setEditorContent(item.content);
+    setEditorContent(item.content); // Update editorContent state with the content
+    if (editorRef.current) {
+      editorRef.current.setContent(item.content); // Set content in the editor
+    }
     setOpenDropdown(null);
   };
 
+  // Delete CMS page
   const handleDelete = (srNum) => {
     Swal.fire({
       title: "Are you sure?",
@@ -181,7 +201,7 @@ const CmsManagement = () => {
         setTableData((prevData) =>
           prevData.filter((item) => item.srNum !== srNum)
         );
-        Swal.fire("Deleted!", "Your file has been deleted.", "success");
+        Swal.fire("Deleted!", "Your page has been deleted.", "success");
       }
     });
   };
@@ -191,6 +211,9 @@ const CmsManagement = () => {
     setEditorContent("");
     setErrors({ pageName: "", editorContent: "" });
     setEditingItem(null);
+    if (editorRef.current) {
+      editorRef.current.setContent(""); // Clear editor content
+    }
   };
 
   return (
@@ -253,7 +276,8 @@ const CmsManagement = () => {
                           onEditorChange={(content) =>
                             setEditorContent(content)
                           }
-                          onInit={(_evt, editor) =>
+                          value={editorContent} // Controlled editor value
+                          onInit={(evt, editor) =>
                             (editorRef.current = editor)
                           }
                         />
@@ -269,18 +293,7 @@ const CmsManagement = () => {
                         className="btn custom-btn text-white mt-2 w-20pr"
                         type="submit"
                       >
-                        Add Page
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width={25}
-                          height={25}
-                          viewBox="0 0 16 16"
-                        >
-                          <path
-                            fill="#fff"
-                            d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"
-                          ></path>
-                        </svg>
+                        {editingItem ? "Update Page" : "Add Page"}
                       </button>
                     </div>
                   </div>

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-import AddUser from "../components/AddUser";
-import { Link } from "react-router-dom";
 
 const Users = () => {
   const DEFAULT_ITEMS_PER_PAGE = 10;
@@ -11,8 +10,7 @@ const Users = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
   const [openDropdown, setOpenDropdown] = useState(null);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState(null);
+  const navigate = useNavigate(); // Use navigate to go to the AddUser component
 
   const visiblePages = 4;
 
@@ -47,30 +45,37 @@ const Users = () => {
     return buttons;
   };
 
-  const handleEdit = (userId) => {
-    const userToEdit = tableData.find((user) => user.id === userId);
-    setSelectedUser(userToEdit);
-    setIsEditModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsEditModalOpen(false);
-    setSelectedUser(null);
-  };
-
   const fetchData = () => {
     setTimeout(() => {
       const users = [
         {
           id: 1,
           accountId: "U001",
-          username: "john_doe",
+          username: "John Doe",
           email: "john.doe@example.com",
           phone: "123-456-7890",
-          assignedBy: "A",
-          status: "Active",
+          assignSubAdmin: "Sub-Admin 1",
+          dob: "1990-01-01",
+          height: "180",
+          weight: "75",
+          gender: "male",
+          nutrition: "vegan",
+          waterTracking: true,
         },
-        // Add more users as needed for testing
+        {
+          id: 2,
+          accountId: "U002",
+          username: "Jane Smith",
+          email: "jane.smith@example.com",
+          phone: "123-456-7891",
+          assignSubAdmin: "Sub-Admin 2",
+          dob: "1991-02-02",
+          height: "165",
+          weight: "65",
+          gender: "female",
+          nutrition: "non-vegan",
+          waterTracking: false,
+        },
       ];
       setTableData(users);
       setLoading(false);
@@ -95,29 +100,6 @@ const Users = () => {
     setCurrentPage(page);
   };
 
-  const handleToggleStatus = (id) => {
-    setTableData((prevData) =>
-      prevData.map((user) =>
-        user.id === id
-          ? {
-              ...user,
-              status: user.status === "Active" ? "Inactive" : "Active",
-            }
-          : user
-      )
-    );
-  };
-
-  const filteredData = tableData.filter((user) =>
-    user.username.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
-  const paginatedData = filteredData.slice(
-    currentPage * itemsPerPage,
-    (currentPage + 1) * itemsPerPage
-  );
-
   const handleDelete = (id) => {
     Swal.fire({
       title: "Are you sure?",
@@ -135,6 +117,21 @@ const Users = () => {
       }
     });
   };
+
+  const handleEdit = (user) => {
+    // Navigate to AddUser component for editing, passing the user data
+    navigate("/users/edit-user", { state: { user } });
+  };
+
+  const filteredData = tableData.filter((user) =>
+    user.username.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+  const paginatedData = filteredData.slice(
+    currentPage * itemsPerPage,
+    (currentPage + 1) * itemsPerPage
+  );
 
   return (
     <main className="app-content">
@@ -212,7 +209,6 @@ const Users = () => {
                           <th>Email ID</th>
                           <th>Phone Number</th>
                           <th>Sub Admin Name</th>
-                          <th>Status</th>
                           <th>Action</th>
                         </tr>
                       </thead>
@@ -224,26 +220,16 @@ const Users = () => {
                             <td>{user.username}</td>
                             <td>{user.email}</td>
                             <td>{user.phone}</td>
-                            <td>{user.assignedBy}</td>
-                            <td>
-                              <div className="form-check form-switch">
-                                <input
-                                  className="form-check-input"
-                                  type="checkbox"
-                                  role="switch"
-                                  id={`toggle-${user.id}`}
-                                  checked={user.status === "Active"}
-                                  onChange={() => handleToggleStatus(user.id)}
-                                />
-                              </div>
-                            </td>
+                            <td>{user.assignSubAdmin}</td>
                             <td>
                               <div className="dropdown text-center">
                                 <button
                                   className="dropdown-button"
                                   onClick={() =>
                                     setOpenDropdown(
-                                      openDropdown === user.id ? null : user.id
+                                      openDropdown === user.id
+                                        ? null
+                                        : user.id
                                     )
                                   }
                                   aria-haspopup="true"
@@ -259,21 +245,16 @@ const Users = () => {
                                 </button>
                                 {openDropdown === user.id && (
                                   <div className="dropdown-menu show">
-                                    <Link
-                                      to={{
-                                        pathname: "/users/edit-user",
-                                        state: { user: user },
-                                      }}
+                                    <button
                                       className="dropdown-item"
                                       onClick={() => {
-                                        handleEdit(user);
+                                        handleEdit(user); // Trigger edit
                                         setOpenDropdown(null);
                                       }}
                                     >
                                       <i className="fa fa-edit"></i> Edit
-                                    </Link>
-
-                                    <a
+                                    </button>
+                                    <button
                                       className="dropdown-item"
                                       onClick={() => {
                                         handleDelete(user.id);
@@ -281,7 +262,7 @@ const Users = () => {
                                       }}
                                     >
                                       <i className="fa fa-trash"></i> Delete
-                                    </a>
+                                    </button>
                                   </div>
                                 )}
                               </div>
@@ -310,7 +291,6 @@ const Users = () => {
           </div>
         </div>
       </div>
-      {isEditModalOpen && <AddUser user={selectedUser} onClose={closeModal} />}
     </main>
   );
 };

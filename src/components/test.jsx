@@ -1,138 +1,170 @@
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { format } from "date-fns";
+import React, { useState } from "react";
 
-const SubAdmin = () => {
-  const DEFAULT_ITEMS_PER_PAGE = 10;
-  const [itemsPerPage, setItemsPerPage] = useState(DEFAULT_ITEMS_PER_PAGE);
-  const [tableData, setTableData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(0);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [openDropdown, setOpenDropdown] = useState(null);
+const AddFood = () => {
+  const [foodName, setFoodName] = useState("");
+  const [category, setCategory] = useState("");
+  const [foodType, setFoodType] = useState("");
+  const [approvalStatus, setApprovalStatus] = useState("");
 
-  const visiblePages = 4;
-
-  const getPaginationButtons = () => {
-    // ... pagination logic remains unchanged
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // You can add your form submission logic here
+    console.log({
+      foodName,
+      category,
+      foodType,
+      approvalStatus,
+    });
+    // Reset the form
+    setFoodName("");
+    setCategory("");
+    setFoodType("");
+    setApprovalStatus("");
   };
-
-  const fetchData = () => {
-    // ... fetching logic remains unchanged
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const handleItemsPerPageChange = (e) => {
-    // ... handle items per page change logic remains unchanged
-  };
-
-  const handleSearchChange = (e) => {
-    // ... handle search change logic remains unchanged
-  };
-
-  const handlePageChange = (page) => {
-    // ... handle page change logic remains unchanged
-  };
-
-  const handleToggleStatus = (id) => {
-    // ... handle toggle status logic remains unchanged
-  };
-
-  const handleEdit = (id) => {
-    console.log("Edit user with ID:", id);
-    // Implement edit logic, e.g., navigate to edit page
-  };
-
-  const handleDelete = (id) => {
-    console.log("Delete user with ID:", id);
-    // Implement delete logic, e.g., show confirmation dialog and delete user
-  };
-
-  const filteredData = tableData.filter((user) =>
-    user.username.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
-  const paginatedData = filteredData.slice(
-    currentPage * itemsPerPage,
-    (currentPage + 1) * itemsPerPage
-  );
 
   return (
     <main className="app-content">
-      {/* ... UI elements above remain unchanged */}
-      <tbody>
-        {paginatedData.map((user, index) => (
-          <tr key={index}>
-            <td>{index + 1 + currentPage * itemsPerPage}</td>
-            <td>{format(new Date(user.createdAt), "dd MMMM yyyy")}</td>
-            <td>{user.username}</td>
-            <td>{user.email}</td>
-            <td>{user.hospital}</td>
-            <td>{user.location}</td>
-            <td>{user.phone}</td>
-            <td>{user.designation}</td>
-            <td>
-              <div className="form-check form-switch">
-                <input
-                  className="form-check-input"
-                  type="checkbox"
-                  role="switch"
-                  id={`toggle-${user.id}`}
-                  checked={user.status === "Active"}
-                  onChange={() => handleToggleStatus(user.id)}
-                />
+      <div className="app-title tile p-3">
+        <div>
+          <h1>
+            <span className="mr-4 fw-bold">&nbsp;Food Categories</span>
+          </h1>
+        </div>
+      </div>
+      <div className="row justify-content-center">
+        <div className="col-md-10 px-5">
+          <div className="tile">
+            <div
+              className="case-status d-flex justify-content-center"
+              style={{
+                backgroundColor: "#002538",
+                color: "#fff",
+                height: "50px",
+                borderRadius: "10px 10px 0px 0px",
+                textAlign: "center",
+                width: "100%",
+              }}
+            >
+              <h4 className="mt-2">Add Food</h4>
+            </div>
+            <div className="tile-body p-3">
+              <div className="bs-component mb-3">
+                <div className="alert alert-dismissible alert-success" style={{ display: foodName ? "block" : "none" }}>
+                  <button className="btn-close" type="button" data-bs-dismiss="alert"></button>
+                  <strong>Well done!</strong> Food added successfully.
+                </div>
               </div>
-            </td>
-            <td>
-              <div className="dropdown text-center">
-                <button
-                  className="dropdown-button"
-                  onClick={() =>
-                    setOpenDropdown(openDropdown === user.id ? null : user.id)
-                  }
-                  aria-haspopup="true"
-                  aria-expanded={openDropdown === user.id}
-                >
-                  <i
-                    className={`fa fa-ellipsis-v ${
-                      openDropdown === user.id ? "rotate-icon" : ""
-                    }`}
-                  ></i>
-                </button>
-                {openDropdown === user.id && (
-                  <div className="dropdown-menu show">
-                    <a
-                      className="dropdown-item"
-                      onClick={() => {
-                        handleEdit(user.id);
-                        setOpenDropdown(null);
-                      }}
-                    >
-                      <i className="fa fa-edit"></i> Edit
-                    </a>
-                    <a
-                      className="dropdown-item"
-                      onClick={() => {
-                        handleDelete(user.id);
-                        setOpenDropdown(null);
-                      }}
-                    >
-                      <i className="fa fa-trash"></i> Delete
-                    </a>
+              <form onSubmit={handleSubmit}>
+                <div className="row">
+                  <div className="mb-3 col-lg-12">
+                    <label className="form-label" htmlFor="food_name">Food Name</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="food_name"
+                      placeholder="Enter food name"
+                      value={foodName}
+                      onChange={(e) => setFoodName(e.target.value)}
+                    />
                   </div>
-                )}
-              </div>
-            </td>
-          </tr>
-        ))}
-      </tbody>
-      {/* ... pagination logic below remains unchanged */}
+
+                  <div className="mb-3 col-lg-12">
+                    <label className="form-label" htmlFor="category">Category</label>
+                    <div className="d-flex align-items-center">
+                      <select
+                        className="form-select"
+                        id="category"
+                        value={category}
+                        onChange={(e) => setCategory(e.target.value)}
+                      >
+                        <option value="" disabled>Select a category</option>
+                      
+                      </select>
+                      <button
+                        type="button"
+                        className="btn btn-outline-primary ms-2"
+                        data-bs-toggle="modal"
+                        data-bs-target="#addCategoryModal"
+                      >
+                        <i className="fa fa-plus"></i>
+                      </button>
+                    </div>
+                  </div>
+{/* Show afte button click as popup  */}
+		<div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="addCategoryModalLabel">Add New Category</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<div class="mb-3">
+							<label for="newCategory" class="form-label">Category Name</label>
+							<input type="text" class="form-control" id="newCategory" placeholder="Enter new category name"/>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+						<button type="button" class="btn btn-primary" id="saveCategory">Save Category</button>
+					</div>
+				</div>
+			</div>
+		</div>
+    {/* Ends here  */}
+                  <div className="mb-3 col-lg-12">
+                    <label className="form-label" htmlFor="food_type">Food Type</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="food_type"
+                      placeholder="Enter food type"
+                      value={foodType}
+                      onChange={(e) => setFoodType(e.target.value)}
+                    />
+                  </div>
+
+                  <div className="mb-3 col-lg-12" style={{display:"flex",alignItems:"flex-start",flexDirection:"column"}}>
+                    <label className="form-label">Approval Status</label>
+                    <div className="form-check">
+                      <input
+                        className="form-check-input"
+                        type="radio"
+                        name="approvalStatus"
+                        id="approved"
+                        value="Approved"
+                        checked={approvalStatus === "Approved"}
+                        onChange={(e) => setApprovalStatus(e.target.value)}
+                      />
+                      <label className="form-check-label" htmlFor="approved">Approved</label>
+                    </div>
+                    <div className="form-check">
+                      <input
+                        className="form-check-input"
+                        type="radio"
+                        name="approvalStatus"
+                        id="non_approved"
+                        value="Non Approved"
+                        checked={approvalStatus === "Non Approved"}
+                        onChange={(e) => setApprovalStatus(e.target.value)}
+                      />
+                      <label className="form-check-label" htmlFor="non_approved">Non Approved</label>
+                    </div>
+                  </div>
+
+                  <div className="mb-3 col-lg-12 text-center mt-3">
+                    <button className="btn custom-btn text-white w-50" type="submit">
+                      <i className="fa-thin fa-paper-plane"></i> &nbsp; Submit
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
     </main>
   );
 };
 
-export default SubAdmin;
+export default AddFood;

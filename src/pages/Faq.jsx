@@ -113,6 +113,7 @@ const Faq = () => {
         resetForm();
       }
     });
+
   };
 
   const handleEdit = (id) => {
@@ -137,7 +138,8 @@ const Faq = () => {
         Swal.fire("Deleted!", "Your FAQ has been deleted.", "success");
       }
     });
-    setTable
+    setNewQuestion("");
+    setNewAnswer("");
   };
 
   const toggleStatus = (id) => {
@@ -237,6 +239,7 @@ const Faq = () => {
                       }`}
                       rows="3"
                       value={newAnswer}
+                      placeholder="Answer"
                       onChange={(e) => setNewAnswer(e.target.value)}
                     ></textarea>
                     {error.answer && (

@@ -297,15 +297,6 @@ const ManageProgram = () => {
                                       <a
                                         className="dropdown-item"
                                         onClick={() => {
-                                          handleEdit(user.srNum);
-                                          setOpenDropdown(null);
-                                        }}
-                                      >
-                                        <i className="fa fa-edit"></i> Edit
-                                      </a>
-                                      <a
-                                        className="dropdown-item"
-                                        onClick={() => {
                                           handleDelete(user.srNum);
                                           setOpenDropdown(null);
                                         }}

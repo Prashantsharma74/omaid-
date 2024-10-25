@@ -13,8 +13,6 @@ const PushNotification = () => {
   const [errors, setErrors] = useState({ pageName: "" });
   const [notifications, setNotifications] = useState([]);
   const [openDropdown, setOpenDropdown] = useState(null);
-  //   const [isEditing, setIsEditing] = useState(false);
-  // const [editingId, setEditingId] = useState(null);
 
   const visiblePages = 4;
 
@@ -412,6 +410,7 @@ const PushNotification = () => {
                                           handleDeleteNotification(row.srNum);
                                           setOpenDropdown(null);
                                         }}
+                                        style={{cursor:"pointer"}}
                                       >
                                         <i className="fa fa-trash"></i>
                                         Delete

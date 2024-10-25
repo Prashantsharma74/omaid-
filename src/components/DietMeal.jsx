@@ -1,15 +1,32 @@
-import React, { useState } from "react";
+
+// DietMeal Component
+import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
 const DietMeal = () => {
+  const location = useLocation();
+  const dietData = location.state ? location.state.diet : null;
+
   const [formData, setFormData] = useState({
-    week: "",
-    day: "",
-    meal: "",
-    food: "",
+    week: dietData ? dietData.week : "",
+    day: dietData ? dietData.day : "",
+    meal: dietData ? dietData.meal : "",
+    food: dietData ? dietData.food : "",
   });
 
   const [isAlert, setIsAlert] = useState(false);
   const [errors, setErrors] = useState({});
+
+  useEffect(() => {
+    if (dietData) {
+      setFormData({
+        week: dietData.week || "",
+        day: dietData.day || "",
+        meal: dietData.meal || "",
+        food: dietData.food || "",
+      });
+    }
+  }, [dietData]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -37,7 +54,7 @@ const DietMeal = () => {
       setErrors(validationErrors);
       return;
     }
-    
+
     console.log(formData);
     setIsAlert(true);
     // Optionally reset the form after submission
@@ -53,7 +70,7 @@ const DietMeal = () => {
     <main className="app-content">
       <div className="app-title tile p-3">
         <h1>
-          <span className="mr-4 fw-bold">&nbsp; Add Diet Meal Plan</span>
+          <span className="mr-4 fw-bold">&nbsp; {dietData ? "Edit" : "Add"} Diet Meal Plan</span>
         </h1>
       </div>
       <div className="row justify-content-center">
@@ -70,7 +87,7 @@ const DietMeal = () => {
                 width: "100%",
               }}
             >
-              <h4 className="mt-2">Add Food</h4>
+              <h4 className="mt-2">{dietData ? "Edit Food" : "Add Food"}</h4>
             </div>
             <div className="tile-body p-3">
               {isAlert && (
@@ -81,7 +98,7 @@ const DietMeal = () => {
                       type="button"
                       onClick={() => setIsAlert(false)}
                     ></button>
-                    <strong>Well done!</strong> Diet & Meal Plan added successfully.
+                    <strong>Well done!</strong> Diet & Meal Plan {dietData ? "updated" : "added"} successfully.
                   </div>
                 </div>
               )}
