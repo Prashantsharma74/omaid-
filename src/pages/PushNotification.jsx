@@ -269,6 +269,14 @@ const PushNotification = () => {
                         </div>
                       )}
                     </div>
+                    <div className="col-lg-12 mt-2">
+                      <label className="form-label">
+                        To
+                      </label>
+                      <input type="checkbox" placeholder="Sub-Admin"/>
+                      <input type="checkbox" placeholder="Users"/>
+                      <input type="checkbox" placeholder="Both"/>
+                    </div>
                     <div
                       className="col-lg-12 col-sm-12 col-xs-12 col-md-12 mt-2 text-center"
                       style={{
@@ -410,7 +418,7 @@ const PushNotification = () => {
                                           handleDeleteNotification(row.srNum);
                                           setOpenDropdown(null);
                                         }}
-                                        style={{cursor:"pointer"}}
+                                        style={{ cursor: "pointer" }}
                                       >
                                         <i className="fa fa-trash"></i>
                                         Delete

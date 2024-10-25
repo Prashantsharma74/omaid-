@@ -303,7 +303,7 @@ const Faq = () => {
                     />
                   </div>
                 </div>
-                <table className="table table-bordered table-hover dt-responsive">
+                <table className="table mt-2 table-bordered table-hover dt-responsive">
                   <thead>
                     <tr>
                       <th>S.Num</th>

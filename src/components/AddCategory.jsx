@@ -92,7 +92,7 @@ const AddCategory = () => {
                   </div>
                 </div>
                 <div className="form-group mb-0 pb-0">
-                  <label className="form-label">Upload Document</label>
+                  <label className="form-label">Upload Icon</label>
                   <input
                     name="pdf_file[]"
                     type="file"
@@ -103,7 +103,7 @@ const AddCategory = () => {
                     accept=".jpg,.jpeg,.png,.gif,.webp,.pdf"
                   />
                   <small className="form-text text-muted upload-info mt-2 mb-2">
-                    Maximum Document Size : Up to 6MB per upload
+                    Maximum Icon Size : Up to 6MB per upload
                   </small>
                 </div>
 
