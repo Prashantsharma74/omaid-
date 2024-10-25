@@ -1,14 +1,27 @@
 import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom"; // Import useLocation
 import "dropify/dist/css/dropify.css";
 import $ from "jquery";
 import "dropify";
 
-const AddProgram = () => {
+const AddFitzone = () => {
+  const location = useLocation(); // Get location
   const [isAlert, setIsAlert] = useState(false);
+  
+  // Initialize state for input fields
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
 
   useEffect(() => {
     $(".dropify").dropify(); // Initialize dropify on component mount
-  }, []);
+
+    // If there's row data, pre-fill the form
+    if (location.state && location.state.row) {
+      const { name, description } = location.state.row; // Destructure the row data
+      setName(name);
+      setDescription(description);
+    }
+  }, [location.state]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -24,7 +37,7 @@ const AddProgram = () => {
       <div className="app-title tile p-3">
         <div>
           <h1>
-            <span className="mr-4">&nbsp; Add Program</span>
+            <span className="mr-4">&nbsp; Add Fitzone</span>
           </h1>
         </div>
       </div>
@@ -49,29 +62,18 @@ const AddProgram = () => {
                 width: "100%",
               }}
             >
-              <h4 className="mt-2">Add Program</h4>
+              <h4 className="mt-2">Add Fitzone</h4>
             </div>
             <div className="tile-body p-3">
-              {isAlert && (
-                <div className="bs-component mb-3">
-                  <div className="alert alert-dismissible alert-success">
-                    <button
-                      className="btn-close"
-                      type="button"
-                      data-bs-dismiss="alert"
-                      onClick={handleCross}
-                    ></button>
-                    <strong>Well done!</strong> Program added successfully.
-                  </div>
-                </div>
-              )}
               <form onSubmit={handleSubmit}>
                 <div className="mb-3 col-md-6 w-100">
-                  <label className="form-label">Title</label>
+                  <label className="form-label">Name</label>
                   <input
                     className="form-control"
                     type="text"
                     placeholder="Enter Program Title"
+                    value={name} // Bind input value
+                    onChange={(e) => setName(e.target.value)} // Update state on change
                   />
                 </div>
 
@@ -81,6 +83,8 @@ const AddProgram = () => {
                     rows={6}
                     className="form-control"
                     placeholder="Enter Program Description"
+                    value={description} // Bind input value
+                    onChange={(e) => setDescription(e.target.value)} // Update state on change
                   ></textarea>
                 </div>
 
@@ -101,7 +105,7 @@ const AddProgram = () => {
 
                 <div className="mb-3 col-lg-12 text-center mt-3">
                   <button
-                    className="btn custom-btn text-white w-50"
+                    className="btn custom-btn text-white w-25"
                     type="submit"
                   >
                     <i className="fa-thin fa-paper-plane"></i> &nbsp; Submit
@@ -116,4 +120,4 @@ const AddProgram = () => {
   );
 };
 
-export default AddProgram;
+export default AddFitzone;

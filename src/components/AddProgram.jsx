@@ -1,13 +1,19 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import "dropify/dist/css/dropify.css";
+import $ from "jquery";
+import "dropify";
+import { useLocation } from "react-router-dom";
 
 const AddProgram = () => {
+  const location = useLocation();
+  const programData = location.state?.program;
   const [isAlert, setIsAlert] = useState(false);
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    image: "",
-    slot: "",
+    title: programData ? programData.title : "",
+    description: programData ? programData.description : "",
+    image: programData ? programData.image : "",
+    duration: programData ? programData.duration : "",
   });
 
   const handleChange = (e) => {
@@ -16,13 +22,26 @@ const AddProgram = () => {
     setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
   };
 
+  const handleCross = () => {
+    setIsAlert(false);
+  };
+
+  useEffect(() => {
+    $(".dropify").dropify();
+
+    $(".dropify").on("change", function () {
+      const fileName = $(this).val().split("\\").pop();
+      setFormData((prevData) => ({ ...prevData, image: fileName }));
+    });
+  }, []);
+
   const validate = () => {
     const newErrors = {};
     if (!formData.title) newErrors.title = "Title is required.";
     if (!formData.description)
       newErrors.description = "Description is required.";
     if (!formData.image) newErrors.image = "Image is required.";
-    if (!formData.slot) newErrors.slot = "Video Length is required.";
+    if (!formData.duration) newErrors.duration = "Duration is required.";
 
     return newErrors;
   };
@@ -34,12 +53,15 @@ const AddProgram = () => {
       setErrors(newErrors);
       return;
     }
-    console.log(formData);
-    setIsAlert(true);
-  };
 
-  const handleCross = () => {
-    setIsAlert(false);
+    if (programData) {
+      console.log("Updating Program: ", formData);
+    } else {
+      console.log("Adding Program: ", formData);
+      // Call your add API here
+    }
+
+    setIsAlert(true);
   };
 
   return (
@@ -74,7 +96,8 @@ const AddProgram = () => {
                       type="button"
                       onClick={handleCross}
                     ></button>
-                    <strong>Well done!</strong> Program added successfully.
+                    <strong>Well done!</strong> Program{" "}
+                    {programData ? "updated" : "added"} successfully.
                   </div>
                 )}
               </div>
@@ -86,9 +109,9 @@ const AddProgram = () => {
                       className={`form-control ${
                         errors.title ? "is-invalid" : ""
                       }`}
-                      name="name"
+                      name="title"
                       type="text"
-                      placeholder="Enter Name"
+                      placeholder="Enter Title"
                       value={formData.title}
                       onChange={handleChange}
                     />
@@ -103,7 +126,6 @@ const AddProgram = () => {
                         errors.description ? "is-invalid" : ""
                       }`}
                       name="description"
-                      type="text"
                       rows="6"
                       placeholder="Enter description"
                       value={formData.description}
@@ -116,73 +138,49 @@ const AddProgram = () => {
                     )}
                   </div>
                   <div className="form-group mb-0 pb-0">
-                    <label htmlFor="pdf_file" className="form-label">
-                      Upload Document
-                    </label>
-                    <div
-                      className="dropify-wrapper"
-                      style={{ height: "110px" }}
-                    >
-                      <div className="dropify-message">
-                        <span className="file-icon"></span>
-                        <p>Drag Or Upload Your Document Here</p>
-                      </div>
-                      <div className="dropify-loader"></div>
-                      <div className="dropify-errors-container">
-                        <ul></ul>
-                      </div>
-                      <input
-                        name="pdf_file[]"
-                        id="pdf_file"
-                        type="file"
-                        className={`form-control dropify ${
-                          errors.file ? "is-invalid" : ""
-                        }`}
-                        data-height="100"
-                        required
-                        multiple
-                        // onChange={handleFileChange}
-                        accept=".jpg,.jpeg,.png,.svg,.webp"
-                      />
-                      <button
-                        type="button"
-                        className="dropify-clear"
-                        style={{ display: "none" }}
-                      >
-                        Remove
-                      </button>
-                      <div className="dropify-preview">
-                        <span className="dropify-render"></span>
-                        <div className="dropify-infos">
-                          <div className="dropify-infos-inner">
-                            <p className="dropify-filename">
-                              <span className="file-icon"></span>
-                              <span className="dropify-filename-inner"></span>
-                            </p>
-                            <p className="dropify-infos-message">
-                              Drag and drop or click to replace
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    {errors.file && (
-                      <div className="invalid-feedback">{errors.file}</div>
+                    <label className="form-label">Upload Image</label>
+                    <input
+                      type="file"
+                      className="dropify"
+                      data-height="100"
+                      required
+                      multiple
+                      accept=".jpg,.jpeg,.png,.gif,.webp,.pdf"
+                    />
+                    {errors.image && (
+                      <div className="invalid-feedback">{errors.image}</div>
                     )}
                     <small className="form-text text-muted upload-info mt-2 mb-2">
-                      Maximum Document Size: Up to 6MB per upload
+                      Maximum Image Size: Up to 6MB per upload
                     </small>
                   </div>
-                  <div className="mb-3 col-md-12">
+                  <div
+                    className="mb-3 col-md-12"
+                    style={{
+                      display: "flex",
+                      alignItems: "flex-start",
+                      flexDirection: "column",
+                    }}
+                  >
                     <label className="form-label">Duration</label>
-
-                    {errors.phone && (
-                      <div className="invalid-feedback">{errors.phone}</div>
+                    <input
+                      className={`form-control ${
+                        errors.duration ? "is-invalid" : ""
+                      }`}
+                      name="duration"
+                      type="text"
+                      placeholder="Enter Duration"
+                      value={formData.duration}
+                      onChange={handleChange}
+                      min="0" // Ensure duration can't be negative
+                    />
+                    {errors.duration && (
+                      <div className="invalid-feedback">{errors.duration}</div>
                     )}
                   </div>
                   <div className="mb-3 col-lg-12 text-center">
                     <button
-                      className="btn custom-btn text-white w-50"
+                      className="btn custom-btn text-white w-25"
                       type="submit"
                     >
                       <i className="fa-thin fa-paper-plane"></i> &nbsp; Submit

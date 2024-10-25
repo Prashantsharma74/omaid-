@@ -5,6 +5,7 @@ import { useLocation } from "react-router-dom";
 const AddUser = () => {
   const location = useLocation();
   const [isEditMode, setIsEditMode] = useState(false);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     userId: "",
@@ -23,8 +24,6 @@ const AddUser = () => {
   useEffect(() => {
     if (location.state?.user) {
       const user = location.state.user;
-      console.log("User data received:", user);
-
       setFormData({
         name: user.username || "",
         userId: user.accountId || "",
@@ -35,7 +34,7 @@ const AddUser = () => {
         height: user.height || "",
         weight: user.weight || "",
         gender: user.gender || "",
-        password: user.password ||  "",  
+        password: user.password || "",
         nutrition: user.nutrition || "",
         waterTracking: user.waterTracking || false,
       });
@@ -49,6 +48,10 @@ const AddUser = () => {
   const handleChange = (e) => {
     const { id, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [id]: value }));
+  };
+
+  const handlePasswordVisibility = () => {
+    setIsPasswordVisible((prev) => !prev);
   };
 
   // Handle form submission for both creation and update
@@ -159,10 +162,13 @@ const AddUser = () => {
                     <input
                       className="form-control"
                       id="phone"
-                      type="text"
+                      type="tel"
                       placeholder="Enter Phone Number"
                       value={formData.phone}
                       onChange={handleChange}
+                      pattern="[0-9]*"
+                      minLength="10"
+                      maxLength="15"
                     />
                   </div>
                   <div className="mb-3 col-md-6">
@@ -197,6 +203,9 @@ const AddUser = () => {
                       placeholder="Enter Height in cm"
                       value={formData.height}
                       onChange={handleChange}
+                      min="0"
+                      max="300"
+                      step="1"
                     />
                   </div>
                   <div className="mb-3 col-md-6">
@@ -208,6 +217,9 @@ const AddUser = () => {
                       placeholder="Enter Weight in kg"
                       value={formData.weight}
                       onChange={handleChange}
+                      min="0"
+                      max="500"
+                      step="0.1"
                     />
                   </div>
                   <div className="mb-3 col-md-6">
@@ -226,21 +238,45 @@ const AddUser = () => {
                   </div>
                   <div className="mb-3 col-md-6">
                     <label className="form-label">Password</label>
-                    <input
-                      className="form-control"
-                      id="password"
-                      type="password"
-                      placeholder="Enter Password"
-                      value={formData.password}
-                      onChange={handleChange}
-                      disabled={isEditMode} // Password is disabled in edit mode
-                    />
+                    <div className="input-group">
+                      <input
+                        className="form-control"
+                        id="password"
+                        type={isPasswordVisible ? "text" : "password"}
+                        placeholder="Enter Password"
+                        value={formData.password}
+                        onChange={handleChange}
+                        disabled={isEditMode}
+                        minLength={8}
+                      />
+                      <button
+                        style={{
+                          border: "none",
+                          color: "#002538",
+                        }}
+                        type="button"
+                        className="toggle-password"
+                        onClick={handlePasswordVisibility}
+                        aria-label={
+                          isPasswordVisible ? "Hide password" : "Show password"
+                        }
+                      >
+                        <i
+                          className={
+                            isPasswordVisible
+                              ? "fa-solid fa-eye-slash eye"
+                              : "fa-solid fa-eye eye"
+                          }
+                        ></i>
+                      </button>
+                    </div>
                   </div>
                   <div className="mb-3 col-lg-12 text-center">
                     <button
-                      className="btn custom-btn text-white w-50"
+                      className="btn custom-btn text-white w-25"
                       type="submit"
                     >
+                      <i className="fa-thin fa-paper-plane"></i> &nbsp;
                       {isEditMode ? "Update User" : "Submit"}
                     </button>
                   </div>

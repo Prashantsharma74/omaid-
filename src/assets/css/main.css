@@ -4181,14 +4181,15 @@ fieldset:disabled .btn {
 }
 .dropdown-item:hover,
 .dropdown-item:focus {
-  color: var(--bs-dropdown-link-hover-color);
-  background-color: var(--bs-dropdown-link-hover-bg);
+  color: var(--bs-dropdown-link-active-color);
+  text-decoration: none;
+  background-color: #002538;
 }
 .dropdown-item.active,
 .dropdown-item:active {
   color: var(--bs-dropdown-link-active-color);
   text-decoration: none;
-  background-color: var(--bs-dropdown-link-active-bg);
+  background-color: black;
 }
 .dropdown-item.disabled,
 .dropdown-item:disabled {
@@ -4199,6 +4200,7 @@ fieldset:disabled .btn {
 
 .dropdown-menu.show {
   display: block;
+  right: 5px;
 }
 
 .dropdown-header {

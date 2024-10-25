@@ -2,13 +2,33 @@ import React, { useEffect, useState } from "react";
 import "dropify/dist/css/dropify.css";
 import $ from "jquery";
 import "dropify";
+import { useLocation } from "react-router-dom";
 
 const AddCategory = () => {
   const [isAlert, setIsAlert] = useState(false);
+  const [formData,setFormData] = useState({
+    title:"",
+    duration:""
+  })
+  const [errors, setErrors] = useState({});
+  const location = useLocation();
+  const [isEditMode, setIsEditMode] = useState(false);
 
   useEffect(() => {
     $(".dropify").dropify();
   }, []);
+
+  useEffect(() => {
+    if (location.state?.row) {
+      setFormData({
+        name: location.state.user.row,
+        email: location.state.user.email,
+      });
+      console.log(formData);
+
+      setIsEditMode(true);
+    }
+  }, [location.state]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -52,26 +72,12 @@ const AddCategory = () => {
               <h4 className="mt-2">Add Category</h4>
             </div>
             <div className="tile-body p-3">
-              {isAlert && (
-                <div className="bs-component mb-3">
-                  <div className="alert alert-dismissible alert-success">
-                    <button
-                      className="btn-close"
-                      type="button"
-                      data-bs-dismiss="alert"
-                      onClick={handleCross}
-                    ></button>
-                    <strong>Well done!</strong> Category added successfully.
-                  </div>
-                </div>
-              )}
               <form onSubmit={handleSubmit}>
                 <div className="mb-3 col-lg-12 col-sm-12 col-xs-12 col-md-12">
                   <h5 className="mt-3 mb-3">
                     <strong>Add Category</strong>
                   </h5>
                 </div>
-
                 <div>
                   <div className="mb-3 col-md-6 col-sm-12 col-xs-12 col-lg-6 w-100">
                     <label className="form-label">Title</label>
@@ -81,7 +87,6 @@ const AddCategory = () => {
                       placeholder="Enter Title Here"
                     />
                   </div>
-
                   <div className="mb-3 col-md-6 col-sm-12 col-xs-12 col-lg-6 w-100">
                     <label className="form-label">Description</label>
                     <textarea

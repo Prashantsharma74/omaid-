@@ -28,6 +28,12 @@ import Diet from "./components/Diet";
 import AddFood from "./components/AddFood";
 import DietMeal from "./components/DietMeal";
 import AddUser from "./components/AddUser";
+import ManageFitzone from "./components/ManageFitzone";
+import EditFitIntro from "./components/EditFitIntro";
+import FitzoneCategory from "./components/FitzoneCategory";
+import FitzoneSession from "./components/FitzoneSession";
+import AddFitezoneCategory from "./components/AddFitezoneCategory";
+import AddFitzoneSession from "./components/AddFitzoneSession";
 
 function App() {
   return (
@@ -65,6 +71,27 @@ function App() {
           />
           <Route path="/fitzone-manage" element={<FitzoneManagement />} />
           <Route path="/fitzone-manage/add-fitzone" element={<AddFitzone />} />
+          <Route path="/fitzone-manage/manage" element={<ManageFitzone />} />
+          <Route
+            path="/fitzone-manage/manage/edit-intro"
+            element={<EditFitIntro />}
+          />
+          <Route
+            path="/fitzone-manage/manage/category"
+            element={<FitzoneCategory />}
+          />
+          <Route
+            path="/fitzone-program/manage/catgory/add-category"
+            element={<AddFitezoneCategory />}
+          />
+          <Route
+            path="/fitzone-program/manage/catgory/add-session"
+            element={<AddFitzoneSession />}
+          />
+          <Route
+            path="/fitzone-manage/manage/session"
+            element={<FitzoneSession />}
+          />
           <Route path="/cms-manage" element={<CmsManagement />} />
           <Route path="/faq" element={<Faq />} />
           <Route path="/account-settings" element={<AccountSettings />} />

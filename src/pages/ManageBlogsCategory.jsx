@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
 const ManageBlogsCategory = () => {
@@ -10,6 +10,7 @@ const ManageBlogsCategory = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const [openDropdown, setOpenDropdown] = useState(null);
+  const navigate = useNavigate();
 
   const visiblePages = 4;
 
@@ -53,12 +54,6 @@ const ManageBlogsCategory = () => {
           description: "Description 1",
           status: "Active",
         },
-        {
-          srNum: 2,
-          title: "Title 2",
-          description: "Description 2",
-          status: "Inactive",
-        }
       ];
       setTableData(users);
       setLoading(false);
@@ -129,6 +124,10 @@ const ManageBlogsCategory = () => {
     currentPage * itemsPerPage,
     (currentPage + 1) * itemsPerPage
   );
+
+  const handleEdit = (row) => {
+    navigate("/blog/manage-category/add-category", { state: row });
+  };
 
   return (
     <main className="app-content">
@@ -245,7 +244,9 @@ const ManageBlogsCategory = () => {
                                   className="dropdown-button"
                                   onClick={() =>
                                     setOpenDropdown(
-                                      openDropdown === row.srNum ? null : row.srNum
+                                      openDropdown === row.srNum
+                                        ? null
+                                        : row.srNum
                                     )
                                   }
                                   aria-haspopup="true"
@@ -264,7 +265,7 @@ const ManageBlogsCategory = () => {
                                     <a
                                       className="dropdown-item"
                                       onClick={() => {
-                                        handleEdit(row.srNum);
+                                        handleEdit(row);
                                         setOpenDropdown(null);
                                       }}
                                     >

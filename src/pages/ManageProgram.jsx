@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
 const ManageProgram = () => {
@@ -10,6 +10,7 @@ const ManageProgram = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
   const [openDropdown, setOpenDropdown] = useState(null);
+  const navigate = useNavigate();
 
   const visiblePages = 4;
 
@@ -47,47 +48,88 @@ const ManageProgram = () => {
   const fetchData = () => {
     setTimeout(() => {
       const users = [
-        { srNum: 1, title: "Title 1", status: "Active" },
-        { srNum: 2, title: "Title 2", status: "Inactive" },
-        { srNum: 3, title: "Title 3", status: "Active" },
-        { srNum: 4, title: "Title 4", status: "Inactive" },
-        { srNum: 5, title: "Title 5", status: "Active" },
-        { srNum: 6, title: "Title 6", status: "Inactive" },
-        { srNum: 7, title: "Title 7", status: "Active" },
-        { srNum: 8, title: "Title 8", status: "Inactive" },
-        { srNum: 9, title: "Title 9", status: "Active" },
-        { srNum: 10, title: "Title 10", status: "Inactive" },
-        { srNum: 11, title: "Title 11", status: "Active" },
-        { srNum: 12, title: "Title 12", status: "Inactive" },
-        { srNum: 13, title: "Title 13", status: "Active" },
-        { srNum: 14, title: "Title 14", status: "Inactive" },
-        { srNum: 15, title: "Title 15", status: "Active" },
-        { srNum: 16, title: "Title 16", status: "Inactive" },
-        { srNum: 17, title: "Title 17", status: "Active" },
-        { srNum: 18, title: "Title 18", status: "Inactive" },
-        { srNum: 19, title: "Title 19", status: "Active" },
-        { srNum: 20, title: "Title 20", status: "Inactive" },
-        { srNum: 21, title: "Title 21", status: "Active" },
-        { srNum: 22, title: "Title 22", status: "Inactive" },
-        { srNum: 23, title: "Title 23", status: "Active" },
-        { srNum: 24, title: "Title 24", status: "Inactive" },
-        { srNum: 25, title: "Title 25", status: "Active" },
-        { srNum: 26, title: "Title 26", status: "Inactive" },
-        { srNum: 27, title: "Title 27", status: "Active" },
-        { srNum: 28, title: "Title 28", status: "Inactive" },
-        { srNum: 29, title: "Title 29", status: "Active" },
-        { srNum: 30, title: "Title 30", status: "Inactive" },
-        { srNum: 31, title: "Title 31", status: "Active" },
-        { srNum: 32, title: "Title 32", status: "Inactive" },
-        { srNum: 33, title: "Title 33", status: "Active" },
-        { srNum: 34, title: "Title 34", status: "Inactive" },
-        { srNum: 35, title: "Title 35", status: "Active" },
-        { srNum: 36, title: "Title 36", status: "Inactive" },
-        { srNum: 37, title: "Title 37", status: "Active" },
-        { srNum: 38, title: "Title 38", status: "Inactive" },
-        { srNum: 39, title: "Title 39", status: "Active" },
-        { srNum: 40, title: "Title 40", status: "Inactive" }
+        {
+          srNum: 1,
+          title: "Title 1",
+          description: "Description for Title 1",
+          image: "https://images.unsplash.com/photo-1576158113928-4c240eaaf360?w=500&auto=format&fit=crop&q=60",
+          duration: "2 hours",
+          status: "Active",
+        },
+        {
+          srNum: 2,
+          title: "Title 2",
+          description: "Description for Title 2",
+          image: "https://images.unsplash.com/photo-1576158113928-4c240eaaf360?w=500&auto=format&fit=crop&q=60",
+          duration: "3 hours",
+          status: "Inactive",
+        },
+        {
+          srNum: 3,
+          title: "Title 3",
+          description: "Description for Title 3",
+          image: "https://images.unsplash.com/photo-1576158113928-4c240eaaf360?w=500&auto=format&fit=crop&q=60",
+          duration: "1.5 hours",
+          status: "Active",
+        },
+        {
+          srNum: 4,
+          title: "Title 4",
+          description: "Description for Title 4",
+          image: "https://images.unsplash.com/photo-1576158113928-4c240eaaf360?w=500&auto=format&fit=crop&q=60",
+          duration: "4 hours",
+          status: "Inactive",
+        },
+        {
+          srNum: 5,
+          title: "Title 5",
+          description: "Description for Title 5",
+          image: "https://images.unsplash.com/photo-1576158113928-4c240eaaf360?w=500&auto=format&fit=crop&q=60",
+          duration: "5 hours",
+          status: "Active",
+        },
+        {
+          srNum: 6,
+          title: "Title 6",
+          description: "Description for Title 6",
+          image: "https://images.unsplash.com/photo-1576158113928-4c240eaaf360?w=500&auto=format&fit=crop&q=60",
+          duration: "30 minutes",
+          status: "Inactive",
+        },
+        {
+          srNum: 7,
+          title: "Title 7",
+          description: "Description for Title 7",
+          image: "https://images.unsplash.com/photo-1576158113928-4c240eaaf360?w=500&auto=format&fit=crop&q=60",
+          duration: "2 hours",
+          status: "Active",
+        },
+        {
+          srNum: 8,
+          title: "Title 8",
+          description: "Description for Title 8",
+          image: "https://images.unsplash.com/photo-1576158113928-4c240eaaf360?w=500&auto=format&fit=crop&q=60",
+          duration: "1 hour",
+          status: "Inactive",
+        },
+        {
+          srNum: 9,
+          title: "Title 9",
+          description: "Description for Title 9",
+          image: "https://images.unsplash.com/photo-1576158113928-4c240eaaf360?w=500&auto=format&fit=crop&q=60",
+          duration: "3 hours",
+          status: "Active",
+        },
+        {
+          srNum: 10,
+          title: "Title 10",
+          description: "Description for Title 10",
+          image: "https://images.unsplash.com/photo-1576158113928-4c240eaaf360?w=500&auto=format&fit=crop&q=60",
+          duration: "4.5 hours",
+          status: "Inactive",
+        },
       ];
+      
       setTableData(users);
       setLoading(false);
     }, 1000);
@@ -99,21 +141,23 @@ const ManageProgram = () => {
 
   const handleDelete = (srNum) => {
     Swal.fire({
-      title: 'Are you sure?',
-      text: 'You will not be able to recover this program!',
-      icon: 'warning',
+      title: "Are you sure?",
+      text: "You will not be able to recover this program!",
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
-      confirmButtonText: 'Yes, delete it!',
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
     }).then((result) => {
       if (result.isConfirmed) {
-        setTableData((prevData) => prevData.filter((item) => item.srNum !== srNum));
-        Swal.fire('Deleted!', 'Your program has been deleted.', 'success');
+        setTableData((prevData) =>
+          prevData.filter((item) => item.srNum !== srNum)
+        );
+        Swal.fire("Deleted!", "Your program has been deleted.", "success");
       }
     });
   };
-  
+
   const handleItemsPerPageChange = (e) => {
     setItemsPerPage(Number(e.target.value));
     setCurrentPage(0);
@@ -150,6 +194,10 @@ const ManageProgram = () => {
     currentPage * itemsPerPage,
     (currentPage + 1) * itemsPerPage
   );
+
+  const handleEdit = (user) => {
+    navigate("/manage-program/add-program", { state: { program: user } });
+  };
 
   return (
     <main className="app-content">
@@ -235,7 +283,7 @@ const ManageProgram = () => {
                       <thead>
                         <tr>
                           <th>S.No</th>
-                          <th>Program Title</th>
+                          <th>Program</th>
                           <th>Status</th>
                           <th>Manage</th>
                           <th>Action</th>
@@ -265,7 +313,10 @@ const ManageProgram = () => {
                                 </div>
                               </td>
                               <td>
-                                <Link className="btn ctb" to="/manage-program/manage">
+                                <Link
+                                  className="btn ctb"
+                                  to="/manage-program/manage"
+                                >
                                   <i className="fa-sharp fa-light fa-pen mx-1"></i>{" "}
                                   Manage
                                 </Link>
@@ -294,6 +345,15 @@ const ManageProgram = () => {
                                   </button>
                                   {openDropdown === user.srNum && (
                                     <div className="dropdown-menu show">
+                                      <a
+                                        className="dropdown-item"
+                                        onClick={() => {
+                                          handleEdit(user);
+                                          setOpenDropdown(null);
+                                        }}
+                                      >
+                                        <i className="fa fa-edit"></i> Edit
+                                      </a>
                                       <a
                                         className="dropdown-item"
                                         onClick={() => {

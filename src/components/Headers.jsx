@@ -7,29 +7,29 @@ import BlogDropDown from "./BlogDropDown";
 const Headers = ({ isSideBarOpen, setIsSideBarOpen }) => {
   useEffect(() => {
     const treeviewMenu = $(".app-menu");
-  
+
     // Handle click event for treeview toggles
     $("[data-toggle='treeview']").click(function (event) {
       event.preventDefault();
       const $parent = $(this).parent();
-  
+
       // Close all expanded treeviews except the one being clicked
       treeviewMenu.find(".is-expanded").not($parent).removeClass("is-expanded");
-  
+
       // Toggle the current treeview
       $parent.toggleClass("is-expanded");
     });
-  
+
     const currentUrl = window.location.href;
     let isAnyExpanded = false;
-  
+
     // Expand the parent if the current URL matches any link
     $(".app-menu a").each(function () {
       if (this.href === currentUrl) {
         $(this).parent().parent().prev().click();
       }
     });
-  
+
     $(".treeview-menu a").each(function () {
       if (this.href === currentUrl) {
         $(this).parent().parent().prev().click();
@@ -37,34 +37,35 @@ const Headers = ({ isSideBarOpen, setIsSideBarOpen }) => {
         isAnyExpanded = true;
       }
     });
-  
+
     if (isAnyExpanded) {
-      treeviewMenu.find("[data-toggle='treeview']").parent().addClass("is-expanded");
+      treeviewMenu
+        .find("[data-toggle='treeview']")
+        .parent()
+        .addClass("is-expanded");
     }
-  
+
     // Handle sidebar toggle
     $('[data-toggle="sidebar"]').click(function (event) {
       event.preventDefault();
       $(".app").toggleClass("sidenav-toggled");
     });
-  
+
     // Cleanup function
     return () => {
       // Safely remove click event handlers if the elements exist
       if ($("[data-toggle='treeview']").length) {
         $("[data-toggle='treeview']").off("click");
       }
-  
+
       if ($('[data-toggle="sidebar"]').length) {
         $('[data-toggle="sidebar"]').off("click");
       }
     };
   }, []);
-  
-  
 
   const handleToggle = () => {
-    setIsSideBarOpen(prev => !prev);
+    setIsSideBarOpen((prev) => !prev);
   };
 
   return (
@@ -210,6 +211,15 @@ const Headers = ({ isSideBarOpen, setIsSideBarOpen }) => {
             </NavLink>
           </li>
           <li>
+            <NavLink className="app-menu__item" to="/notification">
+              <i
+                className="fa-sharp mx-3 fa-light fa-bell app-menu__icon"
+                style={{ fontWeight: "700" }}
+              ></i>
+              <span className="app-menu__label">Notification Manage</span>
+            </NavLink>
+          </li>
+          <li>
             <NavLink className="app-menu__item" to="/faq">
               <i
                 className="app-menu__icon mx-3 fa-regular fa-circle-info"
@@ -225,15 +235,6 @@ const Headers = ({ isSideBarOpen, setIsSideBarOpen }) => {
                 style={{ fontWeight: "700" }}
               ></i>
               <span className="app-menu__label">Account Settings</span>
-            </NavLink>
-          </li>
-          <li>
-            <NavLink className="app-menu__item" to="/notification">
-              <i
-                className="fa-sharp mx-3 fa-light fa-bell app-menu__icon"
-                style={{ fontWeight: "700" }}
-              ></i>
-              <span className="app-menu__label">Notification Manage</span>
             </NavLink>
           </li>
           <li>

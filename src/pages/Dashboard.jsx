@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import dashSide from "../assets/images/dash.jpg";
+import dashSide from "../assets/images/dash.gif";
 
 const Dashboard = () => {
   const [time, setTime] = useState(new Date());
@@ -155,11 +155,16 @@ const Dashboard = () => {
                   </div>
                 </div>
                 <div className="col-lg-12 p-3">
-                  <h2>Welcome</h2>
+                  <h2>
+                    Welcome{" "}
+                    <strong style={{ color: "#002538", fontWeight: "900" }}>
+                      Omaid
+                    </strong>{" "}
+                  </h2>
                   <h6>
-                    Welcome to our Dashboard. Get to know our development tools
-                    by following these onboarding steps, or just feel free to
-                    dive right in!
+                    Welcome to our Dashboard strong. Get to know our development
+                    tools by following these onboarding steps, or just feel free
+                    to dive right in!
                   </h6>
                 </div>
               </div>

@@ -409,14 +409,13 @@ td.dt-type-date {
 
 @media (max-width: 768px) {
   .dropdown {
-      width: 100%;
-  }
-  
-  .dropdown-menu {
-      width: auto;
-      right: 0;
+    width: 100%;
   }
 
+  .dropdown-menu {
+    width: auto;
+    right: 0;
+  }
 }
 
 .modal-overlay {
@@ -495,4 +494,12 @@ span.badge.badge-warning {
   background: radial-gradient(#c54e3b, #93270d);
   font-size: 15px;
   font-weight: 600;
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  cursor: pointer;
 }
