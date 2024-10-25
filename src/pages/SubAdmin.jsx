@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import Swal from "sweetalert2";
@@ -13,6 +13,7 @@ const SubAdmin = () => {
   const [openDropdown, setOpenDropdown] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
   const navigate = useNavigate();
+  const dropdownRef = useRef(null);
 
   const visiblePages = 4;
 
@@ -50,27 +51,227 @@ const SubAdmin = () => {
   const fetchData = () => {
     setTimeout(() => {
       const users = [
-        { srNum: 1, createdAt: "2023-01-01", username: "John Doe", email: "john.doe@example.com", hospital: "Hospital A", location: "Location A", phone: "123-456-7801", designation: "Doctor", password: "password123" },
-        { srNum: 2, createdAt: "2023-01-02", username: "Jane Smith", email: "jane.smith@example.com", hospital: "Hospital B", location: "Location B", phone: "123-456-7802", designation: "Nurse", password: "password123" },
-        { srNum: 3, createdAt: "2023-01-03", username: "Michael Johnson", email: "michael.johnson@example.com", hospital: "Hospital C", location: "Location C", phone: "123-456-7803", designation: "Surgeon", password: "password123" },
-        { srNum: 4, createdAt: "2023-01-04", username: "Emily Davis", email: "emily.davis@example.com", hospital: "Hospital D", location: "Location D", phone: "123-456-7804", designation: "Technician", password: "password123" },
-        { srNum: 5, createdAt: "2023-01-05", username: "James Brown", email: "james.brown@example.com", hospital: "Hospital E", location: "Location E", phone: "123-456-7805", designation: "Admin", password: "password123" },
-        { srNum: 6, createdAt: "2023-01-06", username: "Patricia Taylor", email: "patricia.taylor@example.com", hospital: "Hospital F", location: "Location F", phone: "123-456-7806", designation: "Doctor", password: "password123" },
-        { srNum: 7, createdAt: "2023-01-07", username: "Robert Wilson", email: "robert.wilson@example.com", hospital: "Hospital G", location: "Location G", phone: "123-456-7807", designation: "Nurse", password: "password123" },
-        { srNum: 8, createdAt: "2023-01-08", username: "Linda Martinez", email: "linda.martinez@example.com", hospital: "Hospital H", location: "Location H", phone: "123-456-7808", designation: "Surgeon", password: "password123" },
-        { srNum: 9, createdAt: "2023-01-09", username: "David Anderson", email: "david.anderson@example.com", hospital: "Hospital I", location: "Location I", phone: "123-456-7809", designation: "Technician", password: "password123" },
-        { srNum: 10, createdAt: "2023-01-10", username: "Susan Thomas", email: "susan.thomas@example.com", hospital: "Hospital J", location: "Location J", phone: "123-456-7810", designation: "Admin", password: "password123" },
-        { srNum: 11, createdAt: "2023-01-11", username: "Daniel Jackson", email: "daniel.jackson@example.com", hospital: "Hospital A", location: "Location A", phone: "123-456-7811", designation: "Doctor", password: "password123" },
-        { srNum: 12, createdAt: "2023-01-12", username: "Jessica White", email: "jessica.white@example.com", hospital: "Hospital B", location: "Location B", phone: "123-456-7812", designation: "Nurse", password: "password123" },
-        { srNum: 13, createdAt: "2023-01-13", username: "William Harris", email: "william.harris@example.com", hospital: "Hospital C", location: "Location C", phone: "123-456-7813", designation: "Surgeon", password: "password123" },
-        { srNum: 14, createdAt: "2023-01-14", username: "Sarah Martin", email: "sarah.martin@example.com", hospital: "Hospital D", location: "Location D", phone: "123-456-7814", designation: "Technician", password: "password123" },
-        { srNum: 15, createdAt: "2023-01-15", username: "Charles Thompson", email: "charles.thompson@example.com", hospital: "Hospital E", location: "Location E", phone: "123-456-7815", designation: "Admin", password: "password123" },
-        { srNum: 16, createdAt: "2023-01-16", username: "Barbara Garcia", email: "barbara.garcia@example.com", hospital: "Hospital F", location: "Location F", phone: "123-456-7816", designation: "Doctor", password: "password123" },
-        { srNum: 17, createdAt: "2023-01-17", username: "Matthew Martinez", email: "matthew.martinez@example.com", hospital: "Hospital G", location: "Location G", phone: "123-456-7817", designation: "Nurse", password: "password123" },
-        { srNum: 18, createdAt: "2023-01-18", username: "Elizabeth Rodriguez", email: "elizabeth.rodriguez@example.com", hospital: "Hospital H", location: "Location H", phone: "123-456-7818", designation: "Surgeon", password: "password123" },
-        { srNum: 19, createdAt: "2023-01-19", username: "Christopher Lewis", email: "christopher.lewis@example.com", hospital: "Hospital I", location: "Location I", phone: "123-456-7819", designation: "Technician", password: "password123" },
-        { srNum: 20, createdAt: "2023-01-20", username: "Jessica Lee", email: "jessica.lee@example.com", hospital: "Hospital J", location: "Location J", phone: "123-456-7820", designation: "Admin", password: "password123" },
-    ];
+        {
+          srNum: 1,
+          createdAt: "2023-01-01",
+          username: "John Doe",
+          email: "john.doe@example.com",
+          hospital: "Hospital A",
+          location: "Location A",
+          phone: "123-456-7801",
+          designation: "Doctor",
+          password: "password123",
+        },
+        {
+          srNum: 2,
+          createdAt: "2023-01-02",
+          username: "Jane Smith",
+          email: "jane.smith@example.com",
+          hospital: "Hospital B",
+          location: "Location B",
+          phone: "123-456-7802",
+          designation: "Nurse",
+          password: "password123",
+        },
+        {
+          srNum: 3,
+          createdAt: "2023-01-03",
+          username: "Michael Johnson",
+          email: "michael.johnson@example.com",
+          hospital: "Hospital C",
+          location: "Location C",
+          phone: "123-456-7803",
+          designation: "Surgeon",
+          password: "password123",
+        },
+        {
+          srNum: 4,
+          createdAt: "2023-01-04",
+          username: "Emily Davis",
+          email: "emily.davis@example.com",
+          hospital: "Hospital D",
+          location: "Location D",
+          phone: "123-456-7804",
+          designation: "Technician",
+          password: "password123",
+        },
+        {
+          srNum: 5,
+          createdAt: "2023-01-05",
+          username: "James Brown",
+          email: "james.brown@example.com",
+          hospital: "Hospital E",
+          location: "Location E",
+          phone: "123-456-7805",
+          designation: "Admin",
+          password: "password123",
+        },
+        {
+          srNum: 6,
+          createdAt: "2023-01-06",
+          username: "Patricia Taylor",
+          email: "patricia.taylor@example.com",
+          hospital: "Hospital F",
+          location: "Location F",
+          phone: "123-456-7806",
+          designation: "Doctor",
+          password: "password123",
+        },
+        {
+          srNum: 7,
+          createdAt: "2023-01-07",
+          username: "Robert Wilson",
+          email: "robert.wilson@example.com",
+          hospital: "Hospital G",
+          location: "Location G",
+          phone: "123-456-7807",
+          designation: "Nurse",
+          password: "password123",
+        },
+        {
+          srNum: 8,
+          createdAt: "2023-01-08",
+          username: "Linda Martinez",
+          email: "linda.martinez@example.com",
+          hospital: "Hospital H",
+          location: "Location H",
+          phone: "123-456-7808",
+          designation: "Surgeon",
+          password: "password123",
+        },
+        {
+          srNum: 9,
+          createdAt: "2023-01-09",
+          username: "David Anderson",
+          email: "david.anderson@example.com",
+          hospital: "Hospital I",
+          location: "Location I",
+          phone: "123-456-7809",
+          designation: "Technician",
+          password: "password123",
+        },
+        {
+          srNum: 10,
+          createdAt: "2023-01-10",
+          username: "Susan Thomas",
+          email: "susan.thomas@example.com",
+          hospital: "Hospital J",
+          location: "Location J",
+          phone: "123-456-7810",
+          designation: "Admin",
+          password: "password123",
+        },
+        {
+          srNum: 11,
+          createdAt: "2023-01-11",
+          username: "Daniel Jackson",
+          email: "daniel.jackson@example.com",
+          hospital: "Hospital A",
+          location: "Location A",
+          phone: "123-456-7811",
+          designation: "Doctor",
+          password: "password123",
+        },
+        {
+          srNum: 12,
+          createdAt: "2023-01-12",
+          username: "Jessica White",
+          email: "jessica.white@example.com",
+          hospital: "Hospital B",
+          location: "Location B",
+          phone: "123-456-7812",
+          designation: "Nurse",
+          password: "password123",
+        },
+        {
+          srNum: 13,
+          createdAt: "2023-01-13",
+          username: "William Harris",
+          email: "william.harris@example.com",
+          hospital: "Hospital C",
+          location: "Location C",
+          phone: "123-456-7813",
+          designation: "Surgeon",
+          password: "password123",
+        },
+        {
+          srNum: 14,
+          createdAt: "2023-01-14",
+          username: "Sarah Martin",
+          email: "sarah.martin@example.com",
+          hospital: "Hospital D",
+          location: "Location D",
+          phone: "123-456-7814",
+          designation: "Technician",
+          password: "password123",
+        },
+        {
+          srNum: 15,
+          createdAt: "2023-01-15",
+          username: "Charles Thompson",
+          email: "charles.thompson@example.com",
+          hospital: "Hospital E",
+          location: "Location E",
+          phone: "123-456-7815",
+          designation: "Admin",
+          password: "password123",
+        },
+        {
+          srNum: 16,
+          createdAt: "2023-01-16",
+          username: "Barbara Garcia",
+          email: "barbara.garcia@example.com",
+          hospital: "Hospital F",
+          location: "Location F",
+          phone: "123-456-7816",
+          designation: "Doctor",
+          password: "password123",
+        },
+        {
+          srNum: 17,
+          createdAt: "2023-01-17",
+          username: "Matthew Martinez",
+          email: "matthew.martinez@example.com",
+          hospital: "Hospital G",
+          location: "Location G",
+          phone: "123-456-7817",
+          designation: "Nurse",
+          password: "password123",
+        },
+        {
+          srNum: 18,
+          createdAt: "2023-01-18",
+          username: "Elizabeth Rodriguez",
+          email: "elizabeth.rodriguez@example.com",
+          hospital: "Hospital H",
+          location: "Location H",
+          phone: "123-456-7818",
+          designation: "Surgeon",
+          password: "password123",
+        },
+        {
+          srNum: 19,
+          createdAt: "2023-01-19",
+          username: "Christopher Lewis",
+          email: "christopher.lewis@example.com",
+          hospital: "Hospital I",
+          location: "Location I",
+          phone: "123-456-7819",
+          designation: "Technician",
+          password: "password123",
+        },
+        {
+          srNum: 20,
+          createdAt: "2023-01-20",
+          username: "Jessica Lee",
+          email: "jessica.lee@example.com",
+          hospital: "Hospital J",
+          location: "Location J",
+          phone: "123-456-7820",
+          designation: "Admin",
+          password: "password123",
+        },
+      ];
       setTableData(users);
       setLoading(false);
     }, 1000);
@@ -78,7 +279,25 @@ const SubAdmin = () => {
 
   useEffect(() => {
     fetchData();
+
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setOpenDropdown(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, []);
+
+  const handleClickOutside = (event) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      setOpenDropdown(null);
+    }
+  };
 
   const handleItemsPerPageChange = (e) => {
     setItemsPerPage(Number(e.target.value));
@@ -262,7 +481,10 @@ const SubAdmin = () => {
                               </div>
                             </td>
                             <td>
-                              <div className="dropdown text-center">
+                              <div
+                                className="dropdown text-center"
+                                ref={dropdownRef}
+                              >
                                 <button
                                   className="dropdown-button"
                                   onClick={() =>
@@ -312,7 +534,7 @@ const SubAdmin = () => {
                       </tbody>
                     </table>
                     <div
-                      className="pagination"
+                      className="pagination mt-4 mb-2"
                       style={{
                         display: "flex",
                         alignItems: "flex-start",

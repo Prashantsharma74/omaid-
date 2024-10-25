@@ -11,15 +11,10 @@ const ChangePassword = () => {
   const [newPasswordError, setNewPasswordError] = useState("");
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
   const [message, setMessage] = useState("");
-  const [isAlertVisible, setIsAlertVisible] = useState(false);
   const [error, setError] = useState(false);
 
   const handlePasswordVisibility = (setter) => {
     setter((prev) => !prev);
-  };
-
-  const handleAlertDismiss = () => {
-    setIsAlertVisible(false);
   };
 
   const handleSubmit = async (e) => {
@@ -189,11 +184,15 @@ const ChangePassword = () => {
             )}
           </div>
           <div className="col-lg-12 mt-3">
+            <button className="btn custom-btn text-white col-lg-w-25">
+              {" "}
+              Clear
+            </button>
             <button
-              className="btn custom-btn text-white col-lg-w-25"
+              className="btn custom-btn text-white col-lg-w-25 m-2"
               type="submit"
             >
-              <i className="icon pr-2 fa-solid fa-key-skeleton"></i> Submit
+              Submit
             </button>
           </div>
         </div>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
@@ -11,6 +11,7 @@ const ManageProgram = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [openDropdown, setOpenDropdown] = useState(null);
   const navigate = useNavigate();
+  const dropdownRef = useRef(null);
 
   const visiblePages = 4;
 
@@ -137,6 +138,17 @@ const ManageProgram = () => {
 
   useEffect(() => {
     fetchData();
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setOpenDropdown(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, []);
 
   const handleDelete = (srNum) => {
@@ -322,7 +334,7 @@ const ManageProgram = () => {
                                 </Link>
                               </td>
                               <td>
-                                <div className="dropdown text-center">
+                                <div ref={dropdownRef} className="dropdown text-center">
                                   <button
                                     className="dropdown-button"
                                     onClick={() =>

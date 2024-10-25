@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
@@ -10,7 +10,8 @@ const Users = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
   const [openDropdown, setOpenDropdown] = useState(null);
-  const navigate = useNavigate(); // Use navigate to go to the AddUser component
+  const navigate = useNavigate();
+  const dropdownRef = useRef(null);
 
   const visiblePages = 4;
 
@@ -49,21 +50,8 @@ const Users = () => {
     setTimeout(() => {
       const users = [
         {
-          id: 1,
-          accountId: "U001",
-          username: "John Doe",
-          email: "john.doe@example.com",
-          phone: "123-456-7890",
-          assignSubAdmin: "Sub-Admin 1",
-          dob: "1990-01-01",
-          height: "180",
-          weight: "75",
-          gender: "male",
-          nutrition: "vegan",
-          waterTracking: true,
-        },
-        {
           id: 2,
+          status: "Inactive",
           accountId: "U002",
           username: "Jane Smith",
           email: "jane.smith@example.com",
@@ -84,6 +72,17 @@ const Users = () => {
 
   useEffect(() => {
     fetchData();
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setOpenDropdown(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, []);
 
   const handleItemsPerPageChange = (e) => {
@@ -132,6 +131,19 @@ const Users = () => {
     currentPage * itemsPerPage,
     (currentPage + 1) * itemsPerPage
   );
+
+  const handleToggleStatus = (id) => {
+    setTableData((prevData) =>
+      prevData.map((user) =>
+        user.id === id
+          ? {
+              ...user,
+              status: user.status === "Active" ? "Inactive" : "Active",
+            }
+          : user
+      )
+    );
+  };
 
   return (
     <main className="app-content">
@@ -209,6 +221,7 @@ const Users = () => {
                           <th>Email ID</th>
                           <th>Phone Number</th>
                           <th>Sub Admin Name</th>
+                          <th>Status</th>
                           <th>Action</th>
                         </tr>
                       </thead>
@@ -222,14 +235,27 @@ const Users = () => {
                             <td>{user.phone}</td>
                             <td>{user.assignSubAdmin}</td>
                             <td>
-                              <div className="dropdown text-center">
+                              <div className="form-check form-switch">
+                                <input
+                                  className="form-check-input"
+                                  type="checkbox"
+                                  role="switch"
+                                  id={`toggle-${user.id}`} // Use user.id
+                                  checked={user.status === "Active"}
+                                  onChange={() => handleToggleStatus(user.id)} // Use user.id
+                                />
+                              </div>
+                            </td>
+                            <td>
+                              <div
+                                className="dropdown text-center"
+                                ref={dropdownRef}
+                              >
                                 <button
                                   className="dropdown-button"
                                   onClick={() =>
                                     setOpenDropdown(
-                                      openDropdown === user.id
-                                        ? null
-                                        : user.id
+                                      openDropdown === user.id ? null : user.id
                                     )
                                   }
                                   aria-haspopup="true"
@@ -277,6 +303,7 @@ const Users = () => {
                         display: "flex",
                         alignItems: "flex-start",
                         justifyContent: "space-between",
+                        marginTop: "30px",
                       }}
                     >
                       <span className="pagination-info">
