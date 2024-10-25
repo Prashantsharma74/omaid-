@@ -232,6 +232,7 @@ const SubAdmin = () => {
                           <th>User Name </th>
                           <th>Email ID</th>
                           <th>Hospital/Clinic Name</th>
+                          <th>Designation</th>
                           <th>Location</th>
                           <th>Status</th>
                           <th>Action</th>
@@ -247,6 +248,7 @@ const SubAdmin = () => {
                             <td>{user.username}</td>
                             <td>{user.email}</td>
                             <td>{user.hospital}</td>
+                            <td>{user.designation}</td>
                             <td>{user.location}</td>
                             <td>
                               <div className="form-check form-switch">

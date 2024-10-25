@@ -125,7 +125,10 @@ const Diet = () => {
       <div className="row">
         <div className="col-md-12 col-sm-12 col-xs-12 col-lg-12 px-5 text-end">
           <div className="bt-ad-emp">
-            <Link className="add-btt btn" to="/manage-program/manage/diet-plan/add-diet">
+            <Link
+              className="add-btt btn"
+              to="/manage-program/manage/diet-plan/add-diet"
+            >
               <i className="fa-regular fa-plus"></i> Add Diet & Meal
             </Link>
           </div>
@@ -201,7 +204,9 @@ const Diet = () => {
                       {paginatedData.map((diet, index) => (
                         <tr key={diet.SNo}>
                           <td>{diet.SNo}</td>
-                          <td>{format(new Date(diet.LastEdit), "dd-MM-yyyy")}</td>
+                          <td>
+                            {format(new Date(diet.LastEdit), "dd-MM-yyyy")}
+                          </td>
                           <td>
                             <div className="form-check form-switch">
                               <input

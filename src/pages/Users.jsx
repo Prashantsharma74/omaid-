@@ -275,14 +275,75 @@ const Users = () => {
                       className="pagination"
                       style={{
                         display: "flex",
-                        alignItems: "center",
+                        alignItems: "flex-start",
                         justifyContent: "space-between",
                       }}
                     >
-                      <span className="pagination-text">
-                        Page {currentPage + 1} of {totalPages}
+                      <span className="pagination-info">
+                        Showing {currentPage * itemsPerPage + 1} to{" "}
+                        {Math.min(
+                          (currentPage + 1) * itemsPerPage,
+                          filteredData.length
+                        )}{" "}
+                        of {filteredData.length} entries
                       </span>
-                      <div>{getPaginationButtons()}</div>
+                      <div>
+                        <button
+                          style={{
+                            padding: "7px 10px",
+                            backgroundColor: "#e9ecef",
+                            color: "#002538",
+                            border: "1px solid lightgrey",
+                            borderRadius: "5px 0px 0px 5px",
+                          }}
+                          className="page-btn"
+                          onClick={() => handlePageChange(0)}
+                          disabled={currentPage === 0}
+                        >
+                          &laquo;
+                        </button>
+                        <button
+                          style={{
+                            padding: "7px 10px",
+                            backgroundColor: "#e9ecef",
+                            color: "#002538",
+                            border: "1px solid lightgrey",
+                          }}
+                          className="page-btn"
+                          onClick={() => handlePageChange(currentPage - 1)}
+                          disabled={currentPage === 0}
+                        >
+                          &#x3c;
+                        </button>
+                        {getPaginationButtons()}
+                        <button
+                          style={{
+                            padding: "7px 10px",
+                            backgroundColor: "#e9ecef",
+                            color: "#002538",
+                            border: "1px solid lightgrey",
+                          }}
+                          className="page-btn"
+                          onClick={() => handlePageChange(currentPage + 1)}
+                          disabled={currentPage >= totalPages - 1}
+                        >
+                          &#x3e;
+                        </button>
+                        <button
+                          style={{
+                            padding: "7px 10px",
+                            backgroundColor: "#e9ecef",
+                            color: "#002538",
+                            border: "1px solid lightgrey",
+                            borderRadius: "0px 5px 5px 0px",
+                          }}
+                          className="page-btn"
+                          onClick={() => handlePageChange(totalPages - 1)}
+                          disabled={currentPage >= totalPages - 1}
+                        >
+                          &raquo;
+                        </button>
+                      </div>
                     </div>
                   </div>
                 )}
