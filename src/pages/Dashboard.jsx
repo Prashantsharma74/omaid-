@@ -4,6 +4,7 @@ import dashSide from "../assets/images/dash.gif";
 
 const Dashboard = () => {
   const [time, setTime] = useState(new Date());
+  const [userIP, setUserIP] = useState("");
 
   const formatTime = (date) => {
     let hours = date.getHours();
@@ -21,6 +22,18 @@ const Dashboard = () => {
     const intervalId = setInterval(() => {
       setTime(new Date());
     }, 1000);
+
+    const fetchUserIP = async () => {
+      try {
+        const response = await fetch("https://api.ipify.org?format=json");
+        const data = await response.json();
+        setUserIP(data.ip);
+      } catch (error) {
+        console.error("Error fetching the IP address:", error);
+      }
+    };
+
+    fetchUserIP();
 
     return () => clearInterval(intervalId);
   }, []);
@@ -45,9 +58,7 @@ const Dashboard = () => {
                   <i className="icon fa-sharp fa-light fa-users"></i>
                   <div className="info">
                     <h4>Total Active User</h4>
-                    <p>
-                      <b>500</b>
-                    </p>
+                    <p><b>500</b></p>
                   </div>
                 </div>
               </Link>
@@ -55,12 +66,10 @@ const Dashboard = () => {
             <div className="col-md-6 col-lg-6">
               <Link className="text-decoration-none" to="/sub-admin">
                 <div className="widget-small ctm-bg-2 coloured-icon">
-                  <i className="icon  fa-light fa-user-group"></i>
+                  <i className="icon fa-light fa-user-group"></i>
                   <div className="info">
-                    <h4> Total Sub-Amin</h4>
-                    <p>
-                      <b>12</b>
-                    </p>
+                    <h4>Total Sub-Admin</h4>
+                    <p><b>12</b></p>
                   </div>
                 </div>
               </Link>
@@ -71,9 +80,7 @@ const Dashboard = () => {
                   <i className="icon fa-light fa-rocket"></i>
                   <div className="info">
                     <h4>Total sessions</h4>
-                    <p>
-                      <b>3</b>
-                    </p>
+                    <p><b>3</b></p>
                   </div>
                 </div>
               </Link>
@@ -84,9 +91,7 @@ const Dashboard = () => {
                   <i className="icon fa-thin fa-file-lines"></i>
                   <div className="info">
                     <h4>Total Blogs</h4>
-                    <p>
-                      <b>4</b>
-                    </p>
+                    <p><b>4</b></p>
                   </div>
                 </div>
               </Link>
@@ -96,10 +101,8 @@ const Dashboard = () => {
                 <div className="widget-small ctm-bg-1 coloured-icon">
                   <i className="icon fa-light fa-file-chart-column"></i>
                   <div className="info">
-                    <h4> Total Programs</h4>
-                    <p>
-                      <b>6</b>
-                    </p>
+                    <h4>Total Programs</h4>
+                    <p><b>6</b></p>
                   </div>
                 </div>
               </Link>
@@ -136,18 +139,10 @@ const Dashboard = () => {
                     <p>
                       <i className="fa-sharp fa-regular fa-clock unit fa-xl pt-3"></i>
                     </p>
-                    <p className="unit dots" id="hours">
-                      {hours}
-                    </p>
-                    <p className="unit dots" id="minutes">
-                      {minutes}
-                    </p>
-                    <p className="unit" id="seconds">
-                      {seconds}
-                    </p>
-                    <p className="unit" id="ampm">
-                      {ampm}
-                    </p>
+                    <p className="unit dots" id="hours">{hours}</p>
+                    <p className="unit dots" id="minutes">{minutes}</p>
+                    <p className="unit" id="seconds">{seconds}</p>
+                    <p className="unit" id="ampm">{ampm}</p>
                   </div>
                 </div>
                 <div className="col-lg-12 p-3">
@@ -155,23 +150,26 @@ const Dashboard = () => {
                     Welcome{" "}
                     <strong style={{ color: "#002538", fontWeight: "900" }}>
                       Omaid
-                    </strong>{" "}
+                    </strong>
                   </h2>
                   <h6>
-                    Welcome to our Dashboard strong. Get to know our development
+                    Welcome to our Dashboard, Omaid. Get to know our development
                     tools by following these onboarding steps, or just feel free
                     to dive right in!
                   </h6>
+                  {userIP && (
+                    <h6>
+                      Your IP address is: <strong className="animated-ip">{userIP}</strong>
+                    </h6>
+                  )}
                 </div>
               </div>
               <div className="col-lg-12 text-end">
-                <div className="col-lg-12 text-end">
-                  <img
-                    src={dashSide}
-                    alt="Dashboard Side"
-                    className="responsive-image"
-                  />
-                </div>
+                <img
+                  src={dashSide}
+                  alt="Dashboard Side"
+                  className="responsive-image"
+                />
               </div>
             </div>
           </div>
