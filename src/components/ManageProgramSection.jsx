@@ -1,6 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import Swal from "sweetalert2";
 
 const ManageProgramSection = () => {
   const DEFAULT_ITEMS_PER_PAGE = 10;
@@ -19,6 +18,8 @@ const ManageProgramSection = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
   const [openDropdownIndex, setOpenDropdownIndex] = useState(null);
+
+  const dropdownRef = useRef(null);
 
   const handleDropdownToggle = (index) => {
     setOpenDropdownIndex(openDropdownIndex === index ? null : index);
@@ -80,6 +81,28 @@ const ManageProgramSection = () => {
     (currentPage + 1) * itemsPerPage
   );
 
+  const handleBack = () => {
+    window.history.back();
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target) &&
+        !event.target.classList.contains("dropdown-item")
+      ) {
+        setOpenDropdownIndex(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
     <main className="app-content">
       <div className="app-title tile p-3">
@@ -87,9 +110,21 @@ const ManageProgramSection = () => {
           <span className="mr-4 fw-bold">&nbsp;Manage</span>
         </h1>
       </div>
+      <button
+        className="btn mb-2 ms-2"
+        style={{
+          backgroundColor: "#002538",
+          color: "white",
+        }}
+        type="button"
+        onClick={handleBack}
+      >
+        <i className="fa-solid fa-arrow-left" style={{ color: "#fff" }}></i>{" "}
+        &nbsp;Previous
+      </button>
       <div className="row">
         <div className="col-md-12 px-5">
-          <div className="tile p-3">
+          <div className="tile mt-2 p-3">
             <div className="tile-body">
               <div className="table-responsive">
                 <div
@@ -146,7 +181,10 @@ const ManageProgramSection = () => {
                         <td>{currentPage * itemsPerPage + index + 1}</td>
                         <td>{user.title}</td>
                         <td>
-                          <div className="dropdown text-center">
+                          <div
+                            className="dropdown text-center"
+                            ref={dropdownRef}
+                          >
                             <button
                               className="dropdown-button"
                               onClick={() => handleDropdownToggle(index)}
