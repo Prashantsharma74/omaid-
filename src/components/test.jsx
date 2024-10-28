@@ -1,168 +1,444 @@
-import React, { useEffect, useState, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { format } from "date-fns";
+import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 
-const SubAdmin = () => {
-  const DEFAULT_ITEMS_PER_PAGE = 10;
-  const [itemsPerPage, setItemsPerPage] = useState(DEFAULT_ITEMS_PER_PAGE);
-  const [tableData, setTableData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(0);
+const AddSubAdmin = ({ user, onClose }) => {
+  const countries = [
+    "Afghanistan",
+    "Albania",
+    "Algeria",
+    "Andorra",
+    "Angola",
+    "Argentina",
+    "Armenia",
+    "Australia",
+    "Austria",
+    "Azerbaijan",
+    "Bahamas",
+    "Bahrain",
+    "Bangladesh",
+    "Barbados",
+    "Belarus",
+    "Belgium",
+    "Belize",
+    "Benin",
+    "Bhutan",
+    "Bolivia",
+    "Bosnia and Herzegovina",
+    "Botswana",
+    "Brazil",
+    "Brunei",
+    "Bulgaria",
+    "Burkina Faso",
+    "Burundi",
+    "Cabo Verde",
+    "Cambodia",
+    "Cameroon",
+    "Canada",
+    "Central African Republic",
+    "Chad",
+    "Chile",
+    "China",
+    "Colombia",
+    "Comoros",
+    "Congo",
+    "Costa Rica",
+    "Croatia",
+    "Cuba",
+    "Cyprus",
+    "Czech Republic",
+    "Democratic Republic of the Congo",
+    "Denmark",
+    "Djibouti",
+    "Dominica",
+    "Dominican Republic",
+    "Ecuador",
+    "Egypt",
+    "El Salvador",
+    "Equatorial Guinea",
+    "Eritrea",
+    "Estonia",
+    "Eswatini",
+    "Ethiopia",
+    "Fiji",
+    "Finland",
+    "France",
+    "Gabon",
+    "Gambia",
+    "Georgia",
+    "Germany",
+    "Ghana",
+    "Greece",
+    "Grenada",
+    "Guatemala",
+    "Guinea",
+    "Guinea-Bissau",
+    "Guyana",
+    "Haiti",
+    "Honduras",
+    "Hungary",
+    "Iceland",
+    "India",
+    "Indonesia",
+    "Iran",
+    "Iraq",
+    "Ireland",
+    "Israel",
+    "Italy",
+    "Jamaica",
+    "Japan",
+    "Jordan",
+    "Kazakhstan",
+    "Kenya",
+    "Kiribati",
+    "Kuwait",
+    "Kyrgyzstan",
+    "Laos",
+    "Latvia",
+    "Lebanon",
+    "Lesotho",
+    "Liberia",
+    "Libya",
+    "Liechtenstein",
+    "Lithuania",
+    "Luxembourg",
+    "Madagascar",
+    "Malawi",
+    "Malaysia",
+    "Maldives",
+    "Mali",
+    "Malta",
+    "Marshall Islands",
+    "Mauritania",
+    "Mauritius",
+    "Mexico",
+    "Micronesia",
+    "Moldova",
+    "Monaco",
+    "Mongolia",
+    "Montenegro",
+    "Morocco",
+    "Mozambique",
+    "Myanmar",
+    "Namibia",
+    "Nauru",
+    "Nepal",
+    "Netherlands",
+    "New Zealand",
+    "Nicaragua",
+    "Niger",
+    "Nigeria",
+    "North Macedonia",
+    "Norway",
+    "Oman",
+    "Pakistan",
+    "Palau",
+    "Palestine",
+    "Panama",
+    "Papua New Guinea",
+    "Paraguay",
+    "Peru",
+    "Philippines",
+    "Poland",
+    "Portugal",
+    "Qatar",
+    "Romania",
+    "Russia",
+    "Rwanda",
+    "Saint Kitts and Nevis",
+    "Saint Lucia",
+    "Saint Vincent and the Grenadines",
+    "Samoa",
+    "San Marino",
+    "Sao Tome and Principe",
+    "Saudi Arabia",
+    "Senegal",
+    "Serbia",
+    "Seychelles",
+    "Sierra Leone",
+    "Singapore",
+    "Slovakia",
+    "Slovenia",
+    "Solomon Islands",
+    "Somalia",
+    "South Africa",
+    "South Korea",
+    "South Sudan",
+    "Spain",
+    "Sri Lanka",
+    "Sudan",
+    "Suriname",
+    "Sweden",
+    "Switzerland",
+    "Syria",
+    "Tajikistan",
+    "Tanzania",
+    "Thailand",
+    "Togo",
+    "Tonga",
+    "Trinidad and Tobago",
+    "Tunisia",
+    "Turkey",
+    "Turkmenistan",
+    "Tuvalu",
+    "Uganda",
+    "Ukraine",
+    "United Arab Emirates",
+    "United Kingdom",
+    "United States",
+    "Uruguay",
+    "Uzbekistan",
+    "Vanuatu",
+    "Vatican City",
+    "Venezuela",
+    "Vietnam",
+    "Yemen",
+    "Zambia",
+    "Zimbabwe",
+  ];
+
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    hospital: "",
+    location: "",
+    phone: "",
+    designation: "",
+    password: "",
+  });
+
   const [searchTerm, setSearchTerm] = useState("");
-  const [openDropdown, setOpenDropdown] = useState(null);
-  const [selectedUser, setSelectedUser] = useState(null);
-  const navigate = useNavigate();
+  const [suggestions, setSuggestions] = useState([]);
+  const [errors, setErrors] = useState({});
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
-  // Create a ref for the dropdown
-  const dropdownRef = useRef(null);
-
-  const visiblePages = 4;
-
-  useEffect(() => {
-    const fetchData = async () => {
-      // Replace with your data fetching logic
-      try {
-        // Simulating a data fetch
-        const data = [
-          { srNum: 1, name: "John Doe", email: "john@example.com" },
-          { srNum: 2, name: "Jane Smith", email: "jane@example.com" },
-          // Add more users as needed
-        ];
-        setTableData(data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-
-    // Event listener to close dropdown when clicking outside
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setOpenDropdown(null);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-
-    // Clean up the event listener
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
-  const handleEdit = (srNum) => {
-    const user = tableData.find((u) => u.srNum === srNum);
-    if (user) {
-      setSelectedUser(user);
-      navigate("/sub-admin/add-subadmin", { state: { user } });
-    }
+  const handlePasswordVisibility = () => {
+    setIsPasswordVisible((prev) => !prev);
   };
 
-  const handleDelete = (srNum) => {
-    // Your delete logic here
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        name: user.username,
+        email: user.email,
+        hospital: user.hospital,
+        location: user.location,
+        phone: user.phone,
+        designation: user.designation,
+        password: user.password,
+      });
+      setIsEditMode(true);
+    }
+  }, [user]);
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!formData.name) newErrors.name = "Name is required.";
+    if (!formData.email) newErrors.email = "Email is required.";
+    if (!formData.hospital) newErrors.hospital = "Hospital/Clinic name is required.";
+    if (!formData.location) newErrors.location = "Location is required.";
+    if (!formData.phone) newErrors.phone = "Phone number is required.";
+    if (!formData.designation) newErrors.designation = "Designation is required.";
+    
+    // Password validation
+    if (!formData.password && !isEditMode) {
+      newErrors.password = "Password is required.";
+    } else if (formData.password && formData.password.length < 8) {
+      newErrors.password = "Password must be at least 8 characters long.";
+    } else if (!/[A-Z]/.test(formData.password)) {
+      newErrors.password = "Password must contain at least one uppercase letter.";
+    } else if (!/[a-z]/.test(formData.password)) {
+      newErrors.password = "Password must contain at least one lowercase letter.";
+    } else if (!/[0-9]/.test(formData.password)) {
+      newErrors.password = "Password must contain at least one numeric digit.";
+    } else if (!/[!@#$%^&*(),.?":{}|<>]/.test(formData.password)) {
+      newErrors.password = "Password must contain at least one special character.";
+    }
+
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (formData.email && !emailPattern.test(formData.email)) {
+      newErrors.email = "Please enter a valid email address.";
+    }
+
+    if (formData.phone && (!/^\d{10}$/.test(formData.phone.replace(/[-\s]/g, "")) || formData.phone.length !== 10)) {
+      newErrors.phone = "Phone number must be a 10-digit numeric value.";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    setFormData({ ...formData, [id]: value });
+    setErrors({ ...errors, [id]: "" });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (!validateForm()) return;
+
     Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "Yes, delete it!",
-      cancelButtonText: "No, cancel!",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        setTableData(tableData.filter(user => user.srNum !== srNum));
-        Swal.fire("Deleted!", "Your file has been deleted.", "success");
-      }
+      title: "Sub-Admin Added!",
+      text: `Sub-Admin added successfully`,
+      icon: "success",
+      confirmButtonText: "OK",
+    });
+
+    console.log("Form Data:", formData);
+
+    setFormData({
+      name: "",
+      email: "",
+      hospital: "",
+      location: "",
+      phone: "",
+      designation: "",
+      password: "",
     });
   };
 
-  // Pagination Logic
-  const paginatedData = tableData.slice(
-    currentPage * itemsPerPage,
-    (currentPage + 1) * itemsPerPage
-  );
+  const handleUpdate = (e) => {
+    e.preventDefault();
+
+    if (!validateForm()) return;
+
+    Swal.fire({
+      title: "Sub-Admin Updated!",
+      text: `Sub-Admin details updated successfully`,
+      icon: "success",
+      confirmButtonText: "OK",
+    });
+
+    console.log("Updated Data:", formData);
+
+    setFormData({
+      name: "",
+      email: "",
+      hospital: "",
+      location: "",
+      phone: "",
+      designation: "",
+      password: "",
+    });
+    onClose(); // Close modal after update
+  };
+
+  useEffect(() => {
+    if (searchTerm) {
+      setSuggestions(countries.filter(country => 
+        country.toLowerCase().includes(searchTerm.toLowerCase())
+      ));
+    } else {
+      setSuggestions([]);
+    }
+  }, [searchTerm]);
 
   return (
-    <main className="app-content">
-      <div className="container">
-        <h1>Sub Admin Management</h1>
-        <input
-          type="text"
-          placeholder="Search..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-        {loading ? (
-          <p>Loading...</p>
-        ) : (
-          <table className="table">
-            <thead>
-              <tr>
-                <th>SR Number</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {paginatedData.map((user, index) => (
-                <tr key={index}>
-                  <td>{user.srNum}</td>
-                  <td>{user.name}</td>
-                  <td>{user.email}</td>
-                  <td>
-                    <div className="dropdown text-center" ref={dropdownRef}>
-                      <button
-                        className="dropdown-button"
-                        onClick={() =>
-                          setOpenDropdown(
-                            openDropdown === user.srNum ? null : user.srNum
-                          )
-                        }
-                        aria-haspopup="true"
-                        aria-expanded={openDropdown === user.srNum}
-                      >
-                        <i
-                          className={`fa fa-ellipsis-v ${
-                            openDropdown === user.srNum ? "rotate-icon" : ""
-                          }`}
-                        ></i>
-                      </button>
-                      {openDropdown === user.srNum && (
-                        <div className="dropdown-menu show">
-                          <a
-                            className="dropdown-item"
-                            onClick={() => {
-                              handleEdit(user.srNum);
-                              setOpenDropdown(null);
-                            }}
-                          >
-                            <i className="fa fa-edit"></i> Edit
-                          </a>
-                          <a
-                            className="dropdown-item"
-                            onClick={() => {
-                              handleDelete(user.srNum);
-                              setOpenDropdown(null);
-                            }}
-                          >
-                            <i className="fa fa-trash"></i> Delete
-                          </a>
-                        </div>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
-    </main>
+    <div>
+      <h2>{isEditMode ? "Edit Sub Admin" : "Add Sub Admin"}</h2>
+      <form onSubmit={isEditMode ? handleUpdate : handleSubmit}>
+        <div>
+          <label htmlFor="name">Name</label>
+          <input
+            type="text"
+            id="name"
+            value={formData.name}
+            onChange={handleChange}
+          />
+          {errors.name && <span>{errors.name}</span>}
+        </div>
+
+        <div>
+          <label htmlFor="email">Email</label>
+          <input
+            type="email"
+            id="email"
+            value={formData.email}
+            onChange={handleChange}
+          />
+          {errors.email && <span>{errors.email}</span>}
+        </div>
+
+        <div>
+          <label htmlFor="hospital">Hospital/Clinic Name</label>
+          <input
+            type="text"
+            id="hospital"
+            value={formData.hospital}
+            onChange={handleChange}
+          />
+          {errors.hospital && <span>{errors.hospital}</span>}
+        </div>
+
+        <div>
+          <label htmlFor="location">Location</label>
+          <input
+            type="text"
+            placeholder="Search for a country..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          <select
+            id="location"
+            value={formData.location}
+            onChange={(e) => {
+              setFormData({ ...formData, location: e.target.value });
+              setSearchTerm(e.target.value); // Update search term when a country is selected
+              setSuggestions([]); // Clear suggestions
+            }}
+          >
+            <option value="" disabled>Select a country</option>
+            {suggestions.map((country, index) => (
+              <option key={index} value={country}>{country}</option>
+            ))}
+          </select>
+          {errors.location && <span>{errors.location}</span>}
+        </div>
+
+        <div>
+          <label htmlFor="phone">Phone</label>
+          <input
+            type="text"
+            id="phone"
+            value={formData.phone}
+            onChange={handleChange}
+          />
+          {errors.phone && <span>{errors.phone}</span>}
+        </div>
+
+        <div>
+          <label htmlFor="designation">Designation</label>
+          <input
+            type="text"
+            id="designation"
+            value={formData.designation}
+            onChange={handleChange}
+          />
+          {errors.designation && <span>{errors.designation}</span>}
+        </div>
+
+        <div>
+          <label htmlFor="password">Password</label>
+          <input
+            type={isPasswordVisible ? "text" : "password"}
+            id="password"
+            value={formData.password}
+            onChange={handleChange}
+          />
+          <button type="button" onClick={handlePasswordVisibility}>
+            {isPasswordVisible ? "Hide" : "Show"}
+          </button>
+          {errors.password && <span>{errors.password}</span>}
+        </div>
+
+        <button type="submit">{isEditMode ? "Update" : "Add"} Sub Admin</button>
+        <button type="button" onClick={onClose}>Cancel</button>
+      </form>
+    </div>
   );
 };
 
-export default SubAdmin;
+export default AddSubAdmin;

@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Swal from "sweetalert2";
 
 const Faq = () => {
+  const dropdownRef = useRef(null);
   const [formData, setFormData] = useState([
     {
       id: 1,
@@ -66,6 +67,20 @@ const Faq = () => {
     return buttons;
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setOpenDropdown(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   const handleSubmit = (e) => {
     e.preventDefault();
     setError({ question: "", answer: "" });
@@ -113,7 +128,6 @@ const Faq = () => {
         resetForm();
       }
     });
-
   };
 
   const handleEdit = (id) => {
@@ -331,7 +345,10 @@ const Faq = () => {
                           </div>
                         </td>
                         <td>
-                          <div className="dropdown text-center">
+                          <div
+                            className="dropdown text-center"
+                            ref={dropdownRef}
+                          >
                             <button
                               className="dropdown-button"
                               onClick={() =>
@@ -353,20 +370,18 @@ const Faq = () => {
                                 <a
                                   className="dropdown-item"
                                   onClick={() => {
-                                    handleEdit(data.id)
+                                    handleEdit(data.id);
                                     setOpenDropdown(null);
-                                  } 
-                                }
+                                  }}
                                 >
                                   <i className="fa fa-edit"></i> Edit
                                 </a>
                                 <a
                                   className="dropdown-item"
                                   onClick={() => {
-                                    handleDelete(data.id)
+                                    handleDelete(data.id);
                                     setOpenDropdown(null);
-                                  } 
-                                }
+                                  }}
                                 >
                                   <i className="fa fa-trash"></i> Delete
                                 </a>

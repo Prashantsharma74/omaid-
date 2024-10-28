@@ -17,6 +17,7 @@ const CmsManagement = () => {
   const [editingItem, setEditingItem] = useState(null);
   const [errors, setErrors] = useState({ pageName: "", editorContent: "" });
   const [openDropdown, setOpenDropdown] = useState(null);
+  const dropdownRef = useRef(null);
 
   // Simulating data fetching (using static data)
   const fetchData = () => {
@@ -28,18 +29,6 @@ const CmsManagement = () => {
           content: "This is the content of the About us page.",
           status: "Active",
         },
-        {
-          srNum: 2,
-          title: "Privacy Policy",
-          content: "This is the Privacy Policy page content.",
-          status: "Inactive",
-        },
-        {
-          srNum: 3,
-          title: "Terms and Conditions",
-          content: "Here are the terms and conditions.",
-          status: "Active",
-        },
       ];
       setTableData(users);
       setLoading(false);
@@ -48,6 +37,17 @@ const CmsManagement = () => {
 
   useEffect(() => {
     fetchData();
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setOpenDropdown(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, []);
 
   const visiblePages = 4;
@@ -277,9 +277,7 @@ const CmsManagement = () => {
                             setEditorContent(content)
                           }
                           value={editorContent} // Controlled editor value
-                          onInit={(evt, editor) =>
-                            (editorRef.current = editor)
-                          }
+                          onInit={(evt, editor) => (editorRef.current = editor)}
                         />
                       </div>
                       {errors.editorContent && (
@@ -413,7 +411,7 @@ const CmsManagement = () => {
                                     ></i>
                                   </button>
                                   {openDropdown === row.srNum && (
-                                    <div className="dropdown-menu show">
+                                    <div className="dropdown-menu show" ref={dropdownRef}>
                                       <a
                                         className="dropdown-item"
                                         onClick={() => {
@@ -423,7 +421,7 @@ const CmsManagement = () => {
                                       >
                                         <i className="fa fa-edit"></i> Edit
                                       </a>
-                                      <a
+                                      {/* <a
                                         className="dropdown-item"
                                         onClick={() => {
                                           handleDelete(row.srNum);
@@ -431,7 +429,7 @@ const CmsManagement = () => {
                                         }}
                                       >
                                         <i className="fa fa-trash"></i> Delete
-                                      </a>
+                                      </a> */}
                                     </div>
                                   )}
                                 </div>

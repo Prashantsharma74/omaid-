@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import AddUser from "../components/AddUser";
 
 const Users = () => {
   const DEFAULT_ITEMS_PER_PAGE = 10;
@@ -10,9 +11,11 @@ const Users = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
   const [openDropdown, setOpenDropdown] = useState(null);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
-  const dropdownRef = useRef(null);
 
+  const dropdownRef = useRef(null);
   const visiblePages = 4;
 
   const getPaginationButtons = () => {
@@ -50,7 +53,8 @@ const Users = () => {
     setTimeout(() => {
       const users = [
         {
-          id: 2,
+          id: 1,
+          srNum: 1,
           status: "Inactive",
           accountId: "U002",
           username: "Jane Smith",
@@ -63,6 +67,7 @@ const Users = () => {
           gender: "female",
           nutrition: "non-vegan",
           waterTracking: false,
+          password:"c6s5d45466546"
         },
       ];
       setTableData(users);
@@ -72,6 +77,7 @@ const Users = () => {
 
   useEffect(() => {
     fetchData();
+
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setOpenDropdown(null);
@@ -99,7 +105,7 @@ const Users = () => {
     setCurrentPage(page);
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = (srNum) => {
     Swal.fire({
       title: "Are you sure?",
       text: "You won't be able to revert this!",
@@ -111,15 +117,18 @@ const Users = () => {
       cancelButtonText: "Cancel",
     }).then((result) => {
       if (result.isConfirmed) {
-        setTableData((prevData) => prevData.filter((user) => user.id !== id));
+        setTableData((prevData) => prevData.filter((user) => user.srNum !== srNum));
         Swal.fire("Deleted!", "The user has been deleted.", "success");
       }
     });
   };
 
-  const handleEdit = (user) => {
-    // Navigate to AddUser component for editing, passing the user data
-    navigate("/users/edit-user", { state: { user } });
+  const handleEdit = (srNum) => {
+    const user = tableData.find((u) => u.srNum === srNum);
+    if (user) {
+      setSelectedUser(user);
+      setShowModal(true);
+    }
   };
 
   const filteredData = tableData.filter((user) =>
@@ -154,6 +163,17 @@ const Users = () => {
           </h1>
         </div>
       </div>
+      {showModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <AddUser
+              user={selectedUser}
+              onClose={() => setShowModal(false)}
+              // onSubmit={handleFormSubmit}
+            />
+          </div>
+        </div>
+      )}
       <div className="row mt-4">
         <div className="col-md-12 px-5">
           <div className="tile p-3">
@@ -227,7 +247,7 @@ const Users = () => {
                       </thead>
                       <tbody>
                         {paginatedData.map((user, index) => (
-                          <tr key={user.id}>
+                          <tr key={index}>
                             <td>{index + 1 + currentPage * itemsPerPage}</td>
                             <td>{user.accountId}</td>
                             <td>{user.username}</td>
@@ -240,9 +260,9 @@ const Users = () => {
                                   className="form-check-input"
                                   type="checkbox"
                                   role="switch"
-                                  id={`toggle-${user.id}`} // Use user.id
+                                  id={`toggle-${user.srNum}`} // Use user.id
                                   checked={user.status === "Active"}
-                                  onChange={() => handleToggleStatus(user.id)} // Use user.id
+                                  onChange={() => handleToggleStatus(user.srNum)} // Use user.id
                                 />
                               </div>
                             </td>
@@ -255,26 +275,26 @@ const Users = () => {
                                   className="dropdown-button"
                                   onClick={() =>
                                     setOpenDropdown(
-                                      openDropdown === user.id ? null : user.id
+                                      openDropdown === user.srNum ? null : user.srNum
                                     )
                                   }
                                   aria-haspopup="true"
-                                  aria-expanded={openDropdown === user.id}
+                                  aria-expanded={openDropdown === user.srNum}
                                 >
                                   <i
                                     className={`fa fa-ellipsis-v ${
-                                      openDropdown === user.id
+                                      openDropdown === user.srNum
                                         ? "rotate-icon"
                                         : ""
                                     }`}
                                   ></i>
                                 </button>
-                                {openDropdown === user.id && (
+                                {openDropdown === user.srNum && (
                                   <div className="dropdown-menu show">
                                     <button
                                       className="dropdown-item"
                                       onClick={() => {
-                                        handleEdit(user); // Trigger edit
+                                        handleEdit(user.srNum);
                                         setOpenDropdown(null);
                                       }}
                                     >
@@ -283,7 +303,7 @@ const Users = () => {
                                     <button
                                       className="dropdown-item"
                                       onClick={() => {
-                                        handleDelete(user.id);
+                                        handleDelete(user.srNum);
                                         setOpenDropdown(null);
                                       }}
                                     >

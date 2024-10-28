@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import AddProgram from "../components/AddProgram";
 
 const ManageProgram = () => {
   const DEFAULT_ITEMS_PER_PAGE = 10;
@@ -10,9 +11,8 @@ const ManageProgram = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
   const [openDropdown, setOpenDropdown] = useState(null);
-  const navigate = useNavigate();
-  const dropdownRef = useRef(null);
 
+  const dropdownRef = useRef(null);
   const visiblePages = 4;
 
   const getPaginationButtons = () => {
