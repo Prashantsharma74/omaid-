@@ -570,22 +570,21 @@ a {
   visibility: visible;
   opacity: 1;
 }
-
 @keyframes colorChange {
   0% {
-    color: rgb(255, 0, 0);
+    color: #fefdfe; /* First color */
   }
   25% {
-    color: rgb(0, 255, 0);
+    color: #fbb62d; /* Second color */
   }
   50% {
-    color: rgb(0, 0, 255);
+    color: #fe5e7d; /* Third color */
   }
   75% {
-    color: rgb(255, 255, 0);
+    color: #4217ab; /* Fourth color */
   }
   100% {
-    color: rgb(255, 0, 255);
+    color: #3bc0fe; /* Fifth color */
   }
 }
 
