@@ -53,84 +53,13 @@ const ManageProgram = () => {
           srNum: 1,
           title: "Title 1",
           description: "Description for Title 1",
-          image: "https://images.unsplash.com/photo-1576158113928-4c240eaaf360?w=500&auto=format&fit=crop&q=60",
+          image:
+            "https://images.unsplash.com/photo-1576158113928-4c240eaaf360?w=500&auto=format&fit=crop&q=60",
           duration: "2 hours",
           status: "Active",
-        },
-        {
-          srNum: 2,
-          title: "Title 2",
-          description: "Description for Title 2",
-          image: "https://images.unsplash.com/photo-1576158113928-4c240eaaf360?w=500&auto=format&fit=crop&q=60",
-          duration: "3 hours",
-          status: "Inactive",
-        },
-        {
-          srNum: 3,
-          title: "Title 3",
-          description: "Description for Title 3",
-          image: "https://images.unsplash.com/photo-1576158113928-4c240eaaf360?w=500&auto=format&fit=crop&q=60",
-          duration: "1.5 hours",
-          status: "Active",
-        },
-        {
-          srNum: 4,
-          title: "Title 4",
-          description: "Description for Title 4",
-          image: "https://images.unsplash.com/photo-1576158113928-4c240eaaf360?w=500&auto=format&fit=crop&q=60",
-          duration: "4 hours",
-          status: "Inactive",
-        },
-        {
-          srNum: 5,
-          title: "Title 5",
-          description: "Description for Title 5",
-          image: "https://images.unsplash.com/photo-1576158113928-4c240eaaf360?w=500&auto=format&fit=crop&q=60",
-          duration: "5 hours",
-          status: "Active",
-        },
-        {
-          srNum: 6,
-          title: "Title 6",
-          description: "Description for Title 6",
-          image: "https://images.unsplash.com/photo-1576158113928-4c240eaaf360?w=500&auto=format&fit=crop&q=60",
-          duration: "30 minutes",
-          status: "Inactive",
-        },
-        {
-          srNum: 7,
-          title: "Title 7",
-          description: "Description for Title 7",
-          image: "https://images.unsplash.com/photo-1576158113928-4c240eaaf360?w=500&auto=format&fit=crop&q=60",
-          duration: "2 hours",
-          status: "Active",
-        },
-        {
-          srNum: 8,
-          title: "Title 8",
-          description: "Description for Title 8",
-          image: "https://images.unsplash.com/photo-1576158113928-4c240eaaf360?w=500&auto=format&fit=crop&q=60",
-          duration: "1 hour",
-          status: "Inactive",
-        },
-        {
-          srNum: 9,
-          title: "Title 9",
-          description: "Description for Title 9",
-          image: "https://images.unsplash.com/photo-1576158113928-4c240eaaf360?w=500&auto=format&fit=crop&q=60",
-          duration: "3 hours",
-          status: "Active",
-        },
-        {
-          srNum: 10,
-          title: "Title 10",
-          description: "Description for Title 10",
-          image: "https://images.unsplash.com/photo-1576158113928-4c240eaaf360?w=500&auto=format&fit=crop&q=60",
-          duration: "4.5 hours",
-          status: "Inactive",
-        },
+        }
       ];
-      
+
       setTableData(users);
       setLoading(false);
     }, 1000);
@@ -334,7 +263,10 @@ const ManageProgram = () => {
                                 </Link>
                               </td>
                               <td>
-                                <div ref={dropdownRef} className="dropdown text-center">
+                                <div
+                                  ref={dropdownRef}
+                                  className="dropdown text-center"
+                                >
                                   <button
                                     className="dropdown-button"
                                     onClick={() =>
