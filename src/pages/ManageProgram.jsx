@@ -226,7 +226,7 @@ const ManageProgram = () => {
                           <th>S.No</th>
                           <th>Program</th>
                           <th>Status</th>
-                          <th>Manage</th>
+                          <th>Manage Program</th>
                           <th>Action</th>
                         </tr>
                       </thead>
@@ -260,6 +260,7 @@ const ManageProgram = () => {
                                   style={{
                                     borderBottom: "3px solid #002538",
                                   }}
+                                  title="Manage Program"
                                 >
                                   Open Program
                                 </Link>

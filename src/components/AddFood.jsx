@@ -7,10 +7,16 @@ const AddFood = () => {
   const userData = location.state ? location.state.user : null;
 
   // State variables
-  const [foodName, setFoodName] = useState(userData ? userData.FoodCategory : "");
-  const [category, setCategory] = useState(userData ? userData.FoodCategory : "");
+  const [foodName, setFoodName] = useState(
+    userData ? userData.FoodCategory : ""
+  );
+  const [category, setCategory] = useState(
+    userData ? userData.FoodCategory : ""
+  );
   const [foodType, setFoodType] = useState(userData ? userData.FoodType : "");
-  const [approvalStatus, setApprovalStatus] = useState(userData ? userData.Approved : "");
+  const [approvalStatus, setApprovalStatus] = useState(
+    userData ? userData.Approved : ""
+  );
   const [image, setImage] = useState(null); // State for uploaded image
   const [isImageAdded, setIsImageAdded] = useState(false); // Track if an image is added
   const [categories, setCategories] = useState(["Fruits", "Vegetables"]); // Predefined categories
@@ -125,6 +131,11 @@ const AddFood = () => {
     setShowModal(false); // Close the modal after handling
   };
 
+  // Function to go back to the previous page
+  const handleBack = () => {
+    window.history.back();
+  };
+
   return (
     <main className="app-content">
       <div className="app-title tile p-3">
@@ -132,6 +143,19 @@ const AddFood = () => {
           <span className="mr-4 fw-bold">&nbsp;Food Categories</span>
         </h1>
       </div>
+
+      <button
+        className="btn mb-2 ms-2"
+        style={{
+          backgroundColor: "#002538",
+          color: "white",
+        }}
+        type="button"
+        onClick={handleBack}
+      >
+        <i class="fa-solid fa-arrow-left" style={{ color: "#fff" }}></i>{" "}
+        &nbsp;Previous
+      </button>
       <div className="row justify-content-center">
         <div className="col-md-10 px-5">
           <div className="tile">
@@ -154,25 +178,35 @@ const AddFood = () => {
                   <div className="mb-3 w-100">
                     <label className="form-label">Food Name</label>
                     <input
-                      className={`form-control ${errors.foodName ? "is-invalid" : ""}`}
+                      className={`form-control ${
+                        errors.foodName ? "is-invalid" : ""
+                      }`}
                       type="text"
                       placeholder="Enter food name"
                       value={foodName}
                       onChange={(e) => setFoodName(e.target.value)}
                     />
-                    {errors.foodName && <div className="invalid-feedback">{errors.foodName}</div>}
+                    {errors.foodName && (
+                      <div className="invalid-feedback">{errors.foodName}</div>
+                    )}
                   </div>
                   <div className="mb-3 col-lg-12">
                     <label className="form-label">Category</label>
                     <div className="d-flex align-items-center">
                       <select
-                        className={`form-select ${errors.category ? "is-invalid" : ""}`}
+                        className={`form-select ${
+                          errors.category ? "is-invalid" : ""
+                        }`}
                         value={category}
                         onChange={(e) => setCategory(e.target.value)}
                       >
-                        <option value="" disabled>Select a category</option>
+                        <option value="" disabled>
+                          Select a category
+                        </option>
                         {categories.map((cat, index) => (
-                          <option key={index} value={cat}>{cat}</option>
+                          <option key={index} value={cat}>
+                            {cat}
+                          </option>
                         ))}
                       </select>
                       <button
@@ -183,19 +217,25 @@ const AddFood = () => {
                         <i className="fa fa-plus"></i>
                       </button>
                     </div>
-                    {errors.category && <div className="invalid-feedback">{errors.category}</div>}
+                    {errors.category && (
+                      <div className="invalid-feedback">{errors.category}</div>
+                    )}
                   </div>
 
                   <div className="mb-3 col-lg-12">
                     <label className="form-label">Food Type</label>
                     <input
-                      className={`form-control ${errors.foodType ? "is-invalid" : ""}`}
+                      className={`form-control ${
+                        errors.foodType ? "is-invalid" : ""
+                      }`}
                       type="text"
                       placeholder="Enter food type"
                       value={foodType}
                       onChange={(e) => setFoodType(e.target.value)}
                     />
-                    {errors.foodType && <div className="invalid-feedback">{errors.foodType}</div>}
+                    {errors.foodType && (
+                      <div className="invalid-feedback">{errors.foodType}</div>
+                    )}
                   </div>
 
                   <div className="mb-3 col-lg-12">
@@ -210,9 +250,17 @@ const AddFood = () => {
                           checked={approvalStatus === "Approved"}
                           onChange={(e) => setApprovalStatus(e.target.value)}
                         />
-                        <label className="form-check-label" style={{ marginLeft: "5px" }}>Approved</label>
+                        <label
+                          className="form-check-label"
+                          style={{ marginLeft: "5px" }}
+                        >
+                          Approved
+                        </label>
                       </div>
-                      <div className="form-check" style={{ marginLeft: "10px" }}>
+                      <div
+                        className="form-check"
+                        style={{ marginLeft: "10px" }}
+                      >
                         <input
                           className="form-check-input"
                           type="radio"
@@ -221,14 +269,28 @@ const AddFood = () => {
                           checked={approvalStatus === "Non Approved"}
                           onChange={(e) => setApprovalStatus(e.target.value)}
                         />
-                        <label className="form-check-label" style={{ marginLeft: "5px" }}>Non Approved</label>
+                        <label
+                          className="form-check-label"
+                          style={{ marginLeft: "5px" }}
+                        >
+                          Non Approved
+                        </label>
                       </div>
                     </div>
-                    {errors.approvalStatus && <div className="invalid-feedback">{errors.approvalStatus}</div>}
+                    {errors.approvalStatus && (
+                      <div className="invalid-feedback">
+                        {errors.approvalStatus}
+                      </div>
+                    )}
                   </div>
 
                   <div className="mb-3 text-center mt-3">
-                    <button className="btn custom-btn text-white w-50" type="submit">Submit</button>
+                    <button
+                      className="btn custom-btn text-white w-50"
+                      type="submit"
+                    >
+                      Submit
+                    </button>
                   </div>
                 </div>
               </form>
@@ -251,7 +313,9 @@ const AddFood = () => {
             </div>
             <div className="modal-body">
               <div className="mb-3">
-                <label htmlFor="newCategory" className="form-label">Category Name</label>
+                <label htmlFor="newCategory" className="form-label">
+                  Category Name
+                </label>
                 <input
                   type="text"
                   className="form-control"
@@ -263,8 +327,20 @@ const AddFood = () => {
               </div>
             </div>
             <div className="modal-footer">
-              <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>Close</button>
-              <button type="button" className="btn btn-primary" onClick={handleSaveCategory}>Save Category</button>
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={() => setShowModal(false)}
+              >
+                Close
+              </button>
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={handleSaveCategory}
+              >
+                Save Category
+              </button>
             </div>
           </div>
         </div>

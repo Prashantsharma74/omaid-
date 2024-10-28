@@ -51,6 +51,11 @@ const ApproveNonApprove = () => {
     return buttons;
   };
 
+  // Function to go back to the previous page
+  const handleBack = () => {
+    window.history.back();
+  };
+
   const fetchData = () => {
     setTimeout(() => {
       const users = [
@@ -131,15 +136,32 @@ const ApproveNonApprove = () => {
           </h1>
         </div>
       </div>
-      <div className="row">
-        <div className="col-md-12 px-5">
-          <div className="bt-ad-emp">
-            <Link
-              className="add-btt btn"
-              to="/manage-program/manage/food/add-food"
-            >
-              <i className="fa-regular fa-plus"></i> Add Food Item
-            </Link>
+      <div
+        className="d-flex"
+        style={{ alignItems: "center", justifyContent: "space-between" }}
+      >
+        <button
+          className="btn mb-2 ms-2"
+          style={{
+            backgroundColor: "#002538",
+            color: "white",
+          }}
+          type="button"
+          onClick={handleBack}
+        >
+          <i class="fa-solid fa-arrow-left" style={{ color: "#fff" }}></i>{" "}
+          &nbsp;Previous
+        </button>
+        <div className="row">
+          <div className="col-md-12 px-5">
+            <div className="bt-ad-emp">
+              <Link
+                className="add-btt btn"
+                to="/manage-program/manage/food/add-food"
+              >
+                <i className="fa-regular fa-plus"></i> Add Food Item
+              </Link>
+            </div>
           </div>
         </div>
       </div>
@@ -289,7 +311,8 @@ const ApproveNonApprove = () => {
                         {Math.min(
                           (currentPage + 1) * itemsPerPage,
                           filteredData.length
-                        )} of {filteredData.length} entries
+                        )}{" "}
+                        of {filteredData.length} entries
                       </span>
                       <div>
                         <button

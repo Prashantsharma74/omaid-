@@ -136,11 +136,7 @@ const Dashboard = () => {
                     <p>
                       <i className="fa-sharp fa-regular fa-clock unit fa-xl pt-3"></i>
                     </p>
-                    <p
-                      className="unit dots"
-                      id="hours"
-                      style={{ marginLeft: "10px" }}
-                    >
+                    <p className="unit dots" id="hours">
                       {hours}
                     </p>
                     <p className="unit dots" id="minutes">

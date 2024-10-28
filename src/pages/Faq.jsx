@@ -5,18 +5,6 @@ const Faq = () => {
   const dropdownRef = useRef(null);
   const [formData, setFormData] = useState([
     {
-      id: 1,
-      que: "How do I create a profile?",
-      ans: "To create a profile, simply sign up with your email address or phone number.",
-      status: true,
-    },
-    {
-      id: 2,
-      que: "How do I reset my password?",
-      ans: "You can reset your password by clicking on 'Forgot Password' on the login page.",
-      status: true,
-    },
-    {
       id: 3,
       que: "How do I update my profile information?",
       ans: "Go to your profile settings and edit your information.",
@@ -83,14 +71,20 @@ const Faq = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setError({ question: "", answer: "" });
+    let hasError = false;
+    const newError = { question: "", answer: "" };
 
     if (!newQuestion) {
-      setError((prev) => ({ ...prev, question: "Question is required." }));
-      return;
+      newError.question = "Question is required.";
+      hasError = true;
     }
     if (!newAnswer) {
-      setError((prev) => ({ ...prev, answer: "Answer is required." }));
+      newError.answer = "Answer is required.";
+      hasError = true;
+    }
+
+    if (hasError) {
+      setError(newError);
       return;
     }
 
