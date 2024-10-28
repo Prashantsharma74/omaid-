@@ -35,7 +35,7 @@ const AddUser = ({ user, onClose }) => {
         height: user.height || "",
         weight: user.weight || "",
         gender: user.gender || "",
-        password: user.password || "", // Don't pre-fill the password for security reasons
+        password: user.password || "",
         nutrition: user.nutrition || "",
         waterTracking: user.waterTracking || false,
       });
@@ -77,12 +77,12 @@ const AddUser = ({ user, onClose }) => {
       newErrors.email = "Email is invalid.";
     }
 
-    if (!formData.phone) {
-      newErrors.phone = "Phone number is required.";
-    } else if (formData.phone.length !== 10) {
-      newErrors.phone = "Phone number must be exactly 10 digits.";
-    } else if (!/^\d+$/.test(formData.phone)) {
-      newErrors.phone = "Phone number must contain only digits.";
+    if (
+      formData.phone &&
+      (!/^\d{10}$/.test(formData.phone.replace(/[-\s]/g, "")) ||
+        formData.phone.length !== 10)
+    ) {
+      newErrors.phone = "Phone number must be a 10-digit numeric value.";
     }
 
     if (!formData.assignSubAdmin) {
@@ -128,7 +128,6 @@ const AddUser = ({ user, onClose }) => {
         icon: "success",
         confirmButtonText: "OK",
       });
-      console.log("Updated User Data:", formData);
     } else {
       // Logic for creating a new user
       Swal.fire({
@@ -137,11 +136,7 @@ const AddUser = ({ user, onClose }) => {
         icon: "success",
         confirmButtonText: "OK",
       });
-      console.log("New User Data:", formData);
     }
-
-    // Reset the form after submission
-    resetForm();
   };
 
   const resetForm = () => {
@@ -199,7 +194,8 @@ const AddUser = ({ user, onClose }) => {
                 value={formData.name}
                 onChange={handleChange}
               />
-              {errors.name && <div className="text-danger">{errors.name}</div>} {/* Error message */}
+              {errors.name && <div className="text-danger">{errors.name}</div>}{" "}
+              {/* Error message */}
             </div>
             <div className="mb-3 col-md-6">
               <label className="form-label">User Default ID</label>
@@ -211,7 +207,10 @@ const AddUser = ({ user, onClose }) => {
                 value={formData.userId}
                 onChange={handleChange}
               />
-              {errors.userId && <div className="text-danger">{errors.userId}</div>} {/* Error message */}
+              {errors.userId && (
+                <div className="text-danger">{errors.userId}</div>
+              )}{" "}
+              {/* Error message */}
             </div>
             <div className="mb-3 col-md-6">
               <label className="form-label">Email address</label>
@@ -223,22 +222,33 @@ const AddUser = ({ user, onClose }) => {
                 value={formData.email}
                 onChange={handleChange}
               />
-              {errors.email && <div className="text-danger">{errors.email}</div>} {/* Error message */}
+              {errors.email && (
+                <div className="text-danger">{errors.email}</div>
+              )}{" "}
+              {/* Error message */}
             </div>
             <div className="mb-3 col-md-6">
               <label className="form-label">Phone Number</label>
               <input
                 className="form-control"
                 id="phone"
-                type="tel"
+                type="number"
                 placeholder="Enter Phone Number"
                 value={formData.phone}
                 onChange={handleChange}
                 pattern="[0-9]*"
                 minLength="10"
                 maxLength="15"
+                onKeyPress={(e) => {
+                  if (!/[0-9]/.test(e.key)) {
+                    e.preventDefault();
+                  }
+                }}
               />
-              {errors.phone && <div className="text-danger">{errors.phone}</div>} {/* Error message */}
+              {errors.phone && (
+                <div className="text-danger">{errors.phone}</div>
+              )}{" "}
+              {/* Error message */}
             </div>
             <div className="mb-3 col-md-6">
               <label className="form-label">Assign Sub-Admin</label>
@@ -252,7 +262,10 @@ const AddUser = ({ user, onClose }) => {
                 <option value="subadmin1">Sub-Admin 1</option>
                 <option value="subadmin2">Sub-Admin 2</option>
               </select>
-              {errors.assignSubAdmin && <div className="text-danger">{errors.assignSubAdmin}</div>} {/* Error message */}
+              {errors.assignSubAdmin && (
+                <div className="text-danger">{errors.assignSubAdmin}</div>
+              )}{" "}
+              {/* Error message */}
             </div>
             <div className="mb-3 col-md-6">
               <label className="form-label">Date of Birth</label>
@@ -263,7 +276,8 @@ const AddUser = ({ user, onClose }) => {
                 value={formData.dob}
                 onChange={handleChange}
               />
-              {errors.dob && <div className="text-danger">{errors.dob}</div>} {/* Error message */}
+              {errors.dob && <div className="text-danger">{errors.dob}</div>}{" "}
+              {/* Error message */}
             </div>
             <div className="mb-3 col-md-6">
               <label className="form-label">Height (cm)</label>
@@ -278,7 +292,10 @@ const AddUser = ({ user, onClose }) => {
                 max="300"
                 step="1"
               />
-              {errors.height && <div className="text-danger">{errors.height}</div>} {/* Error message */}
+              {errors.height && (
+                <div className="text-danger">{errors.height}</div>
+              )}{" "}
+              {/* Error message */}
             </div>
             <div className="mb-3 col-md-6">
               <label className="form-label">Weight (kg)</label>
@@ -293,7 +310,10 @@ const AddUser = ({ user, onClose }) => {
                 max="500"
                 step="0.1"
               />
-              {errors.weight && <div className="text-danger">{errors.weight}</div>} {/* Error message */}
+              {errors.weight && (
+                <div className="text-danger">{errors.weight}</div>
+              )}{" "}
+              {/* Error message */}
             </div>
             <div className="mb-3 col-md-6">
               <label className="form-label">Gender</label>
@@ -308,7 +328,10 @@ const AddUser = ({ user, onClose }) => {
                 <option value="female">Female</option>
                 <option value="other">Other</option>
               </select>
-              {errors.gender && <div className="text-danger">{errors.gender}</div>} {/* Error message */}
+              {errors.gender && (
+                <div className="text-danger">{errors.gender}</div>
+              )}{" "}
+              {/* Error message */}
             </div>
             <div className="mb-3 col-md-6">
               <label className="form-label">Password</label>
@@ -344,7 +367,10 @@ const AddUser = ({ user, onClose }) => {
                   ></i>
                 </button>
               </div>
-              {errors.password && <div className="text-danger">{errors.password}</div>} {/* Error message */}
+              {errors.password && (
+                <div className="text-danger">{errors.password}</div>
+              )}{" "}
+              {/* Error message */}
             </div>
             <div className="mb-3 col-lg-12 text-center">
               <button className="btn custom-btn text-white w-25" type="submit">

@@ -300,8 +300,6 @@ const AddSubAdmin = ({ user, onClose }) => {
       confirmButtonText: "OK",
     });
 
-    console.log("Form Data:", formData);
-
     setFormData({
       name: "",
       email: "",
@@ -324,8 +322,6 @@ const AddSubAdmin = ({ user, onClose }) => {
       icon: "success",
       confirmButtonText: "OK",
     });
-
-    console.log("Updated Data:", formData);
 
     setFormData({
       name: "",
@@ -431,7 +427,7 @@ const AddSubAdmin = ({ user, onClose }) => {
                   setSearchTerm(e.target.value);
                   setSuggestions([]);
                 }}
-                onFocus={() => setSuggestions(countries)} // Populate suggestions on focus
+                onFocus={() => setSuggestions(countries)}
               >
                 <option value="" disabled>
                   Select a country
@@ -484,38 +480,18 @@ const AddSubAdmin = ({ user, onClose }) => {
                 <div className="invalid-feedback">{errors.designation}</div>
               )}
             </div>
-
             <div className="mb-3 col-md-6">
               <label className="form-label">Password</label>
-              <div className="input-group">
-                <input
-                  className={`form-control ${
-                    errors.password ? "is-invalid" : ""
-                  }`}
-                  id="password"
-                  type={isPasswordVisible ? "text" : "password"}
-                  placeholder="Enter Password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  minLength={8}
-                />
-                <button
-                  style={{
-                    border: "none",
-                    color: "#002538",
-                  }}
-                  type="button"
-                  className="toggle-password"
-                  onClick={handlePasswordVisibility}
-                >
-                  <i
-                    className={`fa-solid fa-eye${
-                      isPasswordVisible ? "" : "-slash"
-                    }`}
-                    style={{ backgroundColor: "none" }}
-                  ></i>
-                </button>
-              </div>
+              <input
+                className={`form-control ${
+                  errors.password ? "is-invalid" : ""
+                }`}
+                id="password"
+                placeholder="Enter Password"
+                value={formData.password}
+                onChange={handleChange}
+                minLength={8}
+              />
               {errors.password && (
                 <div className="invalid-feedback">{errors.password}</div>
               )}

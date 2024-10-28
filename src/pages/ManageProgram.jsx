@@ -57,7 +57,7 @@ const ManageProgram = () => {
             "https://images.unsplash.com/photo-1576158113928-4c240eaaf360?w=500&auto=format&fit=crop&q=60",
           duration: "2 hours",
           status: "Active",
-        }
+        },
       ];
 
       setTableData(users);
@@ -257,9 +257,11 @@ const ManageProgram = () => {
                                 <Link
                                   className="btn ctb"
                                   to="/manage-program/manage"
+                                  style={{
+                                    borderBottom: "3px solid lightgrey",
+                                  }}
                                 >
-                                  <i className="fa-sharp fa-light fa-pen mx-1"></i>{" "}
-                                  Manage
+                                  Click Me
                                 </Link>
                               </td>
                               <td>
