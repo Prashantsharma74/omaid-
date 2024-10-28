@@ -7,20 +7,15 @@ const AddFood = () => {
   const userData = location.state ? location.state.user : null;
 
   // State variables
-  const [foodName, setFoodName] = useState(
-    userData ? userData.FoodCategory : ""
-  );
-  const [category, setCategory] = useState(
-    userData ? userData.FoodCategory : ""
-  );
+  const [foodName, setFoodName] = useState(userData ? userData.FoodCategory : "");
+  const [category, setCategory] = useState(userData ? userData.FoodCategory : "");
   const [foodType, setFoodType] = useState(userData ? userData.FoodType : "");
-  const [approvalStatus, setApprovalStatus] = useState(
-    userData ? userData.Approved : ""
-  );
+  const [approvalStatus, setApprovalStatus] = useState(userData ? userData.Approved : "");
   const [image, setImage] = useState(null); // State for uploaded image
   const [isImageAdded, setIsImageAdded] = useState(false); // Track if an image is added
   const [categories, setCategories] = useState(["Fruits", "Vegetables"]); // Predefined categories
   const [newCategory, setNewCategory] = useState(""); // New category input
+  const [newCategoryImage, setNewCategoryImage] = useState(null); // State for new category image
   const [showModal, setShowModal] = useState(false); // Track modal visibility
   const [errors, setErrors] = useState({}); // State for storing field-specific errors
 
@@ -97,6 +92,7 @@ const AddFood = () => {
     setImage(null);
     setNewCategory("");
     setIsImageAdded(false);
+    setNewCategoryImage(null); // Reset new category image
     setErrors({}); // Clear errors after submission
   };
 
@@ -108,11 +104,19 @@ const AddFood = () => {
     }
   };
 
+  const handleNewCategoryImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setNewCategoryImage(URL.createObjectURL(file)); // Store new category image URL for preview
+    }
+  };
+
   const handleSaveCategory = () => {
     if (newCategory && !categories.includes(newCategory)) {
       setCategories([...categories, newCategory]);
       setCategory(newCategory); // Set the new category as selected
       setNewCategory(""); // Clear the input after saving
+      setNewCategoryImage(null); // Reset new category image
 
       // Show success alert for category addition
       Swal.fire({
@@ -146,14 +150,11 @@ const AddFood = () => {
 
       <button
         className="btn mb-2 ms-2"
-        style={{
-          backgroundColor: "#002538",
-          color: "white",
-        }}
+        style={{ backgroundColor: "#002538", color: "white" }}
         type="button"
         onClick={handleBack}
       >
-        <i class="fa-solid fa-arrow-left" style={{ color: "#fff" }}></i>{" "}
+        <i className="fa-solid fa-arrow-left" style={{ color: "#fff" }}></i>{" "}
         &nbsp;Previous
       </button>
       <div className="row justify-content-center">
@@ -178,9 +179,7 @@ const AddFood = () => {
                   <div className="mb-3 w-100">
                     <label className="form-label">Food Name</label>
                     <input
-                      className={`form-control ${
-                        errors.foodName ? "is-invalid" : ""
-                      }`}
+                      className={`form-control ${errors.foodName ? "is-invalid" : ""}`}
                       type="text"
                       placeholder="Enter food name"
                       value={foodName}
@@ -194,9 +193,7 @@ const AddFood = () => {
                     <label className="form-label">Category</label>
                     <div className="d-flex align-items-center">
                       <select
-                        className={`form-select ${
-                          errors.category ? "is-invalid" : ""
-                        }`}
+                        className={`form-select ${errors.category ? "is-invalid" : ""}`}
                         value={category}
                         onChange={(e) => setCategory(e.target.value)}
                       >
@@ -210,12 +207,9 @@ const AddFood = () => {
                         ))}
                       </select>
                       <button
-                      className="btn  ms-2"
+                        className="btn ms-2"
                         type="button"
-                        style={{
-                          backgroundColor: "#002538",
-                          color: "white",
-                        }}
+                        style={{ backgroundColor: "#002538", color: "white" }}
                         onClick={() => setShowModal(true)}
                       >
                         <i className="fa fa-plus"></i>
@@ -229,9 +223,7 @@ const AddFood = () => {
                   <div className="mb-3 col-lg-12">
                     <label className="form-label">Food Type</label>
                     <input
-                      className={`form-control ${
-                        errors.foodType ? "is-invalid" : ""
-                      }`}
+                      className={`form-control ${errors.foodType ? "is-invalid" : ""}`}
                       type="text"
                       placeholder="Enter food type"
                       value={foodType}
@@ -254,17 +246,11 @@ const AddFood = () => {
                           checked={approvalStatus === "Approved"}
                           onChange={(e) => setApprovalStatus(e.target.value)}
                         />
-                        <label
-                          className="form-check-label"
-                          style={{ marginLeft: "5px" }}
-                        >
+                        <label className="form-check-label" style={{ marginLeft: "5px" }}>
                           Approved
                         </label>
                       </div>
-                      <div
-                        className="form-check"
-                        style={{ marginLeft: "10px" }}
-                      >
+                      <div className="form-check" style={{ marginLeft: "10px" }}>
                         <input
                           className="form-check-input"
                           type="radio"
@@ -273,26 +259,18 @@ const AddFood = () => {
                           checked={approvalStatus === "Non Approved"}
                           onChange={(e) => setApprovalStatus(e.target.value)}
                         />
-                        <label
-                          className="form-check-label"
-                          style={{ marginLeft: "5px" }}
-                        >
+                        <label className="form-check-label" style={{ marginLeft: "5px" }}>
                           Non Approved
                         </label>
                       </div>
                     </div>
                     {errors.approvalStatus && (
-                      <div className="invalid-feedback">
-                        {errors.approvalStatus}
-                      </div>
+                      <div className="invalid-feedback">{errors.approvalStatus}</div>
                     )}
                   </div>
 
                   <div className="mb-3 text-center mt-3">
-                    <button
-                      className="btn custom-btn text-white w-50"
-                      type="submit"
-                    >
+                    <button className="btn custom-btn text-white w-50" type="submit">
                       Submit
                     </button>
                   </div>
@@ -329,6 +307,26 @@ const AddFood = () => {
                   onChange={(e) => setNewCategory(e.target.value)}
                 />
               </div>
+              <div className="mb-3">
+                <label htmlFor="newCategoryImage" className="form-label">
+                  Food Icon
+                </label>
+                <input
+                  type="file"
+                  className="form-control"
+                  id="newCategoryImage"
+                  accept="image/*"
+                  onChange={handleNewCategoryImageChange}
+                />
+                {newCategoryImage && (
+                  <img
+                    src={newCategoryImage}
+                    alt="New Category Icon"
+                    className="mt-2"
+                    style={{ maxWidth: '100px', maxHeight: '100px' }} // Adjust as needed
+                  />
+                )}
+              </div>
             </div>
             <div className="modal-footer">
               <button
@@ -341,16 +339,27 @@ const AddFood = () => {
               <button
                 type="button"
                 className="btn ms-2"
-                style={{
-                  backgroundColor: "#002538",
-                  color: "white",
-                }}
+                style={{ backgroundColor: "#002538", color: "white" }}
                 onClick={handleSaveCategory}
               >
                 Save Category
               </button>
             </div>
           </div>
+        <div>
+          <table>
+            <thead>
+              <th>Sr.No</th>
+              <th>Category</th>
+              <th>Action</th>
+            </thead>
+            <tbody>
+              <tr>1</tr>
+              <tr>Banana</tr>
+              <tr>1</tr>
+            </tbody>
+          </table>
+        </div>
         </div>
       )}
 
