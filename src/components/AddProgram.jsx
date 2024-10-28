@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import "dropify/dist/css/dropify.css";
 import $ from "jquery";
 import "dropify";
-import { useLocation } from "react-router-dom";
 
 const AddProgram = ({ isOpen, setIsOpen, programData }) => {
   const [isAlert, setIsAlert] = useState(false);
@@ -21,9 +20,9 @@ const AddProgram = ({ isOpen, setIsOpen, programData }) => {
   };
 
   const handleCross = () => {
-    setIsOpen(false); // Close the modal
-    setFormData({ title: "", description: "", image: "", duration: "" }); // Reset form data
-    setErrors({}); // Reset errors
+    setIsOpen(false);
+    setFormData({ title: "", description: "", image: "", duration: "" });
+    setErrors({});
   };
 
   useEffect(() => {
@@ -38,7 +37,8 @@ const AddProgram = ({ isOpen, setIsOpen, programData }) => {
   const validate = () => {
     const newErrors = {};
     if (!formData.title) newErrors.title = "Title is required.";
-    if (!formData.description) newErrors.description = "Description is required.";
+    if (!formData.description)
+      newErrors.description = "Description is required.";
     if (!formData.image) newErrors.image = "Image is required.";
     if (!formData.duration) newErrors.duration = "Duration is required.";
 
@@ -65,7 +65,10 @@ const AddProgram = ({ isOpen, setIsOpen, programData }) => {
   };
 
   return (
-    <div className={`modal ${isOpen ? 'show' : ''}`} style={{ display: isOpen ? 'block' : 'none' }}>
+    <div
+      className={`modal ${isOpen ? "show" : ""}`}
+      style={{ display: isOpen ? "block" : "none" }}
+    >
       <div className="modal-dialog">
         <div className="modal-content">
           <div className="modal-header">
@@ -77,7 +80,8 @@ const AddProgram = ({ isOpen, setIsOpen, programData }) => {
           <div className="modal-body">
             {isAlert && (
               <div className="alert alert-dismissible alert-success">
-                <strong>Well done!</strong> Program {programData ? "updated" : "added"} successfully.
+                <strong>Well done!</strong> Program{" "}
+                {programData ? "updated" : "added"} successfully.
               </div>
             )}
             <form onSubmit={handleSubmit}>
@@ -85,26 +89,34 @@ const AddProgram = ({ isOpen, setIsOpen, programData }) => {
                 <div className="mb-3 col-md-12">
                   <label className="form-label">Title</label>
                   <input
-                    className={`form-control ${errors.title ? "is-invalid" : ""}`}
+                    className={`form-control ${
+                      errors.title ? "is-invalid" : ""
+                    }`}
                     name="title"
                     type="text"
                     placeholder="Enter Title"
                     value={formData.title}
                     onChange={handleChange}
                   />
-                  {errors.title && <div className="invalid-feedback">{errors.title}</div>}
+                  {errors.title && (
+                    <div className="invalid-feedback">{errors.title}</div>
+                  )}
                 </div>
                 <div className="mb-3 col-md-12">
                   <label className="form-label">Description</label>
                   <textarea
-                    className={`form-control ${errors.description ? "is-invalid" : ""}`}
+                    className={`form-control ${
+                      errors.description ? "is-invalid" : ""
+                    }`}
                     name="description"
                     rows="6"
                     placeholder="Enter description"
                     value={formData.description}
                     onChange={handleChange}
                   ></textarea>
-                  {errors.description && <div className="invalid-feedback">{errors.description}</div>}
+                  {errors.description && (
+                    <div className="invalid-feedback">{errors.description}</div>
+                  )}
                 </div>
                 <div className="form-group mb-0 pb-0">
                   <label className="form-label">Upload Image</label>
@@ -116,7 +128,9 @@ const AddProgram = ({ isOpen, setIsOpen, programData }) => {
                     multiple
                     accept=".jpg,.jpeg,.png,.gif,.webp,.pdf"
                   />
-                  {errors.image && <div className="invalid-feedback">{errors.image}</div>}
+                  {errors.image && (
+                    <div className="invalid-feedback">{errors.image}</div>
+                  )}
                   <small className="form-text text-muted upload-info mt-2 mb-2">
                     Maximum Image Size: Up to 6MB per upload
                   </small>
@@ -124,17 +138,24 @@ const AddProgram = ({ isOpen, setIsOpen, programData }) => {
                 <div className="mb-3 col-md-12">
                   <label className="form-label">Duration</label>
                   <input
-                    className={`form-control ${errors.duration ? "is-invalid" : ""}`}
+                    className={`form-control ${
+                      errors.duration ? "is-invalid" : ""
+                    }`}
                     name="duration"
                     type="text"
                     placeholder="Enter Duration"
                     value={formData.duration}
                     onChange={handleChange}
                   />
-                  {errors.duration && <div className="invalid-feedback">{errors.duration}</div>}
+                  {errors.duration && (
+                    <div className="invalid-feedback">{errors.duration}</div>
+                  )}
                 </div>
                 <div className="mb-3 col-lg-12 text-center">
-                  <button className="btn custom-btn text-white w-25" type="submit">
+                  <button
+                    className="btn custom-btn text-white w-25"
+                    type="submit"
+                  >
                     <i className="fa-thin fa-paper-plane"></i> &nbsp; Submit
                   </button>
                 </div>

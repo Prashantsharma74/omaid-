@@ -369,18 +369,20 @@ const Faq = () => {
                               <div className="dropdown-menu show">
                                 <a
                                   className="dropdown-item"
-                                  onClick={() => {
+                                  onClick={(e) => {
+                                    e.preventDefault();
                                     handleEdit(data.id);
-                                    setOpenDropdown(null);
+                                    setOpenDropdown(null); // Close the dropdown after edit
                                   }}
                                 >
                                   <i className="fa fa-edit"></i> Edit
                                 </a>
                                 <a
                                   className="dropdown-item"
-                                  onClick={() => {
+                                  onClick={(e) => {
+                                    e.preventDefault();
                                     handleDelete(data.id);
-                                    setOpenDropdown(null);
+                                    setOpenDropdown(null); // Close the dropdown after delete
                                   }}
                                 >
                                   <i className="fa fa-trash"></i> Delete

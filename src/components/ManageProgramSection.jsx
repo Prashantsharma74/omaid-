@@ -6,10 +6,14 @@ const ManageProgramSection = () => {
   const DEFAULT_ITEMS_PER_PAGE = 10;
   const initialData = [
     { title: "Introduction", id: 1, url: "/manage-program/manage/edit-intro" },
-    { title: "Approved / Non-Approved Foods", id: 2, url: "/manage-program/manage/food" },
+    {
+      title: "Approved / Non-Approved Foods",
+      id: 2,
+      url: "/manage-program/manage/food",
+    },
     { title: "Diet Plan", id: 3, url: "/manage-program/manage/diet-plan" },
   ];
-  
+
   const [itemsPerPage, setItemsPerPage] = useState(DEFAULT_ITEMS_PER_PAGE);
   const [tableData, setTableData] = useState(initialData);
   const [currentPage, setCurrentPage] = useState(0);
@@ -66,9 +70,8 @@ const ManageProgramSection = () => {
     setCurrentPage(page);
   };
 
-  const filteredData = tableData.filter(
-    (user) =>
-      user.title.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredData = tableData.filter((user) =>
+    user.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
@@ -76,24 +79,6 @@ const ManageProgramSection = () => {
     currentPage * itemsPerPage,
     (currentPage + 1) * itemsPerPage
   );
-
-  const handleDelete = (id) => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "This action cannot be undone!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
-      confirmButtonText: "Yes, delete it!",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        setTableData((prevData) => prevData.filter((item) => item.id !== id));
-        Swal.fire("Deleted!", "Your program has been deleted.", "success");
-      }
-    });
-    setOpenDropdownIndex(false)
-  };
 
   return (
     <main className="app-content">
@@ -174,12 +159,6 @@ const ManageProgramSection = () => {
                                 <Link to={user.url} className="dropdown-item">
                                   <i className="fa fa-edit"></i> Edit
                                 </Link>
-                                <a
-                                  className="dropdown-item"
-                                  onClick={() => handleDelete(user.id)}
-                                >
-                                  <i className="fa fa-trash"></i> Delete
-                                </a>
                               </div>
                             )}
                           </div>

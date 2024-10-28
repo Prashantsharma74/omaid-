@@ -15803,10 +15803,10 @@ a.add-btt {
 }
 
 .switch-item.active {
-  /* background-color: #002538; */
-  color: #002538;
-  background: #fff;
-  border-bottom: 3px solid #002538;
+  background-color: #002538;
+  color: white;
+  /* background: #fff; */
+  border-bottom: 3px solid #5aa0c1;
   padding: 0px 10px 10px 10px;
   transition: all ease-in-out 0.3s;
 }

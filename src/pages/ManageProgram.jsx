@@ -255,13 +255,13 @@ const ManageProgram = () => {
                               </td>
                               <td>
                                 <Link
-                                  className="btn ctb"
+                                  className="btn"
                                   to="/manage-program/manage"
                                   style={{
-                                    borderBottom: "3px solid lightgrey",
+                                    borderBottom: "3px solid #002538",
                                   }}
                                 >
-                                  Click Me
+                                  Open Program
                                 </Link>
                               </td>
                               <td>

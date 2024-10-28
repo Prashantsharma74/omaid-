@@ -19,7 +19,6 @@ const CmsManagement = () => {
   const [openDropdown, setOpenDropdown] = useState(null);
   const dropdownRef = useRef(null);
 
-  // Simulating data fetching (using static data)
   const fetchData = () => {
     setTimeout(() => {
       const users = [
