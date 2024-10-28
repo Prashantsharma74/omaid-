@@ -210,8 +210,12 @@ const AddFood = () => {
                         ))}
                       </select>
                       <button
+                      className="btn  ms-2"
                         type="button"
-                        className="btn btn-outline-primary ms-2"
+                        style={{
+                          backgroundColor: "#002538",
+                          color: "white",
+                        }}
                         onClick={() => setShowModal(true)}
                       >
                         <i className="fa fa-plus"></i>
@@ -336,7 +340,11 @@ const AddFood = () => {
               </button>
               <button
                 type="button"
-                className="btn btn-primary"
+                className="btn ms-2"
+                style={{
+                  backgroundColor: "#002538",
+                  color: "white",
+                }}
                 onClick={handleSaveCategory}
               >
                 Save Category
@@ -346,7 +354,6 @@ const AddFood = () => {
         </div>
       )}
 
-      {/* CSS for modal, overlay, and animation */}
       <style>{`
         .modal-overlay {
           position: fixed;

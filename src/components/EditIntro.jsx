@@ -69,12 +69,12 @@ const EditIntro = () => {
         type="button"
         onClick={handleBack}
       >
-        <i class="fa-solid fa-arrow-left" style={{ color: "#fff" }}></i>{" "}
+        <i className="fa-solid fa-arrow-left" style={{ color: "#fff" }}></i>{" "}
         &nbsp;Previous
       </button>
       <div className="row">
         <div className="col-md-12 px-5">
-          <div className="tile mt-3">
+          <div className="tile mt-3" >
             <div
               className="case-status d-flex justify-content-center text-align-center"
               style={{

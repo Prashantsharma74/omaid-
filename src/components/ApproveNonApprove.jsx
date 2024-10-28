@@ -149,7 +149,7 @@ const ApproveNonApprove = () => {
           type="button"
           onClick={handleBack}
         >
-          <i class="fa-solid fa-arrow-left" style={{ color: "#fff" }}></i>{" "}
+          <i className="fa-solid fa-arrow-left" style={{ color: "#fff" }}></i>{" "}
           &nbsp;Previous
         </button>
         <div className="row">
