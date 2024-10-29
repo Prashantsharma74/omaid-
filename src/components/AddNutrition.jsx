@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const AddNutrition = ({ onClose }) => {
+const AddNutrition = ({ onClose, onSubmit }) => {
   const [formData, setFormData] = useState({
     userId: "",
     title: "",
@@ -23,11 +23,23 @@ const AddNutrition = ({ onClose }) => {
 
   const validateForm = () => {
     const newErrors = {};
+
+    // Generic validation for empty fields
     for (const field in formData) {
       if (!formData[field]) {
         newErrors[field] = `${field.charAt(0).toUpperCase() + field.slice(1)} is required.`;
       }
     }
+
+    // Specific validation for number inputs (cannot be empty, zero, or negative)
+    const numberFields = ["proteins", "carbs", "calories", "fats"];
+    numberFields.forEach((field) => {
+      const value = formData[field];
+      if (value === "" || parseFloat(value) <= 0) {
+        newErrors[field] = `${field.charAt(0).toUpperCase() + field.slice(1)} must be a positive number and cannot be empty.`;
+      }
+    });
+
     return newErrors;
   };
 
@@ -38,7 +50,8 @@ const AddNutrition = ({ onClose }) => {
       setErrors(validationErrors);
     } else {
       setErrors({});
-      console.log("Form submitted successfully:", formData);
+      onSubmit({ ...formData, createdAt: new Date().toLocaleString() });
+      onClose();
     }
   };
 
@@ -55,9 +68,7 @@ const AddNutrition = ({ onClose }) => {
           width: "100%",
         }}
       >
-        <button
-          className="cross-button" aria-label="Close" onClick={onClose}
-        >
+        <button className="cross-button" aria-label="Close" onClick={onClose}>
           &times;
         </button>
         <h4 className="mt-2">Add Nutrition</h4>

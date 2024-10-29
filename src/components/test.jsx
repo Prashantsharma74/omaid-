@@ -1,322 +1,15 @@
 import React, { useEffect, useState } from "react";
-import * as XLSX from "xlsx";
-import AddNutrition from "../components/AddNutrition";
-
-const NutritionFood = () => {
-  const DEFAULT_ITEMS_PER_PAGE = 10;
-  const [itemsPerPage, setItemsPerPage] = useState(DEFAULT_ITEMS_PER_PAGE);
-  const [tableData, setTableData] = useState([]);
-  const [currentPage, setCurrentPage] = useState(0);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [showModal, setShowModal] = useState(false);
-
-  const visiblePages = 4;
-
-  const getPaginationButtons = () => {
-    const buttons = [];
-    let startPage = Math.max(0, currentPage - Math.floor(visiblePages / 2));
-    let endPage = Math.min(totalPages - 1, startPage + visiblePages - 1);
-
-    if (endPage - startPage < visiblePages - 1) {
-      startPage = Math.max(0, endPage - visiblePages + 1);
-    }
-
-    for (let i = startPage; i <= endPage; i++) {
-      const isActive = i === currentPage;
-      buttons.push(
-        <button
-          key={i}
-          style={{
-            padding: "7px 10px",
-            backgroundColor: isActive ? "#002538" : "#e9ecef",
-            color: isActive ? "white" : "#002538",
-            border: "1px solid lightgrey",
-          }}
-          className={`page-btn ${isActive ? "active" : ""}`}
-          onClick={() => handlePageChange(i)}
-        >
-          {i + 1}
-        </button>
-      );
-    }
-
-    return buttons;
-  };
-
-  const fetchData = () => {
-    setTimeout(() => {
-      const users = [
-        { srNum: 1, title: "Title 1", description: "Description 1", status: "Active" }
-      ];
-      setTableData(users);
-      setLoading(false);
-    }, 1000);
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const handleItemsPerPageChange = (e) => {
-    setItemsPerPage(Number(e.target.value));
-    setCurrentPage(0);
-  };
-
-  const handleSearchChange = (e) => {
-    setSearchTerm(e.target.value);
-    setCurrentPage(0);
-  };
-
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
-  };
-
-  const toggleStatus = (srNum) => {
-    setTableData((prevData) =>
-      prevData.map((item) =>
-        item.srNum === srNum
-          ? { ...item, status: item.status === "Active" ? "Inactive" : "Active" }
-          : item
-      )
-    );
-  };
-
-  const handleFileUpload = (event) => {
-    const file = event.target.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const binaryStr = e.target.result;
-      const workbook = XLSX.read(binaryStr, { type: "binary" });
-      const sheetName = workbook.SheetNames[0];
-      const sheet = workbook.Sheets[sheetName];
-      const data = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-
-      const headers = data[0];
-      const newData = data.slice(1).map((row, index) => ({
-        srNum: tableData.length + index + 1,
-        title: row[0] || "No Title",
-        description: row[1] || "No Description",
-        status: row[2] || "Inactive",
-      }));
-
-      setTableData((prevData) => [...prevData, ...newData]);
-    };
-
-    reader.onerror = (error) => {
-      console.error("Error reading file:", error);
-      alert("Failed to read file. Please try again.");
-    };
-
-    reader.readAsBinaryString(file);
-  };
-
-  const handleAddNutrition = () => {
-    setShowModal(true); // Show the modal
-  };
-
-  const handleFormSubmit = (data) => {
-    setTableData((prevData) => [...prevData, data]);
-    setShowModal(false); // Close modal after submission
-  };
-
-  const filteredData = tableData.filter(
-    (user) =>
-      user.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.description.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
-  const paginatedData = filteredData.slice(
-    currentPage * itemsPerPage,
-    (currentPage + 1) * itemsPerPage
-  );
-
-  return (
-    <main className="app-content">
-      <div className="app-title tile p-3">
-        <h1 className="fw-bold">Nutrition Food</h1>
-      </div>
-
-      <div className="row mb-5">
-        <div className="col-md-12 px-5">
-          <div className="bt-ad-emp">
-            <button className="add-btt btn" onClick={handleAddNutrition}>
-              <i className="fa-regular fa-plus"></i> Add Nutrition
-            </button>
-            <a className="add-btt btn" style={{ marginLeft: "30px" }}>
-              <label htmlFor="upload-excel">
-                Upload Nutrition &nbsp;
-                <i className="fa-regular fa-file-csv"></i>
-                <input
-                  type="file"
-                  id="upload-excel"
-                  style={{ display: "none" }}
-                  accept=".xlsx,.xls"
-                  onChange={handleFileUpload}
-                />
-              </label>
-            </a>
-          </div>
-        </div>
-      </div>
-
-      <div className="row">
-        <div className="col-md-12 px-5">
-          <div className="tile p-3">
-            <div className="tile-body">
-              <div className="table-responsive">
-                <div className="table-controls" style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between"
-                }}>
-                  <div className="items-per-page-container">
-                    <select
-                      value={itemsPerPage}
-                      onChange={handleItemsPerPageChange}
-                      className="items-per-page-select"
-                    >
-                      <option value={10}>10</option>
-                      <option value={25}>25</option>
-                      <option value={50}>50</option>
-                    </select>
-                    <span className="entries-text" style={{ marginLeft: "10px" }}>
-                      entries per page
-                    </span>
-                  </div>
-                  <div className="search-container">
-                    <span className="search-text" style={{ marginRight: "10px" }}>
-                      Search:
-                    </span>
-                    <input
-                      type="text"
-                      value={searchTerm}
-                      onChange={handleSearchChange}
-                      className="search-input"
-                    />
-                  </div>
-                </div>
-
-                {loading ? (
-                  <div style={{
-                    height: "200px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center"
-                  }}>
-                    <div className="loader"></div>
-                  </div>
-                ) : (
-                  <div className="table-responsive">
-                    <table className="table table-bordered table-hover dt-responsive mt-2">
-                      <thead>
-                        <tr>
-                          <th>Sr. num</th>
-                          <th>Food</th>
-                          <th>Description</th>
-                          <th>Status</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {paginatedData.map((row) => (
-                          <tr key={row.srNum}>
-                            <td>{currentPage * itemsPerPage + row.srNum}</td>
-                            <td>{row.title}</td>
-                            <td>{row.description}</td>
-                            <td>
-                              <div className="form-check form-switch">
-                                <input
-                                  className="form-check-input"
-                                  type="checkbox"
-                                  role="switch"
-                                  checked={row.status === "Active"}
-                                  onChange={() => toggleStatus(row.srNum)}
-                                />
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                    <div className="pagination" style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between"
-                    }}>
-                      <span className="pagination-info">
-                        Showing {currentPage * itemsPerPage + 1} to{" "}
-                        {Math.min((currentPage + 1) * itemsPerPage, filteredData.length)} of {filteredData.length} entries
-                      </span>
-                      <div>
-                        <button onClick={() => handlePageChange(0)} disabled={currentPage === 0}>
-                          &laquo;
-                        </button>
-                        <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 0}>
-                          &#x3c;
-                        </button>
-                        {getPaginationButtons()}
-                        <button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage >= totalPages - 1}>
-                          &#x3e;
-                        </button>
-                        <button onClick={() => handlePageChange(totalPages - 1)} disabled={currentPage >= totalPages - 1}>
-                          &raquo;
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {showModal && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <button
-              className="close-button"
-              onClick={() => setShowModal(false)}
-              style={{
-                position: "absolute",
-                top: "10px",
-                right: "10px",
-                background: "transparent",
-                border: "none",
-                fontSize: "20px",
-                cursor: "pointer",
-              }}
-            >
-              &times;
-            </button>
-            <AddNutrition
-              onClose={() => setShowModal(false)}
-              onSubmit={handleFormSubmit}
-            />
-          </div>
-        </div>
-      )}
-    </main>
-  );
-};
-
-export default NutritionFood;
-
-
-import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import * as XLSX from "xlsx";
 
-const NutritionFood = () => {
+const DietPlan = () => {
   const DEFAULT_ITEMS_PER_PAGE = 10;
   const [itemsPerPage, setItemsPerPage] = useState(DEFAULT_ITEMS_PER_PAGE);
   const [tableData, setTableData] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
+  const [openDropdown, setOpenDropdown] = useState(null);
 
   const visiblePages = 4;
 
@@ -351,10 +44,24 @@ const NutritionFood = () => {
     return buttons;
   };
 
+  const formatDate = (date) => {
+    return new Intl.DateTimeFormat("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "2-digit",
+    }).format(new Date(date));
+  };
+
   const fetchData = () => {
     setTimeout(() => {
       const users = [
-        { srNum: 1, title: "Title 1", description: "Description 1", status: "Active" }
+        {
+          srNum: 1,
+          createdAt: formatDate("2023-10-02"), // Hardcoded date
+          title: "Title 1",
+          description: "Description 1",
+          status: "Active",
+        },
       ];
       setTableData(users);
       setLoading(false);
@@ -384,9 +91,9 @@ const NutritionFood = () => {
       prevData.map((item) =>
         item.srNum === srNum
           ? {
-            ...item,
-            status: item.status === "Active" ? "Inactive" : "Active",
-          }
+              ...item,
+              status: item.status === "Active" ? "Inactive" : "Active",
+            }
           : item
       )
     );
@@ -404,9 +111,9 @@ const NutritionFood = () => {
       const sheet = workbook.Sheets[sheetName];
       const data = XLSX.utils.sheet_to_json(sheet, { header: 1 });
 
-      const headers = data[0];
       const newData = data.slice(1).map((row, index) => ({
         srNum: tableData.length + index + 1,
+        createdAt: formatDate("2023-10-02"), // Hardcoded date for uploads
         title: row[0] || "No Title",
         description: row[1] || "No Description",
         status: row[2] || "Inactive",
@@ -438,21 +145,17 @@ const NutritionFood = () => {
   return (
     <main className="app-content">
       <div className="app-title tile p-3">
-        <h1 className="fw-bold">
-          Nutrition Food
-        </h1>
+        <h1 className="fw-bold">Diet Plan</h1>
       </div>
 
       <div className="row mb-5">
         <div className="col-md-12 px-5">
           <div className="bt-ad-emp">
-            <Link className="add-btt btn" to="/data-manage/nutrition-food/add-nutrition">
-              <i className="fa-regular fa-plus"></i> Add Nutrition
+            <Link to="/data-manage/diet-plan/add-diet" className="add-btt btn">
+              <i className="fa-regular fa-plus"></i> Add Diet
             </Link>
             <a className="add-btt btn" style={{ marginLeft: "30px" }}>
-              <label
-                htmlFor="upload-excel"
-              >
+              <label htmlFor="upload-excel">
                 Upload Nutrition &nbsp;{" "}
                 <i className="fa-regular fa-file-csv"></i>
                 <input
@@ -533,15 +236,17 @@ const NutritionFood = () => {
                       <thead>
                         <tr>
                           <th>Sr. num</th>
-                          <th>Food</th>
+                          <th>Created At</th>
+                          <th>Title</th>
                           <th>Description</th>
                           <th>Status</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {paginatedData.map((row) => (
+                        {paginatedData.map((row, index) => (
                           <tr key={row.srNum}>
-                            <td>{currentPage * itemsPerPage + row.srNum}</td>
+                            <td>{currentPage * itemsPerPage + index + 1}</td>
+                            <td>{row.createdAt}</td>
                             <td>{row.title}</td>
                             <td>{row.description}</td>
                             <td>
@@ -567,75 +272,7 @@ const NutritionFood = () => {
                         justifyContent: "space-between",
                       }}
                     >
-                      <span className="pagination-info">
-                        Showing {currentPage * itemsPerPage + 1} to{" "}
-                        {Math.min(
-                          (currentPage + 1) * itemsPerPage,
-                          filteredData.length
-                        )}{" "}
-                        of {filteredData.length} entries
-                      </span>
-                      <div>
-                        <button
-                          style={{
-                            padding: "7px 10px",
-                            backgroundColor: "#e9ecef",
-                            color: "#002538",
-                            border: "1px solid lightgrey",
-                            borderRadius: "5px 0px 0px 5px",
-                          }}
-                          className="page-btn"
-                          onClick={() => handlePageChange(0)}
-                          disabled={currentPage === 0}
-                          aria-label="First Page"
-                        >
-                          &laquo;
-                        </button>
-                        <button
-                          style={{
-                            padding: "7px 10px",
-                            backgroundColor: "#e9ecef",
-                            color: "#002538",
-                            border: "1px solid lightgrey",
-                          }}
-                          className="page-btn"
-                          onClick={() => handlePageChange(currentPage - 1)}
-                          disabled={currentPage === 0}
-                          aria-label="Previous Page"
-                        >
-                          &#x3c;
-                        </button>
-                        {getPaginationButtons()}
-                        <button
-                          style={{
-                            padding: "7px 10px",
-                            backgroundColor: "#e9ecef",
-                            color: "#002538",
-                            border: "1px solid lightgrey",
-                          }}
-                          className="page-btn"
-                          onClick={() => handlePageChange(currentPage + 1)}
-                          disabled={currentPage >= totalPages - 1}
-                          aria-label="Next Page"
-                        >
-                          &#x3e;
-                        </button>
-                        <button
-                          style={{
-                            padding: "7px 10px",
-                            backgroundColor: "#e9ecef",
-                            color: "#002538",
-                            border: "1px solid lightgrey",
-                            borderRadius: "0px 5px 5px 0px",
-                          }}
-                          className="page-btn"
-                          onClick={() => handlePageChange(totalPages - 1)}
-                          disabled={currentPage >= totalPages - 1}
-                          aria-label="Last Page"
-                        >
-                          &raquo;
-                        </button>
-                      </div>
+                      <div>{getPaginationButtons()}</div>
                     </div>
                   </div>
                 )}
@@ -648,4 +285,4 @@ const NutritionFood = () => {
   );
 };
 
-export default NutritionFood;
+export default DietPlan;

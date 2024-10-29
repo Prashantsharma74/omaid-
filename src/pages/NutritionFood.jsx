@@ -47,7 +47,17 @@ const NutritionFood = () => {
   const fetchData = () => {
     setTimeout(() => {
       const users = [
-        { srNum: 1, title: "Title 1", description: "Description 1", status: "Active" }
+        {
+          srNum: 1,
+          title: "Title 1",
+          description: "Description 1",
+          status: "Active",
+          createdAt: new Date().toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "long",
+            year: "numeric",
+          })
+        }
       ];
       setTableData(users);
       setLoading(false);
@@ -94,12 +104,16 @@ const NutritionFood = () => {
       const sheet = workbook.Sheets[sheetName];
       const data = XLSX.utils.sheet_to_json(sheet, { header: 1 });
 
-      const headers = data[0];
       const newData = data.slice(1).map((row, index) => ({
         srNum: tableData.length + index + 1,
         title: row[0] || "No Title",
         description: row[1] || "No Description",
         status: row[2] || "Inactive",
+        createdAt: new Date().toLocaleDateString("en-GB", {
+          day: "2-digit",
+          month: "long",
+          year: "numeric",
+        })
       }));
 
       setTableData((prevData) => [...prevData, ...newData]);
@@ -118,8 +132,13 @@ const NutritionFood = () => {
   };
 
   const handleFormSubmit = (data) => {
-    setTableData((prevData) => [...prevData, data]);
-    setShowModal(false); // Close modal after submission
+    const newData = {
+      ...data,
+      srNum: tableData.length + 1,
+      createdAt: new Date().toLocaleString()
+    };
+    setTableData((prevData) => [...prevData, newData]);
+    setShowModal(false);
   };
 
   const filteredData = tableData.filter(
@@ -215,6 +234,7 @@ const NutritionFood = () => {
                       <thead>
                         <tr>
                           <th>Sr. num</th>
+                          <th>Created At</th>
                           <th>Food</th>
                           <th>Description</th>
                           <th>Status</th>
@@ -224,6 +244,7 @@ const NutritionFood = () => {
                         {paginatedData.map((row) => (
                           <tr key={row.srNum}>
                             <td>{currentPage * itemsPerPage + row.srNum}</td>
+                            <td>{row.createdAt}</td>
                             <td>{row.title}</td>
                             <td>{row.description}</td>
                             <td>
@@ -251,17 +272,39 @@ const NutritionFood = () => {
                         {Math.min((currentPage + 1) * itemsPerPage, filteredData.length)} of {filteredData.length} entries
                       </span>
                       <div>
-                        <button onClick={() => handlePageChange(0)} disabled={currentPage === 0}>
+                        <button style={{
+                          padding: "7px 10px",
+                          backgroundColor: "#e9ecef",
+                          color: "#002538",
+                          border: "1px solid lightgrey",
+                          borderRadius: "5px 0px 0px 5px",
+                        }} onClick={() => handlePageChange(0)} disabled={currentPage === 0}>
                           &laquo;
                         </button>
-                        <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 0}>
+                        <button style={{
+                          padding: "7px 10px",
+                          backgroundColor: "#e9ecef",
+                          color: "#002538",
+                          border: "1px solid lightgrey",
+                        }} onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 0}>
                           &#x3c;
                         </button>
                         {getPaginationButtons()}
-                        <button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage >= totalPages - 1}>
+                        <button style={{
+                          padding: "7px 10px",
+                          backgroundColor: "#e9ecef",
+                          color: "#002538",
+                          border: "1px solid lightgrey",
+                        }} onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage >= totalPages - 1}>
                           &#x3e;
                         </button>
-                        <button onClick={() => handlePageChange(totalPages - 1)} disabled={currentPage >= totalPages - 1}>
+                        <button style={{
+                          padding: "7px 10px",
+                          backgroundColor: "#e9ecef",
+                          color: "#002538",
+                          border: "1px solid lightgrey",
+                          borderRadius: "0px 5px 5px 0px",
+                        }} onClick={() => handlePageChange(totalPages - 1)} disabled={currentPage >= totalPages - 1}>
                           &raquo;
                         </button>
                       </div>
