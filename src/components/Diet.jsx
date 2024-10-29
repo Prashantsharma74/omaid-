@@ -96,9 +96,9 @@ const Diet = () => {
       prevData.map((item) =>
         item.SNo === sNo
           ? {
-              ...item,
-              Status: item.Status === "Active" ? "Inactive" : "Active",
-            }
+            ...item,
+            Status: item.Status === "Active" ? "Inactive" : "Active",
+          }
           : item
       )
     );
@@ -114,6 +114,11 @@ const Diet = () => {
     setOpenDropdownIndex(null);
   };
 
+  // Function to go back to the previous page
+  const handleBack = () => {
+    window.history.back();
+  };
+
   return (
     <main className="app-content">
       <div className="app-title tile p-3">
@@ -123,6 +128,18 @@ const Diet = () => {
       </div>
 
       <div className="row">
+        <button
+          className="btn mb-2 ms-2"
+          style={{
+            backgroundColor: "#002538",
+            color: "white",
+          }}
+          type="button"
+          onClick={handleBack}
+        >
+          <i className="fa-solid fa-arrow-left" style={{ color: "#fff" }}></i>{" "}
+          &nbsp;Previous
+        </button>
         <div className="col-md-12 col-sm-12 col-xs-12 col-lg-12 px-5 text-end">
           <div className="bt-ad-emp">
             <Link
