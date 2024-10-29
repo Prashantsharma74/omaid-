@@ -15,7 +15,6 @@ const AddFitzone = () => {
   useEffect(() => {
     $(".dropify").dropify(); // Initialize dropify on component mount
 
-    // If there's row data, pre-fill the form
     if (location.state && location.state.row) {
       const { name, description } = location.state.row; // Destructure the row data
       setName(name);

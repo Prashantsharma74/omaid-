@@ -66,6 +66,11 @@ const DietMeal = () => {
     });
   };
 
+  // Function to go back to the previous page
+  const handleBack = () => {
+    window.history.back();
+  };
+
   return (
     <main className="app-content">
       <div className="app-title tile p-3">
@@ -73,6 +78,18 @@ const DietMeal = () => {
           <span className="mr-4 fw-bold">&nbsp; {dietData ? "Edit" : "Add"} Diet Meal Plan</span>
         </h1>
       </div>
+      <button
+        className="btn mb-2 ms-2"
+        style={{
+          backgroundColor: "#002538",
+          color: "white",
+        }}
+        type="button"
+        onClick={handleBack}
+      >
+        <i className="fa-solid fa-arrow-left" style={{ color: "#fff" }}></i>{" "}
+        &nbsp;Previous
+      </button>
       <div className="row justify-content-center">
         <div className="col-md-10 px-5">
           <div className="tile">
@@ -90,18 +107,6 @@ const DietMeal = () => {
               <h4 className="mt-2">{dietData ? "Edit Food" : "Add Food"}</h4>
             </div>
             <div className="tile-body p-3">
-              {isAlert && (
-                <div className="bs-component mb-3">
-                  <div className="alert alert-dismissible alert-success">
-                    <button
-                      className="btn-close"
-                      type="button"
-                      onClick={() => setIsAlert(false)}
-                    ></button>
-                    <strong>Well done!</strong> Diet & Meal Plan {dietData ? "updated" : "added"} successfully.
-                  </div>
-                </div>
-              )}
               <form onSubmit={handleSubmit}>
                 <div className="row">
                   <div className="mb-3 col-lg-12">

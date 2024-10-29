@@ -59,6 +59,7 @@ const ManageFitzone = () => {
     return buttons;
   };
 
+
   const handleItemsPerPageChange = (e) => {
     setItemsPerPage(Number(e.target.value));
     setCurrentPage(0);
@@ -83,23 +84,10 @@ const ManageFitzone = () => {
     (currentPage + 1) * itemsPerPage
   );
 
-  const handleDelete = (id) => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "This action cannot be undone!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
-      confirmButtonText: "Yes, delete it!",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        setTableData((prevData) => prevData.filter((item) => item.id !== id));
-        Swal.fire("Deleted!", "Your program has been deleted.", "success");
-      }
-    });
-    setOpenDropdownIndex(false);
-  };
+    // Function to go back to the previous page
+    const handleBack = () => {
+      window.history.back();
+    };
 
   return (
     <main className="app-content">
@@ -108,8 +96,20 @@ const ManageFitzone = () => {
           <span className="mr-4 fw-bold">&nbsp;Manage</span>
         </h1>
       </div>
+      <button
+        className="btn mb-2 ms-2"
+        style={{
+          backgroundColor: "#002538",
+          color: "white",
+        }}
+        type="button"
+        onClick={handleBack}
+      >
+        <i className="fa-solid fa-arrow-left" style={{ color: "#fff" }}></i>{" "}
+        &nbsp;Previous
+      </button>
       <div className="row">
-        <div className="col-md-12 px-5">
+        <div className="col-md-12 px-5 mt-2">
           <div className="tile p-3">
             <div className="tile-body">
               <div className="table-responsive">
@@ -180,12 +180,6 @@ const ManageFitzone = () => {
                                 <Link to={user.url} className="dropdown-item">
                                   <i className="fa fa-edit"></i> Edit
                                 </Link>
-                                <a
-                                  className="dropdown-item"
-                                  onClick={() => handleDelete(user.id)}
-                                >
-                                  <i className="fa fa-trash"></i> Delete
-                                </a>
                               </div>
                             )}
                           </div>

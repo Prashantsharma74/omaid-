@@ -1,424 +1,418 @@
-import React, { useState, useEffect } from "react";
-import Swal from "sweetalert2"; // Import SweetAlert2
-import { useLocation } from "react-router-dom";
+import React, { useEffect, useRef, useState } from "react";
+import { format } from "date-fns";
+import Swal from "sweetalert2";
+import AddFitezoneCategory from "./AddFitezoneCategory";
 
-const AddFood = () => {
-  const location = useLocation();
-  const userData = location.state ? location.state.user : null;
+const FitzoneCategory = () => {
+  const DEFAULT_ITEMS_PER_PAGE = 10;
+  const [itemsPerPage, setItemsPerPage] = useState(DEFAULT_ITEMS_PER_PAGE);
+  const [tableData, setTableData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [openDropdown, setOpenDropdown] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
-  // State variables
-  const [foodName, setFoodName] = useState(userData ? userData.FoodCategory : "");
-  const [category, setCategory] = useState(userData ? userData.FoodCategory : "");
-  const [foodType, setFoodType] = useState(userData ? userData.FoodType : "");
-  const [approvalStatus, setApprovalStatus] = useState(userData ? userData.Approved : "");
-  const [image, setImage] = useState(null); // State for uploaded image
-  const [categories, setCategories] = useState(["Fruits", "Vegetables"]); // Predefined categories
-  const [newCategory, setNewCategory] = useState(""); // New category input
-  const [newCategoryImage, setNewCategoryImage] = useState(null); // State for new category image
-  const [showModal, setShowModal] = useState(false); // Track modal visibility
-  const [errors, setErrors] = useState({}); // State for storing field-specific errors
-  const [foodItems, setFoodItems] = useState([]); // State to store food items
+  const dropdownRef = useRef(null);
+  const visiblePages = 4;
+
+  const getPaginationButtons = () => {
+    const buttons = [];
+    let startPage = Math.max(0, currentPage - Math.floor(visiblePages / 2));
+    let endPage = Math.min(totalPages - 1, startPage + visiblePages - 1);
+
+    if (endPage - startPage < visiblePages - 1) {
+      startPage = Math.max(0, endPage - visiblePages + 1);
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      const isActive = i === currentPage;
+      buttons.push(
+        <button
+          key={i}
+          style={{
+            padding: "7px 10px",
+            backgroundColor: isActive ? "#002538" : "#e9ecef",
+            color: isActive ? "white" : "#002538",
+            border: "1px solid lightgrey",
+          }}
+          className={`page-btn ${isActive ? "active" : ""}`}
+          onClick={() => handlePageChange(i)}
+        >
+          {i + 1}
+        </button>
+      );
+    }
+
+    return buttons;
+  };
+
+  const handleFormSubmit = (category) => {
+    if (category.id) {
+      setTableData((prevData) =>
+        prevData.map((c) => (c.id === category.id ? category : c))
+      );
+    } else {
+      const newCategory = {
+        ...category,
+        id: tableData.length + 1,
+        createdAt: new Date().toISOString().split("T")[0],
+      };
+      setTableData((prevData) => [...prevData, newCategory]);
+    }
+    Swal.fire({
+      title: category.id ? "Category Updated!" : "Category Added!",
+      icon: "success",
+    });
+    setShowModal(false);
+    setSelectedCategory(null);
+  };
+
+  const fetchData = () => {
+    setTimeout(() => {
+      const categories = [
+        {
+          id: 1,
+          createdAt: "2023-01-01",
+          categoryName: "Fruits",
+          status: "Active",
+        },
+      ];
+      setTableData(categories);
+      setLoading(false);
+    }, 1000);
+  };
 
   useEffect(() => {
-    if (userData) {
-      setFoodName(userData.FoodCategory);
-      setCategory(userData.FoodCategory);
-      setFoodType(userData.FoodType || "");
-      setApprovalStatus(userData.Approved);
-    }
-  }, [userData]);
+    fetchData();
 
-  // Validate form function
-  const validateForm = () => {
-    let formErrors = {};
-
-    if (!foodName.trim()) {
-      formErrors.foodName = "Food name is required.";
-    }
-    if (!category) {
-      formErrors.category = "Please select a category.";
-    }
-    if (!foodType.trim()) {
-      formErrors.foodType = "Food type is required.";
-    }
-    if (!approvalStatus) {
-      formErrors.approvalStatus = "Please select an approval status.";
-    }
-
-    setErrors(formErrors);
-    return Object.keys(formErrors).length === 0; // Return true if no errors
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    if (!validateForm()) {
-      return;
-    }
-
-    const formData = {
-      foodName,
-      category,
-      foodType,
-      approvalStatus,
-      image,
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setOpenDropdown(null);
+      }
     };
 
-    if (userData) {
-      // Update existing food item
-      setFoodItems((prevItems) =>
-        prevItems.map((item) =>
-          item.foodName === userData.FoodCategory ? formData : item
-        )
-      );
-      Swal.fire({
-        icon: "success",
-        title: "Food updated successfully",
-        text: "Your food item has been updated!",
-      });
-    } else {
-      // Add new food item
-      setFoodItems((prevItems) => [...prevItems, formData]);
-      Swal.fire({
-        icon: "success",
-        title: "Food added successfully",
-        text: "Your food item has been submitted!",
-      });
-    }
+    document.addEventListener("mousedown", handleClickOutside);
 
-    // Reset form
-    resetForm();
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const handleItemsPerPageChange = (e) => {
+    setItemsPerPage(Number(e.target.value));
+    setCurrentPage(0);
   };
 
-  const resetForm = () => {
-    setFoodName("");
-    setCategory("");
-    setFoodType("");
-    setApprovalStatus("");
-    setImage(null);
-    setNewCategory("");
-    setNewCategoryImage(null);
-    setErrors({});
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(0);
   };
 
-  const handleNewCategoryImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setNewCategoryImage(URL.createObjectURL(file)); // Store new category image URL for preview
-    }
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
   };
 
-  const handleSaveCategory = () => {
-    if (newCategory && !categories.includes(newCategory)) {
-      setCategories((prev) => [...prev, newCategory]); // Update the categories state
-      setCategory(newCategory); // Set the new category as selected
-      setNewCategory(""); // Clear the input after saving
-      setNewCategoryImage(null); // Reset new category image
+  const handleToggleStatus = (id) => {
+    setTableData((prevData) =>
+      prevData.map((category) =>
+        category.id === id
+          ? {
+              ...category,
+              status: category.status === "Active" ? "Inactive" : "Active",
+            }
+          : category
+      )
+    );
+  };
 
-      // Show success alert for category addition
-      Swal.fire({
-        icon: "success",
-        title: "Category added",
-        text: `The category "${newCategory}" has been added successfully.`,
-      });
-    } else if (!newCategory) {
-      // Show error alert for empty category
-      Swal.fire({
-        icon: "error",
-        title: "Category is empty",
-        text: "Please enter a valid category name!",
-      });
+  const handleDelete = (id) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        setTableData((prevData) => prevData.filter((category) => category.id !== id));
+        Swal.fire("Deleted!", "Your category has been deleted.", "success");
+      }
+    });
+  };
+
+  const handleEdit = (id) => {
+    const category = tableData.find((c) => c.id === id);
+    if (category) {
+      setSelectedCategory(category);
+      setShowModal(true);
     }
   };
 
-  // Function to go back to the previous page
-  const handleBack = () => {
-    window.history.back();
-  };
+  const filteredData = tableData.filter((category) =>
+    category.categoryName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+  const paginatedData = filteredData.slice(
+    currentPage * itemsPerPage,
+    (currentPage + 1) * itemsPerPage
+  );
 
   return (
     <main className="app-content">
       <div className="app-title tile p-3">
-        <h1>
-          <span className="mr-4 fw-bold">&nbsp;Food Categories</span>
-        </h1>
+        <div>
+          <h1 className="">
+            <span className="mr-4 fw-bold">&nbsp;Category Management</span>
+          </h1>
+        </div>
       </div>
-
-      <button
-        className="btn mb-2 ms-2"
-        style={{ backgroundColor: "#002538", color: "white" }}
-        type="button"
-        onClick={handleBack}
-      >
-        <i className="fa-solid fa-arrow-left" style={{ color: "#fff" }}></i>{" "}
-        &nbsp;Previous
-      </button>
-      <div className="row justify-content-center">
-        <div className="col-md-10 px-5">
-          <div className="tile">
-            <div
-              className="case-status d-flex justify-content-center"
-              style={{
-                backgroundColor: "#002538",
-                color: "#fff",
-                height: "50px",
-                borderRadius: "10px 10px 0px 0px",
-                textAlign: "center",
-                width: "100%",
+      <div className="row">
+        <div className="col-md-12 px-5">
+          <div className="bt-ad-emp">
+            <a
+              className="add-btt btn"
+              onClick={() => {
+                setSelectedCategory(null);
+                setShowModal(true);
               }}
             >
-              <h4 className="mt-2">{userData ? "Edit Food" : "Add Food"}</h4>
-            </div>
-            <div className="tile-body p-3">
-              <form onSubmit={handleSubmit}>
-                <div>
-                  <div className="mb-3 w-100">
-                    <label className="form-label">Food Name</label>
-                    <input
-                      className={`form-control ${errors.foodName ? "is-invalid" : ""}`}
-                      type="text"
-                      placeholder="Enter food name"
-                      value={foodName}
-                      onChange={(e) => setFoodName(e.target.value)}
-                    />
-                    {errors.foodName && (
-                      <div className="invalid-feedback">{errors.foodName}</div>
-                    )}
-                  </div>
-                  <div className="mb-3 col-lg-12">
-                    <label className="form-label">Category</label>
-                    <div className="d-flex align-items-center">
-                      <select
-                        className={`form-select ${errors.category ? "is-invalid" : ""}`}
-                        value={category}
-                        onChange={(e) => setCategory(e.target.value)}
-                      >
-                        <option value="" disabled>
-                          Select a category
-                        </option>
-                        {categories.map((cat, index) => (
-                          <option key={index} value={cat}>
-                            {cat}
-                          </option>
-                        ))}
-                      </select>
-                      <button
-                        className="btn ms-2"
-                        type="button"
-                        style={{ backgroundColor: "#002538", color: "white" }}
-                        onClick={() => setShowModal(true)}
-                      >
-                        <i className="fa fa-plus"></i>
-                      </button>
-                    </div>
-                    {errors.category && (
-                      <div className="invalid-feedback">{errors.category}</div>
-                    )}
-                  </div>
-
-                  <div className="mb-3 col-lg-12">
-                    <label className="form-label">Food Type</label>
-                    <input
-                      className={`form-control ${errors.foodType ? "is-invalid" : ""}`}
-                      type="text"
-                      placeholder="Enter food type"
-                      value={foodType}
-                      onChange={(e) => setFoodType(e.target.value)}
-                    />
-                    {errors.foodType && (
-                      <div className="invalid-feedback">{errors.foodType}</div>
-                    )}
-                  </div>
-
-                  <div className="mb-3 col-lg-12">
-                    <label className="form-label">Approval Status</label>
-                    <div style={{ display: "flex" }}>
-                      <div className="form-check">
-                        <input
-                          className="form-check-input"
-                          type="radio"
-                          name="approvalStatus"
-                          value="Approved"
-                          checked={approvalStatus === "Approved"}
-                          onChange={(e) => setApprovalStatus(e.target.value)}
-                        />
-                        <label className="form-check-label" style={{ marginLeft: "5px" }}>
-                          Approved
-                        </label>
-                      </div>
-                      <div className="form-check" style={{ marginLeft: "10px" }}>
-                        <input
-                          className="form-check-input"
-                          type="radio"
-                          name="approvalStatus"
-                          value="Non Approved"
-                          checked={approvalStatus === "Non Approved"}
-                          onChange={(e) => setApprovalStatus(e.target.value)}
-                        />
-                        <label className="form-check-label" style={{ marginLeft: "5px" }}>
-                          Non Approved
-                        </label>
-                      </div>
-                    </div>
-                    {errors.approvalStatus && (
-                      <div className="invalid-feedback">{errors.approvalStatus}</div>
-                    )}
-                  </div>
-
-                  <div className="mb-3 text-center mt-3">
-                    <button className="btn custom-btn text-white w-50" type="submit">
-                      Submit
-                    </button>
-                  </div>
-                </div>
-              </form>
-            </div>
+              <i className="fa-regular fa-plus"></i> Add Category
+            </a>
           </div>
         </div>
       </div>
-
-      {/* Add New Category Modal */}
       {showModal && (
-        <div className="modal-overlay" style={{ display: "flex", alignItems: "center", justifyContent: "flex-start", flexDirection: "column" }}>
-          <div className="modal-content animated-modal">
-            <div className="modal-header">
-              <h5 className="modal-title">Add New Category</h5>
-              <button
-                type="button"
-                className="btn-close"
-                onClick={() => setShowModal(false)}
-              ></button>
-            </div>
-            <div className="modal-body">
-              <div className="mb-3">
-                <label htmlFor="newCategory" className="form-label">
-                  Category Name
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="newCategory"
-                  placeholder="Enter new category name"
-                  value={newCategory}
-                  onChange={(e) => setNewCategory(e.target.value)}
-                />
-              </div>
-              <div className="mb-3">
-                <label htmlFor="newCategoryImage" className="form-label">
-                  Food Icon
-                </label>
-                <input
-                  type="file"
-                  className="form-control"
-                  id="newCategoryImage"
-                  accept="image/*"
-                  onChange={handleNewCategoryImageChange}
-                />
-                {newCategoryImage && (
-                  <img
-                    src={newCategoryImage}
-                    alt="New Category Icon"
-                    className="mt-2"
-                    style={{ maxWidth: '100px', maxHeight: '100px' }}
-                  />
-                )}
-              </div>
-            </div>
-            <div className="modal-footer">
-              <button
-                type="button"
-                className="btn btn-secondary"
-                onClick={() => setShowModal(false)}
-              >
-                Close
-              </button>
-              <button
-                type="button"
-                className="btn ms-2"
-                style={{ backgroundColor: "#002538", color: "white" }}
-                onClick={handleSaveCategory}
-              >
-                Save Category
-              </button>
-            </div>
-          </div>
-          <div className="mt-3 modal-content animated-modal">
-            <table className="table mt-2 table-bordered table-hover dt-responsive">
-              <thead>
-                <tr>
-                  <th>Sr.No</th>
-                  <th>Category</th>
-                  <th>Icon</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {categories.map((cat, index) => (
-                  <tr key={index}>
-                    <td>{index + 1}</td>
-                    <td>{cat}</td>
-                    <td>
-                      <img src={newCategoryImage} alt="icon" />
-                    </td>
-                    <td>
-                      <button className="btn btn-warning">Edit</button>
-                      <button className="btn btn-danger" style={{ marginLeft: "10px" }}>Delete</button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <AddFitezoneCategory
+              category={selectedCategory}
+              onClose={() => setShowModal(false)}
+              onSubmit={handleFormSubmit}
+            />
           </div>
         </div>
       )}
-
-      <style>{`
-        .modal-overlay {
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background: rgba(0, 0, 0, 0.5);
-          display: flex;
-          justify-content: center;
-          align-items: flex-start;
-          padding-top: 50px;
-          z-index: 1000;
-        }
-        .modal-content {
-          background: white;
-          border-radius: 8px;
-          padding: 20px;
-          max-width: 500px;
-          width: 100%;
-        }
-        .modal-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-        }
-        .btn-close {
-          background: none;
-          border: none;
-          font-size: 1.5rem;
-        }
-        @keyframes slideDown {
-          0% {
-            transform: translateY(-100%);
-            opacity: 0;
-          }
-          100% {
-            transform: translateY(0);
-            opacity: 1;
-          }
-        }
-        .animated-modal {
-          animation: slideDown 0.5s ease-in-out;
-        }
-      `}</style>
+      <div className="row mt-4">
+        <div className="col-md-12 px-5">
+          <div className="tile p-3">
+            <div className="tile-body">
+              <div className="table-responsive">
+                <div
+                  className="table-controls"
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <div className="items-per-page-container">
+                    <select
+                      value={itemsPerPage}
+                      onChange={handleItemsPerPageChange}
+                      className="items-per-page-select"
+                    >
+                      <option value={10}>10</option>
+                      <option value={25}>25</option>
+                      <option value={50}>50</option>
+                    </select>
+                    <span
+                      className="entries-text"
+                      style={{ marginLeft: "10px" }}
+                    >
+                      entries per page
+                    </span>
+                  </div>
+                  <div className="search-container">
+                    <span
+                      className="search-text"
+                      style={{ marginRight: "10px" }}
+                    >
+                      Search:
+                    </span>
+                    <input
+                      type="text"
+                      value={searchTerm}
+                      onChange={handleSearchChange}
+                      className="search-input"
+                    />
+                  </div>
+                </div>
+                {loading ? (
+                  <div
+                    style={{
+                      height: "200px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <div className="loader"></div>
+                  </div>
+                ) : (
+                  <div className="table-responsive mt-2">
+                    <table className="table table-bordered table-hover dt-responsive">
+                      <thead>
+                        <tr>
+                          <th>S.No</th>
+                          <th>Created At</th>
+                          <th>Category Name</th>
+                          <th>Status</th>
+                          <th>Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {paginatedData.map((category, index) => (
+                          <tr key={category.id}>
+                            <td>{index + 1 + currentPage * itemsPerPage}</td>
+                            <td>
+                              {format(new Date(category.createdAt), "dd MMMM yyyy")}
+                            </td>
+                            <td>{category.categoryName}</td>
+                            <td>
+                              <div className="form-check form-switch">
+                                <input
+                                  className="form-check-input"
+                                  type="checkbox"
+                                  role="switch"
+                                  checked={category.status === "Active"}
+                                  onChange={() => handleToggleStatus(category.id)}
+                                />
+                              </div>
+                            </td>
+                            <td>
+                              <div className="dropdown text-center" ref={dropdownRef}>
+                                <button
+                                  className="dropdown-button"
+                                  onClick={() =>
+                                    setOpenDropdown(
+                                      openDropdown === category.id ? null : category.id
+                                    )
+                                  }
+                                  aria-haspopup="true"
+                                  aria-expanded={openDropdown === category.id}
+                                >
+                                  <i
+                                    className={`fa fa-ellipsis-v ${
+                                      openDropdown === category.id ? "rotate-icon" : ""
+                                    }`}
+                                  ></i>
+                                </button>
+                                {openDropdown === category.id && (
+                                  <div className="dropdown-menu show">
+                                    <a
+                                      className="dropdown-item"
+                                      onClick={() => {
+                                        handleEdit(category.id);
+                                        setOpenDropdown(null);
+                                      }}
+                                    >
+                                      <i className="fa fa-edit"></i> Edit
+                                    </a>
+                                    <a
+                                      className="dropdown-item"
+                                      onClick={() => {
+                                        handleDelete(category.id);
+                                        setOpenDropdown(null);
+                                      }}
+                                    >
+                                      <i className="fa fa-trash"></i> Delete
+                                    </a>
+                                  </div>
+                                )}
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                    <div
+                      className="pagination mt-4 mb-2"
+                      style={{
+                        display: "flex",
+                        alignItems: "flex-start",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <span className="pagination-info">
+                        Showing {currentPage * itemsPerPage + 1} to{" "}
+                        {Math.min(
+                          (currentPage + 1) * itemsPerPage,
+                          filteredData.length
+                        )}{" "}
+                        of {filteredData.length} entries
+                      </span>
+                      <div>
+                        <button
+                          style={{
+                            padding: "7px 10px",
+                            backgroundColor: "#e9ecef",
+                            color: "#002538",
+                            border: "1px solid lightgrey",
+                            borderRadius: "5px 0px 0px 5px",
+                          }}
+                          className="page-btn"
+                          onClick={() => handlePageChange(0)}
+                          disabled={currentPage === 0}
+                        >
+                          &laquo;
+                        </button>
+                        <button
+                          style={{
+                            padding: "7px 10px",
+                            backgroundColor: "#e9ecef",
+                            color: "#002538",
+                            border: "1px solid lightgrey",
+                          }}
+                          className="page-btn"
+                          onClick={() => handlePageChange(currentPage - 1)}
+                          disabled={currentPage === 0}
+                        >
+                          &#x3c;
+                        </button>
+                        {getPaginationButtons()}
+                        <button
+                          style={{
+                            padding: "7px 10px",
+                            backgroundColor: "#e9ecef",
+                            color: "#002538",
+                            border: "1px solid lightgrey",
+                          }}
+                          className="page-btn"
+                          onClick={() => handlePageChange(currentPage + 1)}
+                          disabled={currentPage >= totalPages - 1}
+                        >
+                          &#x3e;
+                        </button>
+                        <button
+                          style={{
+                            padding: "7px 10px",
+                            backgroundColor: "#e9ecef",
+                            color: "#002538",
+                            border: "1px solid lightgrey",
+                            borderRadius: "0px 5px 5px 0px",
+                          }}
+                          className="page-btn"
+                          onClick={() => handlePageChange(totalPages - 1)}
+                          disabled={currentPage >= totalPages - 1}
+                        >
+                          &raquo;
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </main>
   );
 };
 
-export default AddFood;
+export default FitzoneCategory;

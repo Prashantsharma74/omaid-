@@ -126,8 +126,10 @@ const Diet = () => {
           <span className="mr-4 fw-bold">&nbsp; Manage Diet Meal plan</span>
         </h1>
       </div>
-
-      <div className="row">
+      <div
+        className="d-flex"
+        style={{ alignItems: "center", justifyContent: "space-between" }}
+      >
         <button
           className="btn mb-2 ms-2"
           style={{
@@ -140,14 +142,16 @@ const Diet = () => {
           <i className="fa-solid fa-arrow-left" style={{ color: "#fff" }}></i>{" "}
           &nbsp;Previous
         </button>
-        <div className="col-md-12 col-sm-12 col-xs-12 col-lg-12 px-5 text-end">
-          <div className="bt-ad-emp">
-            <Link
-              className="add-btt btn"
-              to="/manage-program/manage/diet-plan/add-diet"
-            >
-              <i className="fa-regular fa-plus"></i> Add Diet & Meal
-            </Link>
+        <div className="row">
+          <div className="col-md-12 px-5">
+            <div className="bt-ad-emp">
+              <Link
+                className="add-btt btn"
+                to="/manage-program/manage/diet-plan/add-diet"
+              >
+                <i className="fa-regular fa-plus"></i> Add Diet & Meal
+              </Link>
+            </div>
           </div>
         </div>
       </div>

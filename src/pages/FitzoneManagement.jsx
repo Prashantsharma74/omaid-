@@ -73,9 +73,9 @@ const FitzoneManagement = () => {
       prevData.map((item) =>
         item.srNum === srNum
           ? {
-              ...item,
-              status: item.status === "Active" ? "Inactive" : "Active",
-            }
+            ...item,
+            status: item.status === "Active" ? "Inactive" : "Active",
+          }
           : item
       )
     );
@@ -216,9 +216,12 @@ const FitzoneManagement = () => {
                               <Link
                                 className="btn ctb"
                                 to="/fitzone-manage/manage"
+                                style={{
+                                  borderBottom: "3px solid #002538",
+                                }}
+                                title="Manage Program"
                               >
-                                <i className="fa-sharp fa-light fa-pen mx-1"></i>{" "}
-                                Manage
+                                Open Program
                               </Link>
                             </td>
                             <td>
@@ -236,11 +239,10 @@ const FitzoneManagement = () => {
                                   aria-expanded={openDropdown === row.srNum}
                                 >
                                   <i
-                                    className={`fa fa-ellipsis-v ${
-                                      openDropdown === row.srNum
+                                    className={`fa fa-ellipsis-v ${openDropdown === row.srNum
                                         ? "rotate-icon"
                                         : ""
-                                    }`}
+                                      }`}
                                   ></i>
                                 </button>
                                 {openDropdown === row.srNum && (

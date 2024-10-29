@@ -1,6 +1,7 @@
+import React, { useEffect, useRef, useState } from "react";
 import { format } from "date-fns";
-import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
+import AddFitezoneCategory from "./AddFitezoneCategory";
 
 const FitzoneCategory = () => {
   const DEFAULT_ITEMS_PER_PAGE = 10;
@@ -9,19 +10,15 @@ const FitzoneCategory = () => {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
-  const [openDropdownIndex, setOpenDropdownIndex] = useState(null);
+  const [openDropdown, setOpenDropdown] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
-  const navigate = useNavigate();
-
-  const handleDropdownToggle = (index) => {
-    setOpenDropdownIndex(openDropdownIndex === index ? null : index);
-  };
-
+  const dropdownRef = useRef(null);
   const visiblePages = 4;
 
   const getPaginationButtons = () => {
     const buttons = [];
-    const totalPages = Math.ceil(filteredData.length / itemsPerPage);
     let startPage = Math.max(0, currentPage - Math.floor(visiblePages / 2));
     let endPage = Math.min(totalPages - 1, startPage + visiblePages - 1);
 
@@ -51,34 +48,56 @@ const FitzoneCategory = () => {
     return buttons;
   };
 
+  const handleFormSubmit = (category) => {
+    if (category.id) {
+      setTableData((prevData) =>
+        prevData.map((c) => (c.id === category.id ? category : c))
+      );
+    } else {
+      const newCategory = {
+        ...category,
+        id: tableData.length + 1,
+        createdAt: new Date().toISOString().split("T")[0],
+      };
+      setTableData((prevData) => [...prevData, newCategory]);
+    }
+    Swal.fire({
+      title: category.id ? "Category Updated!" : "Category Added!",
+      icon: "success",
+    });
+    setShowModal(false);
+    setSelectedCategory(null);
+  };
+
   const fetchData = () => {
     setTimeout(() => {
-      const users = [
+      const categories = [
         {
-          SNo: 1,
-          LastEdit: "2024-10-01",
-          FoodCategory: "Fruits",
-          FoodType: "Citrus",
-          Approved: "Approved",
-          Status: "Active",
-        },
-        {
-          SNo: 2,
-          LastEdit: "2024-10-02",
-          FoodCategory: "Vegetables",
-          FoodType: "Root",
-          Approved: "Non Approved",
-          Status: "Inactive",
+          id: 1,
+          createdAt: "2023-01-01",
+          categoryName: "Fruits",
+          status: "Active",
         },
       ];
-
-      setTableData(users);
+      setTableData(categories);
       setLoading(false);
     }, 1000);
   };
 
   useEffect(() => {
     fetchData();
+
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setOpenDropdown(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, []);
 
   const handleItemsPerPageChange = (e) => {
@@ -95,8 +114,50 @@ const FitzoneCategory = () => {
     setCurrentPage(page);
   };
 
-  const filteredData = tableData.filter((user) =>
-    user.FoodCategory.toLowerCase().includes(searchTerm.toLowerCase())
+  const handleToggleStatus = (id) => {
+    setTableData((prevData) =>
+      prevData.map((category) =>
+        category.id === id
+          ? {
+            ...category,
+            status: category.status === "Active" ? "Inactive" : "Active",
+          }
+          : category
+      )
+    );
+  };
+
+  const handleDelete = (id) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        setTableData((prevData) => prevData.filter((category) => category.id !== id));
+        Swal.fire("Deleted!", "Your category has been deleted.", "success");
+      }
+    });
+  };
+
+  const handleBack = () => {
+    window.history.back();
+  };
+
+  const handleEdit = (id) => {
+    const category = tableData.find((c) => c.id === id);
+    if (category) {
+      setSelectedCategory(category);
+      setShowModal(true);
+    }
+  };
+
+  const filteredData = tableData.filter((category) =>
+    category.categoryName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
@@ -104,25 +165,6 @@ const FitzoneCategory = () => {
     currentPage * itemsPerPage,
     (currentPage + 1) * itemsPerPage
   );
-
-  const handleToggleStatus = (sNo) => {
-    setTableData((prevData) =>
-      prevData.map((item) =>
-        item.SNo === sNo
-          ? {
-              ...item,
-              Status: item.Status === "Active" ? "Inactive" : "Active",
-            }
-          : item
-      )
-    );
-  };
-
-  const handleEdit = (user) => {
-    navigate("/fitzone-program/manage/catgory/add-category", {
-      state: { user },
-    });
-  };
 
   return (
     <main className="app-content">
@@ -133,18 +175,63 @@ const FitzoneCategory = () => {
           </h1>
         </div>
       </div>
-      <div className="row">
-        <div className="col-md-12 px-5">
-          <div className="bt-ad-emp">
-            <Link
-              className="add-btt btn"
-              to="/fitzone-program/manage/catgory/add-category"
-            >
-              <i className="fa-regular fa-plus"></i> Add Category
-            </Link>
+      <div className="flex"
+        style={{ alignItems: "center", justifyContent: "space-between" }}
+      >
+        <button
+          className="btn mb-2 ms-2"
+          style={{
+            backgroundColor: "#002538",
+            color: "white",
+          }}
+          type="button"
+          onClick={handleBack}
+        >
+          <i className="fa-solid fa-arrow-left" style={{ color: "#fff" }}></i>{" "}
+          &nbsp;Previous
+        </button>
+        <div className="row">
+          <div className="col-md-12 px-5">
+            <div className="bt-ad-emp">
+              <a
+                className="add-btt btn"
+                onClick={() => {
+                  setSelectedCategory(null);
+                  setShowModal(true);
+                }}
+              >
+                <i className="fa-regular fa-plus"></i> Add Category
+              </a>
+            </div>
           </div>
         </div>
       </div>
+      {showModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <button
+              className="close-button"
+              onClick={() => setShowModal(false)}
+              style={{
+                position: "absolute",
+                top: "10px",
+                right: "10px",
+                background: "transparent",
+                border: "none",
+                fontSize: "20px",
+                cursor: "pointer",
+              }}
+            >
+              &times;
+            </button>
+            <AddFitezoneCategory
+              category={selectedCategory}
+              onClose={() => setShowModal(false)}
+              onSubmit={handleFormSubmit}
+            />
+          </div>
+        </div>
+      )}
 
       <div className="row mt-4">
         <div className="col-md-12 px-5">
@@ -208,47 +295,65 @@ const FitzoneCategory = () => {
                       <thead>
                         <tr>
                           <th>S.No</th>
+                          <th>Created At</th>
                           <th>Category Name</th>
                           <th>Status</th>
                           <th>Action</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {paginatedData.map((user, index) => (
-                          <tr key={user.SNo}>
-                            <td>{user.SNo}</td>
-                            <td>{user.category}</td>
+                        {paginatedData.map((category, index) => (
+                          <tr key={category.id}>
+                            <td>{index + 1 + currentPage * itemsPerPage}</td>
+                            <td>
+                              {format(new Date(category.createdAt), "dd MMMM yyyy")}
+                            </td>
+                            <td>{category.categoryName}</td>
                             <td>
                               <div className="form-check form-switch">
                                 <input
                                   className="form-check-input"
                                   type="checkbox"
                                   role="switch"
-                                  checked={user.Status === "Active"}
-                                  onChange={() => handleToggleStatus(user.SNo)}
+                                  checked={category.status === "Active"}
+                                  onChange={() => handleToggleStatus(category.id)}
                                 />
                               </div>
                             </td>
                             <td>
-                              <div className="dropdown text-center">
+                              <div className="dropdown text-center" ref={dropdownRef}>
                                 <button
                                   className="dropdown-button"
-                                  onClick={() => handleDropdownToggle(index)}
+                                  onClick={() =>
+                                    setOpenDropdown(
+                                      openDropdown === category.id ? null : category.id
+                                    )
+                                  }
                                   aria-haspopup="true"
+                                  aria-expanded={openDropdown === category.id}
                                 >
-                                  <i className="fa fa-ellipsis-v"></i>
+                                  <i
+                                    className={`fa fa-ellipsis-v ${openDropdown === category.id ? "rotate-icon" : ""
+                                      }`}
+                                  ></i>
                                 </button>
-                                {openDropdownIndex === index && (
+                                {openDropdown === category.id && (
                                   <div className="dropdown-menu show">
-                                    <button
-                                      className="dropdown-item"
-                                      onClick={() => handleEdit(user)}
-                                    >
-                                      <i className="fa fa-edit"></i> Edit
-                                    </button>
                                     <a
                                       className="dropdown-item"
-                                      onClick={() => handleDelete(user.SNo)}
+                                      onClick={() => {
+                                        handleEdit(category.id);
+                                        setOpenDropdown(null);
+                                      }}
+                                    >
+                                      <i className="fa fa-edit"></i> Edit
+                                    </a>
+                                    <a
+                                      className="dropdown-item"
+                                      onClick={() => {
+                                        handleDelete(category.id);
+                                        setOpenDropdown(null);
+                                      }}
                                     >
                                       <i className="fa fa-trash"></i> Delete
                                     </a>
@@ -261,10 +366,10 @@ const FitzoneCategory = () => {
                       </tbody>
                     </table>
                     <div
-                      className="pagination"
+                      className="pagination mt-4 mb-2"
                       style={{
                         display: "flex",
-                        alignItems: "center",
+                        alignItems: "flex-start",
                         justifyContent: "space-between",
                       }}
                     >
@@ -285,6 +390,7 @@ const FitzoneCategory = () => {
                             border: "1px solid lightgrey",
                             borderRadius: "5px 0px 0px 5px",
                           }}
+                          className="page-btn"
                           onClick={() => handlePageChange(0)}
                           disabled={currentPage === 0}
                         >
@@ -297,6 +403,7 @@ const FitzoneCategory = () => {
                             color: "#002538",
                             border: "1px solid lightgrey",
                           }}
+                          className="page-btn"
                           onClick={() => handlePageChange(currentPage - 1)}
                           disabled={currentPage === 0}
                         >
@@ -310,6 +417,7 @@ const FitzoneCategory = () => {
                             color: "#002538",
                             border: "1px solid lightgrey",
                           }}
+                          className="page-btn"
                           onClick={() => handlePageChange(currentPage + 1)}
                           disabled={currentPage >= totalPages - 1}
                         >
@@ -323,6 +431,7 @@ const FitzoneCategory = () => {
                             border: "1px solid lightgrey",
                             borderRadius: "0px 5px 5px 0px",
                           }}
+                          className="page-btn"
                           onClick={() => handlePageChange(totalPages - 1)}
                           disabled={currentPage >= totalPages - 1}
                         >
