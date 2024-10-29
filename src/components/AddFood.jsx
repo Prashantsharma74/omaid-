@@ -19,7 +19,6 @@ const AddFood = () => {
   const [showModal, setShowModal] = useState(false); // Track modal visibility
   const [errors, setErrors] = useState({}); // State for storing field-specific errors
 
-  // Use effect to set initial values when editing
   useEffect(() => {
     if (userData) {
       setFoodName(userData.FoodCategory);
@@ -283,7 +282,7 @@ const AddFood = () => {
 
       {/* Add New Category Modal */}
       {showModal && (
-        <div className="modal-overlay">
+        <div className="modal-overlay" style={{ display: "flex", alignItems: "center", justifyContent: "flex-start", flexDirection: "column" }}>
           <div className="modal-content animated-modal">
             <div className="modal-header">
               <h5 className="modal-title">Add New Category</h5>
@@ -323,7 +322,7 @@ const AddFood = () => {
                     src={newCategoryImage}
                     alt="New Category Icon"
                     className="mt-2"
-                    style={{ maxWidth: '100px', maxHeight: '100px' }} // Adjust as needed
+                    style={{ maxWidth: '100px', maxHeight: '100px' }}
                   />
                 )}
               </div>
@@ -346,20 +345,25 @@ const AddFood = () => {
               </button>
             </div>
           </div>
-        <div>
-          <table>
-            <thead>
-              <th>Sr.No</th>
-              <th>Category</th>
-              <th>Action</th>
-            </thead>
-            <tbody>
-              <tr>1</tr>
-              <tr>Banana</tr>
-              <tr>1</tr>
-            </tbody>
-          </table>
-        </div>
+          <div className="mt-3 modal-content animated-modal">
+            <table>
+              <thead>
+                <th>Sr.No</th>
+                <th>Category</th>
+                <th>Action</th>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1</td>
+                  <td>Banana</td>
+                  <td>
+                    <button>Edit</button>
+                    <button>Delete</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 
