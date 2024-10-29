@@ -1,20 +1,16 @@
-import React, { useEffect, useRef, useState } from "react";
-import { format } from "date-fns";
-import Swal from "sweetalert2";
-import AddFitezoneCategory from "./AddFitezoneCategory";
+import React, { useEffect, useState } from "react";
+import * as XLSX from "xlsx";
+import AddNutrition from "../components/AddNutrition";
 
-const FitzoneCategory = () => {
+const NutritionFood = () => {
   const DEFAULT_ITEMS_PER_PAGE = 10;
   const [itemsPerPage, setItemsPerPage] = useState(DEFAULT_ITEMS_PER_PAGE);
   const [tableData, setTableData] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
-  const [openDropdown, setOpenDropdown] = useState(null);
-  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
 
-  const dropdownRef = useRef(null);
   const visiblePages = 4;
 
   const getPaginationButtons = () => {
@@ -48,56 +44,18 @@ const FitzoneCategory = () => {
     return buttons;
   };
 
-  const handleFormSubmit = (category) => {
-    if (category.id) {
-      setTableData((prevData) =>
-        prevData.map((c) => (c.id === category.id ? category : c))
-      );
-    } else {
-      const newCategory = {
-        ...category,
-        id: tableData.length + 1,
-        createdAt: new Date().toISOString().split("T")[0],
-      };
-      setTableData((prevData) => [...prevData, newCategory]);
-    }
-    Swal.fire({
-      title: category.id ? "Category Updated!" : "Category Added!",
-      icon: "success",
-    });
-    setShowModal(false);
-    setSelectedCategory(null);
-  };
-
   const fetchData = () => {
     setTimeout(() => {
-      const categories = [
-        {
-          id: 1,
-          createdAt: "2023-01-01",
-          categoryName: "Fruits",
-          status: "Active",
-        },
+      const users = [
+        { srNum: 1, title: "Title 1", description: "Description 1", status: "Active" }
       ];
-      setTableData(categories);
+      setTableData(users);
       setLoading(false);
     }, 1000);
   };
 
   useEffect(() => {
     fetchData();
-
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setOpenDropdown(null);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
   }, []);
 
   const handleItemsPerPageChange = (e) => {
@@ -114,46 +72,60 @@ const FitzoneCategory = () => {
     setCurrentPage(page);
   };
 
-  const handleToggleStatus = (id) => {
+  const toggleStatus = (srNum) => {
     setTableData((prevData) =>
-      prevData.map((category) =>
-        category.id === id
-          ? {
-              ...category,
-              status: category.status === "Active" ? "Inactive" : "Active",
-            }
-          : category
+      prevData.map((item) =>
+        item.srNum === srNum
+          ? { ...item, status: item.status === "Active" ? "Inactive" : "Active" }
+          : item
       )
     );
   };
 
-  const handleDelete = (id) => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
-      confirmButtonText: "Yes, delete it!",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        setTableData((prevData) => prevData.filter((category) => category.id !== id));
-        Swal.fire("Deleted!", "Your category has been deleted.", "success");
-      }
-    });
+  const handleFileUpload = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const binaryStr = e.target.result;
+      const workbook = XLSX.read(binaryStr, { type: "binary" });
+      const sheetName = workbook.SheetNames[0];
+      const sheet = workbook.Sheets[sheetName];
+      const data = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+      const headers = data[0];
+      const newData = data.slice(1).map((row, index) => ({
+        srNum: tableData.length + index + 1,
+        title: row[0] || "No Title",
+        description: row[1] || "No Description",
+        status: row[2] || "Inactive",
+      }));
+
+      setTableData((prevData) => [...prevData, ...newData]);
+    };
+
+    reader.onerror = (error) => {
+      console.error("Error reading file:", error);
+      alert("Failed to read file. Please try again.");
+    };
+
+    reader.readAsBinaryString(file);
   };
 
-  const handleEdit = (id) => {
-    const category = tableData.find((c) => c.id === id);
-    if (category) {
-      setSelectedCategory(category);
-      setShowModal(true);
-    }
+  const handleAddNutrition = () => {
+    setShowModal(true); // Show the modal
   };
 
-  const filteredData = tableData.filter((category) =>
-    category.categoryName.toLowerCase().includes(searchTerm.toLowerCase())
+  const handleFormSubmit = (data) => {
+    setTableData((prevData) => [...prevData, data]);
+    setShowModal(false); // Close modal after submission
+  };
+
+  const filteredData = tableData.filter(
+    (user) =>
+      user.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.description.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
@@ -165,39 +137,338 @@ const FitzoneCategory = () => {
   return (
     <main className="app-content">
       <div className="app-title tile p-3">
-        <div>
-          <h1 className="">
-            <span className="mr-4 fw-bold">&nbsp;Category Management</span>
-          </h1>
-        </div>
+        <h1 className="fw-bold">Nutrition Food</h1>
       </div>
-      <div className="row">
+
+      <div className="row mb-5">
         <div className="col-md-12 px-5">
           <div className="bt-ad-emp">
-            <a
-              className="add-btt btn"
-              onClick={() => {
-                setSelectedCategory(null);
-                setShowModal(true);
-              }}
-            >
-              <i className="fa-regular fa-plus"></i> Add Category
+            <button className="add-btt btn" onClick={handleAddNutrition}>
+              <i className="fa-regular fa-plus"></i> Add Nutrition
+            </button>
+            <a className="add-btt btn" style={{ marginLeft: "30px" }}>
+              <label htmlFor="upload-excel">
+                Upload Nutrition &nbsp;
+                <i className="fa-regular fa-file-csv"></i>
+                <input
+                  type="file"
+                  id="upload-excel"
+                  style={{ display: "none" }}
+                  accept=".xlsx,.xls"
+                  onChange={handleFileUpload}
+                />
+              </label>
             </a>
           </div>
         </div>
       </div>
+
+      <div className="row">
+        <div className="col-md-12 px-5">
+          <div className="tile p-3">
+            <div className="tile-body">
+              <div className="table-responsive">
+                <div className="table-controls" style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between"
+                }}>
+                  <div className="items-per-page-container">
+                    <select
+                      value={itemsPerPage}
+                      onChange={handleItemsPerPageChange}
+                      className="items-per-page-select"
+                    >
+                      <option value={10}>10</option>
+                      <option value={25}>25</option>
+                      <option value={50}>50</option>
+                    </select>
+                    <span className="entries-text" style={{ marginLeft: "10px" }}>
+                      entries per page
+                    </span>
+                  </div>
+                  <div className="search-container">
+                    <span className="search-text" style={{ marginRight: "10px" }}>
+                      Search:
+                    </span>
+                    <input
+                      type="text"
+                      value={searchTerm}
+                      onChange={handleSearchChange}
+                      className="search-input"
+                    />
+                  </div>
+                </div>
+
+                {loading ? (
+                  <div style={{
+                    height: "200px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center"
+                  }}>
+                    <div className="loader"></div>
+                  </div>
+                ) : (
+                  <div className="table-responsive">
+                    <table className="table table-bordered table-hover dt-responsive mt-2">
+                      <thead>
+                        <tr>
+                          <th>Sr. num</th>
+                          <th>Food</th>
+                          <th>Description</th>
+                          <th>Status</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {paginatedData.map((row) => (
+                          <tr key={row.srNum}>
+                            <td>{currentPage * itemsPerPage + row.srNum}</td>
+                            <td>{row.title}</td>
+                            <td>{row.description}</td>
+                            <td>
+                              <div className="form-check form-switch">
+                                <input
+                                  className="form-check-input"
+                                  type="checkbox"
+                                  role="switch"
+                                  checked={row.status === "Active"}
+                                  onChange={() => toggleStatus(row.srNum)}
+                                />
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                    <div className="pagination" style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between"
+                    }}>
+                      <span className="pagination-info">
+                        Showing {currentPage * itemsPerPage + 1} to{" "}
+                        {Math.min((currentPage + 1) * itemsPerPage, filteredData.length)} of {filteredData.length} entries
+                      </span>
+                      <div>
+                        <button onClick={() => handlePageChange(0)} disabled={currentPage === 0}>
+                          &laquo;
+                        </button>
+                        <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 0}>
+                          &#x3c;
+                        </button>
+                        {getPaginationButtons()}
+                        <button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage >= totalPages - 1}>
+                          &#x3e;
+                        </button>
+                        <button onClick={() => handlePageChange(totalPages - 1)} disabled={currentPage >= totalPages - 1}>
+                          &raquo;
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {showModal && (
         <div className="modal-overlay">
           <div className="modal-content">
-            <AddFitezoneCategory
-              category={selectedCategory}
+            <button
+              className="close-button"
+              onClick={() => setShowModal(false)}
+              style={{
+                position: "absolute",
+                top: "10px",
+                right: "10px",
+                background: "transparent",
+                border: "none",
+                fontSize: "20px",
+                cursor: "pointer",
+              }}
+            >
+              &times;
+            </button>
+            <AddNutrition
               onClose={() => setShowModal(false)}
               onSubmit={handleFormSubmit}
             />
           </div>
         </div>
       )}
-      <div className="row mt-4">
+    </main>
+  );
+};
+
+export default NutritionFood;
+
+
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import * as XLSX from "xlsx";
+
+const NutritionFood = () => {
+  const DEFAULT_ITEMS_PER_PAGE = 10;
+  const [itemsPerPage, setItemsPerPage] = useState(DEFAULT_ITEMS_PER_PAGE);
+  const [tableData, setTableData] = useState([]);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  const visiblePages = 4;
+
+  const getPaginationButtons = () => {
+    const buttons = [];
+    let startPage = Math.max(0, currentPage - Math.floor(visiblePages / 2));
+    let endPage = Math.min(totalPages - 1, startPage + visiblePages - 1);
+
+    if (endPage - startPage < visiblePages - 1) {
+      startPage = Math.max(0, endPage - visiblePages + 1);
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      const isActive = i === currentPage;
+      buttons.push(
+        <button
+          key={i}
+          style={{
+            padding: "7px 10px",
+            backgroundColor: isActive ? "#002538" : "#e9ecef",
+            color: isActive ? "white" : "#002538",
+            border: "1px solid lightgrey",
+          }}
+          className={`page-btn ${isActive ? "active" : ""}`}
+          onClick={() => handlePageChange(i)}
+        >
+          {i + 1}
+        </button>
+      );
+    }
+
+    return buttons;
+  };
+
+  const fetchData = () => {
+    setTimeout(() => {
+      const users = [
+        { srNum: 1, title: "Title 1", description: "Description 1", status: "Active" }
+      ];
+      setTableData(users);
+      setLoading(false);
+    }, 1000);
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const handleItemsPerPageChange = (e) => {
+    setItemsPerPage(Number(e.target.value));
+    setCurrentPage(0);
+  };
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(0);
+  };
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  const toggleStatus = (srNum) => {
+    setTableData((prevData) =>
+      prevData.map((item) =>
+        item.srNum === srNum
+          ? {
+            ...item,
+            status: item.status === "Active" ? "Inactive" : "Active",
+          }
+          : item
+      )
+    );
+  };
+
+  const handleFileUpload = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const binaryStr = e.target.result;
+      const workbook = XLSX.read(binaryStr, { type: "binary" });
+      const sheetName = workbook.SheetNames[0];
+      const sheet = workbook.Sheets[sheetName];
+      const data = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+      const headers = data[0];
+      const newData = data.slice(1).map((row, index) => ({
+        srNum: tableData.length + index + 1,
+        title: row[0] || "No Title",
+        description: row[1] || "No Description",
+        status: row[2] || "Inactive",
+      }));
+
+      setTableData((prevData) => [...prevData, ...newData]);
+    };
+
+    reader.onerror = (error) => {
+      console.error("Error reading file:", error);
+      alert("Failed to read file. Please try again.");
+    };
+
+    reader.readAsBinaryString(file);
+  };
+
+  const filteredData = tableData.filter(
+    (user) =>
+      user.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.description.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+  const paginatedData = filteredData.slice(
+    currentPage * itemsPerPage,
+    (currentPage + 1) * itemsPerPage
+  );
+
+  return (
+    <main className="app-content">
+      <div className="app-title tile p-3">
+        <h1 className="fw-bold">
+          Nutrition Food
+        </h1>
+      </div>
+
+      <div className="row mb-5">
+        <div className="col-md-12 px-5">
+          <div className="bt-ad-emp">
+            <Link className="add-btt btn" to="/data-manage/nutrition-food/add-nutrition">
+              <i className="fa-regular fa-plus"></i> Add Nutrition
+            </Link>
+            <a className="add-btt btn" style={{ marginLeft: "30px" }}>
+              <label
+                htmlFor="upload-excel"
+              >
+                Upload Nutrition &nbsp;{" "}
+                <i className="fa-regular fa-file-csv"></i>
+                <input
+                  type="file"
+                  id="upload-excel"
+                  style={{ display: "none" }}
+                  accept=".xlsx,.xls"
+                  onChange={handleFileUpload}
+                />
+              </label>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div className="row">
         <div className="col-md-12 px-5">
           <div className="tile p-3">
             <div className="tile-body">
@@ -254,76 +525,34 @@ const FitzoneCategory = () => {
                     <div className="loader"></div>
                   </div>
                 ) : (
-                  <div className="table-responsive mt-2">
-                    <table className="table table-bordered table-hover dt-responsive">
+                  <div className="table-responsive">
+                    <table
+                      className="table table-bordered table-hover dt-responsive mt-2"
+                      id="data-table"
+                    >
                       <thead>
                         <tr>
-                          <th>S.No</th>
-                          <th>Created At</th>
-                          <th>Category Name</th>
+                          <th>Sr. num</th>
+                          <th>Food</th>
+                          <th>Description</th>
                           <th>Status</th>
-                          <th>Action</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {paginatedData.map((category, index) => (
-                          <tr key={category.id}>
-                            <td>{index + 1 + currentPage * itemsPerPage}</td>
-                            <td>
-                              {format(new Date(category.createdAt), "dd MMMM yyyy")}
-                            </td>
-                            <td>{category.categoryName}</td>
+                        {paginatedData.map((row) => (
+                          <tr key={row.srNum}>
+                            <td>{currentPage * itemsPerPage + row.srNum}</td>
+                            <td>{row.title}</td>
+                            <td>{row.description}</td>
                             <td>
                               <div className="form-check form-switch">
                                 <input
                                   className="form-check-input"
                                   type="checkbox"
                                   role="switch"
-                                  checked={category.status === "Active"}
-                                  onChange={() => handleToggleStatus(category.id)}
+                                  checked={row.status === "Active"}
+                                  onChange={() => toggleStatus(row.srNum)}
                                 />
-                              </div>
-                            </td>
-                            <td>
-                              <div className="dropdown text-center" ref={dropdownRef}>
-                                <button
-                                  className="dropdown-button"
-                                  onClick={() =>
-                                    setOpenDropdown(
-                                      openDropdown === category.id ? null : category.id
-                                    )
-                                  }
-                                  aria-haspopup="true"
-                                  aria-expanded={openDropdown === category.id}
-                                >
-                                  <i
-                                    className={`fa fa-ellipsis-v ${
-                                      openDropdown === category.id ? "rotate-icon" : ""
-                                    }`}
-                                  ></i>
-                                </button>
-                                {openDropdown === category.id && (
-                                  <div className="dropdown-menu show">
-                                    <a
-                                      className="dropdown-item"
-                                      onClick={() => {
-                                        handleEdit(category.id);
-                                        setOpenDropdown(null);
-                                      }}
-                                    >
-                                      <i className="fa fa-edit"></i> Edit
-                                    </a>
-                                    <a
-                                      className="dropdown-item"
-                                      onClick={() => {
-                                        handleDelete(category.id);
-                                        setOpenDropdown(null);
-                                      }}
-                                    >
-                                      <i className="fa fa-trash"></i> Delete
-                                    </a>
-                                  </div>
-                                )}
                               </div>
                             </td>
                           </tr>
@@ -331,10 +560,10 @@ const FitzoneCategory = () => {
                       </tbody>
                     </table>
                     <div
-                      className="pagination mt-4 mb-2"
+                      className="pagination"
                       style={{
                         display: "flex",
-                        alignItems: "flex-start",
+                        alignItems: "center",
                         justifyContent: "space-between",
                       }}
                     >
@@ -358,6 +587,7 @@ const FitzoneCategory = () => {
                           className="page-btn"
                           onClick={() => handlePageChange(0)}
                           disabled={currentPage === 0}
+                          aria-label="First Page"
                         >
                           &laquo;
                         </button>
@@ -371,6 +601,7 @@ const FitzoneCategory = () => {
                           className="page-btn"
                           onClick={() => handlePageChange(currentPage - 1)}
                           disabled={currentPage === 0}
+                          aria-label="Previous Page"
                         >
                           &#x3c;
                         </button>
@@ -385,6 +616,7 @@ const FitzoneCategory = () => {
                           className="page-btn"
                           onClick={() => handlePageChange(currentPage + 1)}
                           disabled={currentPage >= totalPages - 1}
+                          aria-label="Next Page"
                         >
                           &#x3e;
                         </button>
@@ -399,6 +631,7 @@ const FitzoneCategory = () => {
                           className="page-btn"
                           onClick={() => handlePageChange(totalPages - 1)}
                           disabled={currentPage >= totalPages - 1}
+                          aria-label="Last Page"
                         >
                           &raquo;
                         </button>
@@ -415,4 +648,4 @@ const FitzoneCategory = () => {
   );
 };
 
-export default FitzoneCategory;
+export default NutritionFood;
