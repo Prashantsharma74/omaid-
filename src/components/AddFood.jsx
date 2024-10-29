@@ -12,12 +12,12 @@ const AddFood = () => {
   const [foodType, setFoodType] = useState(userData ? userData.FoodType : "");
   const [approvalStatus, setApprovalStatus] = useState(userData ? userData.Approved : "");
   const [image, setImage] = useState(null); // State for uploaded image
-  const [isImageAdded, setIsImageAdded] = useState(false); // Track if an image is added
   const [categories, setCategories] = useState(["Fruits", "Vegetables"]); // Predefined categories
   const [newCategory, setNewCategory] = useState(""); // New category input
   const [newCategoryImage, setNewCategoryImage] = useState(null); // State for new category image
   const [showModal, setShowModal] = useState(false); // Track modal visibility
   const [errors, setErrors] = useState({}); // State for storing field-specific errors
+  const [foodItems, setFoodItems] = useState([]); // State to store food items
 
   useEffect(() => {
     if (userData) {
@@ -32,47 +32,30 @@ const AddFood = () => {
   const validateForm = () => {
     let formErrors = {};
 
-    // Validate food name
     if (!foodName.trim()) {
       formErrors.foodName = "Food name is required.";
     }
-
-    // Validate category
     if (!category) {
       formErrors.category = "Please select a category.";
     }
-
-    // Validate food type
     if (!foodType.trim()) {
       formErrors.foodType = "Food type is required.";
     }
-
-    // Validate approval status
     if (!approvalStatus) {
       formErrors.approvalStatus = "Please select an approval status.";
     }
 
     setErrors(formErrors);
-
     return Object.keys(formErrors).length === 0; // Return true if no errors
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Validate the form fields
     if (!validateForm()) {
       return;
     }
 
-    // Success alert using SweetAlert
-    Swal.fire({
-      icon: "success",
-      title: userData ? "Food updated successfully" : "Food added successfully",
-      text: "Your food item has been submitted!",
-    });
-
-    // Console log form data
     const formData = {
       foodName,
       category,
@@ -81,26 +64,41 @@ const AddFood = () => {
       image,
     };
 
-    console.log("Form data:", formData);
+    if (userData) {
+      // Update existing food item
+      setFoodItems((prevItems) =>
+        prevItems.map((item) =>
+          item.foodName === userData.FoodCategory ? formData : item
+        )
+      );
+      Swal.fire({
+        icon: "success",
+        title: "Food updated successfully",
+        text: "Your food item has been updated!",
+      });
+    } else {
+      // Add new food item
+      setFoodItems((prevItems) => [...prevItems, formData]);
+      Swal.fire({
+        icon: "success",
+        title: "Food added successfully",
+        text: "Your food item has been submitted!",
+      });
+    }
 
     // Reset form
+    resetForm();
+  };
+
+  const resetForm = () => {
     setFoodName("");
     setCategory("");
     setFoodType("");
     setApprovalStatus("");
     setImage(null);
     setNewCategory("");
-    setIsImageAdded(false);
-    setNewCategoryImage(null); // Reset new category image
-    setErrors({}); // Clear errors after submission
-  };
-
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setImage(URL.createObjectURL(file)); // Store image URL for preview
-      setIsImageAdded(true); // Mark image as added
-    }
+    setNewCategoryImage(null);
+    setErrors({});
   };
 
   const handleNewCategoryImageChange = (e) => {
@@ -110,28 +108,56 @@ const AddFood = () => {
     }
   };
 
+  const handleEditCategory = (index) => {
+    const categoryToEdit = categories[index];
+    setNewCategory(categoryToEdit); // Set the selected category to the input for editing
+    setCategories((prev) => prev.filter((_, i) => i !== index)); // Remove the category from the list temporarily for editing
+    setShowModal(true); // Open the modal for editing
+  };
+
+  const handleDeleteCategory = (index) => {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        setCategories((prev) => prev.filter((_, i) => i !== index)); // Remove the category
+        Swal.fire('Deleted!', 'Your category has been deleted.', 'success');
+      }
+    });
+  };
+
+  // Update the handleSaveCategory function to include editing
   const handleSaveCategory = () => {
     if (newCategory && !categories.includes(newCategory)) {
-      setCategories([...categories, newCategory]);
+      setCategories((prev) => [...prev, newCategory]); // Update the categories state
       setCategory(newCategory); // Set the new category as selected
       setNewCategory(""); // Clear the input after saving
       setNewCategoryImage(null); // Reset new category image
 
-      // Show success alert for category addition
       Swal.fire({
         icon: "success",
         title: "Category added",
         text: `The category "${newCategory}" has been added successfully.`,
       });
-    } else if (!newCategory) {
-      // Show error alert for empty category
+    } else if (newCategory) {
+      Swal.fire({
+        icon: "success",
+        title: "Category updated",
+        text: `The category has been updated to "${newCategory}".`,
+      });
+    } else {
       Swal.fire({
         icon: "error",
         title: "Category is empty",
         text: "Please enter a valid category name!",
       });
     }
-    setShowModal(false); // Close the modal after handling
   };
 
   // Function to go back to the previous page
@@ -346,21 +372,29 @@ const AddFood = () => {
             </div>
           </div>
           <div className="mt-3 modal-content animated-modal">
-            <table>
+            <table className="table mt-2 table-bordered table-hover dt-responsive">
               <thead>
-                <th>Sr.No</th>
-                <th>Category</th>
-                <th>Action</th>
+                <tr>
+                  <th>Sr.No</th>
+                  <th>Category</th>
+                  <th>Icon</th>
+                  <th>Action</th>
+                </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>1</td>
-                  <td>Banana</td>
-                  <td>
-                    <button>Edit</button>
-                    <button>Delete</button>
-                  </td>
-                </tr>
+                {categories.map((cat, index) => (
+                  <tr key={index}>
+                    <td>{index + 1}</td>
+                    <td>{cat}</td>
+                    <td>
+                      <img src={newCategoryImage} alt="icon" />
+                    </td>
+                    <td>
+                      <button className="btn btn-warning" onClick={() => handleEditCategory(index)}>Edit</button>
+                      <button className="btn btn-danger" style={{ marginLeft: "10px" }} onClick={() => handleDeleteCategory(index)}>Delete</button>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
