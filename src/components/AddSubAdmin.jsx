@@ -16,10 +16,8 @@ const AddSubAdmin = ({ user, onClose }) => {
   const [suggestions, setSuggestions] = useState([]);
   const [errors, setErrors] = useState({});
   const [isEditMode, setIsEditMode] = useState(false);
-  const [inputValue, setInputValue] = useState('');
-  const [filteredSuggestions, setFilteredSuggestions] = useState([]);
-  const [activeSuggestionIndex, setActiveSuggestionIndex] = useState(-1);
-  const autocompleteRef = useRef(null);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [showAddButton, setShowAddButton] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -39,32 +37,25 @@ const AddSubAdmin = ({ user, onClose }) => {
   const validateForm = () => {
     const newErrors = {};
 
-    // Existing validations...
     if (!formData.name) newErrors.name = "Name is required.";
     if (!formData.email) newErrors.email = "Email is required.";
-    if (!formData.hospital)
-      newErrors.hospital = "Hospital/Clinic name is required.";
+    if (!formData.hospital) newErrors.hospital = "Hospital/Clinic name is required.";
     if (!formData.location) newErrors.location = "Location is required.";
     if (!formData.phone) newErrors.phone = "Phone number is required.";
-    if (!formData.designation)
-      newErrors.designation = "Designation is required.";
+    if (!formData.designation) newErrors.designation = "Designation is required.";
 
-    // Password validation
     if (!formData.password && !isEditMode) {
       newErrors.password = "Password is required.";
     } else if (formData.password && formData.password.length < 8) {
       newErrors.password = "Password must be at least 8 characters long.";
     } else if (!/[A-Z]/.test(formData.password)) {
-      newErrors.password =
-        "Password must contain at least one uppercase letter.";
+      newErrors.password = "Password must contain at least one uppercase letter.";
     } else if (!/[a-z]/.test(formData.password)) {
-      newErrors.password =
-        "Password must contain at least one lowercase letter.";
+      newErrors.password = "Password must contain at least one lowercase letter.";
     } else if (!/[0-9]/.test(formData.password)) {
       newErrors.password = "Password must contain at least one numeric digit.";
     } else if (!/[!@#$%^&*(),.?":{}|<>]/.test(formData.password)) {
-      newErrors.password =
-        "Password must contain at least one special character.";
+      newErrors.password = "Password must contain at least one special character.";
     }
 
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -94,21 +85,25 @@ const AddSubAdmin = ({ user, onClose }) => {
     const value = e.target.value;
     setFormData({ ...formData, location: value });
     setSearchTerm(value);
-    setSuggestions(value ? countries.filter((country) => country.toLowerCase().includes(value.toLowerCase())) : []);
+    const filteredSuggestions = value ? countries.filter((country) => country.toLowerCase().includes(value.toLowerCase())) : [];
+    setSuggestions(filteredSuggestions);
+    setShowAddButton(value && !countries.includes(value));
   };
 
-  const handleUpdate = (e) => {
-    e.preventDefault();
-    if (!validateForm()) return;
-    Swal.fire({ title: "Sub-Admin Updated!", text: `Sub-Admin details updated successfully`, icon: "success", confirmButtonText: "OK" });
-    setFormData({ name: "", email: "", hospital: "", location: "", phone: "", designation: "", password: "" });
-    setIsEditMode(false);
+  const handleAddNewLocation = () => {
+    if (searchTerm && !countries.includes(searchTerm)) {
+      setFormData({ ...formData, location: searchTerm });
+      setSuggestions([]);
+      setShowAddButton(false);
+      setSearchTerm("");
+    }
   };
 
   const handleSuggestionClick = (suggestion) => {
     setFormData({ ...formData, location: suggestion });
     setSearchTerm(suggestion);
     setSuggestions([]);
+    setShowAddButton(false);
   };
 
   const handleSubmit = (e) => {
@@ -117,7 +112,6 @@ const AddSubAdmin = ({ user, onClose }) => {
     Swal.fire({ title: "Sub-Admin Added!", text: `Sub-Admin added successfully`, icon: "success", confirmButtonText: "OK" });
     setFormData({ name: "", email: "", hospital: "", location: "", phone: "", designation: "", password: "" });
   };
-
 
   const handleClose = () => {
     setFormData({
@@ -183,8 +177,7 @@ const AddSubAdmin = ({ user, onClose }) => {
             <div className="mb-3 col-md-6">
               <label className="form-label">Hospital/Clinic Name</label>
               <input
-                className={`form-control ${errors.hospital ? "is-invalid" : ""
-                  }`}
+                className={`form-control ${errors.hospital ? "is-invalid" : ""}`}
                 id="hospital"
                 type="text"
                 placeholder="Enter Hospital/Clinic name"
@@ -196,79 +189,61 @@ const AddSubAdmin = ({ user, onClose }) => {
               )}
             </div>
             <div className="mb-3 col-md-6" style={{ position: "relative" }}>
-              <label className="form-label">Location</label>
+              <label className="form-label">Country</label>
               <input
+                className={`form-control ${errors.location ? "is-invalid" : ""}`}
                 id="location"
                 type="text"
-                className={`form-control ${errors.location ? "is-invalid" : ""}`}
                 placeholder="Enter Country"
-                value={searchTerm}
+                value={formData.location}
                 onChange={handleLocationChange}
-                onFocus={() => setSuggestions(countries)}
+                onFocus={() => setShowSuggestions(true)}
+                onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
               />
-
-              {/* Autocomplete suggestions dropdown */}
-              {suggestions.length > 0 && (
-                <div
-                  className="autocomplete-suggestions"
-                  style={{
-                    position: "absolute",
-                    top: "100%",  // Position directly below the input
-                    left: "0",
-                    right: "0",
-                    backgroundColor: "#fff",
-                    border: "1px solid #ccc",
-                    zIndex: 1000,  // Make sure it appears above other content
-                    maxHeight: "180px",  // Optional: limit height for scrolling
-                    overflowY: "auto"
-                  }}
-                >
+              {showSuggestions && suggestions.length > 0 && (
+                <div style={{
+                  position: "absolute", top: "100%", left: "0", right: "0", backgroundColor: "#fff",
+                  border: "1px solid #ccc", zIndex: 1000, maxHeight: "150px", overflowY: "auto", borderRadius: "4px"
+                }}>
                   {suggestions.map((country, index) => (
-                    <div
-                      key={index}
-                      className="autocomplete-item"
-                      onClick={() => handleSuggestionClick(country)}
-                      style={{
-                        padding: "8px",
-                        cursor: "pointer",
-                        borderBottom: "1px solid #f1f1f1"
-                      }}
-                    >
+                    <div key={index} onClick={() => handleSuggestionClick(country)} style={{
+                      padding: "8px", cursor: "pointer", borderBottom: "1px solid #f1f1f1"
+                    }}>
                       {country}
                     </div>
                   ))}
                 </div>
               )}
-
-              {errors.location && <span className="text-danger">{errors.location}</span>}
+              {showAddButton && (
+                <button type="button" onClick={handleAddNewLocation} className="btn p-0" style={{ color: "#002538" }}>
+                  + Add "{searchTerm}"
+                </button>
+              )}
+              {errors.location && <div className="invalid-feedback">{errors.location}</div>}
             </div>
             <div className="mb-3 col-md-6">
               <label className="form-label">Phone Number</label>
               <input
                 className={`form-control ${errors.phone ? "is-invalid" : ""}`}
                 id="phone"
-                type="number"
+                type="tel"
                 placeholder="Enter Number"
                 value={formData.phone}
                 onChange={handleChange}
                 pattern="[0-9]*"
-                minLength="10"
-                maxLength="15"
+                maxLength="10"
                 onKeyPress={(e) => {
                   if (!/[0-9]/.test(e.key)) {
                     e.preventDefault();
                   }
                 }}
               />
-              {errors.phone && (
-                <div className="invalid-feedback">{errors.phone}</div>
-              )}
+              {errors.phone && <div className="invalid-feedback">{errors.phone}</div>}
             </div>
             <div className="mb-3 col-md-6">
               <label className="form-label">Designation</label>
               <input
-                className={`form-control ${errors.designation ? "is-invalid" : ""
-                  }`}
+                className={`form-control ${errors.designation ? "is-invalid" : ""}`}
                 id="designation"
                 type="text"
                 placeholder="Enter Designation"
@@ -282,17 +257,14 @@ const AddSubAdmin = ({ user, onClose }) => {
             <div className="mb-3 col-md-6">
               <label className="form-label">Password</label>
               <input
-                className={`form-control ${errors.password ? "is-invalid" : ""
-                  }`}
+                className={`form-control ${errors.password ? "is-invalid" : ""}`}
                 id="password"
+                type="password"
                 placeholder="Enter Password"
                 value={formData.password}
                 onChange={handleChange}
-                minLength={8}
               />
-              {errors.password && (
-                <div className="invalid-feedback">{errors.password}</div>
-              )}
+              {errors.password && <div className="invalid-feedback">{errors.password}</div>}
             </div>
           </div>
           <div className="mb-3 col-lg-12 text-center">
