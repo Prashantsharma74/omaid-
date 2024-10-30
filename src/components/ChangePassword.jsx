@@ -184,7 +184,7 @@ const ChangePassword = () => {
             )}
           </div>
           <div className="col-lg-12 mt-3">
-            <button className="btn custom-btn text-white col-lg-w-25">
+            <button className="btn  text-white col-lg-w-25" style={{backgroundColor:"#6c757d",color:"white"}}>
               {" "}
               Clear
             </button>
