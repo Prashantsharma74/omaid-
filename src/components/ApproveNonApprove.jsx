@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 
@@ -11,6 +11,7 @@ const ApproveNonApprove = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [openDropdownIndex, setOpenDropdownIndex] = useState(null);
 
+  const dropdownRef = useRef(null);
   const navigate = useNavigate();
 
   const handleDropdownToggle = (index) => {
@@ -84,6 +85,17 @@ const ApproveNonApprove = () => {
 
   useEffect(() => {
     fetchData();
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setOpenDropdownIndex(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, []);
 
   const handleItemsPerPageChange = (e) => {
@@ -115,9 +127,9 @@ const ApproveNonApprove = () => {
       prevData.map((item) =>
         item.SNo === sNo
           ? {
-              ...item,
-              Status: item.Status === "Active" ? "Inactive" : "Active",
-            }
+            ...item,
+            Status: item.Status === "Active" ? "Inactive" : "Active",
+          }
           : item
       )
     );
@@ -247,11 +259,10 @@ const ApproveNonApprove = () => {
                             <td>{user.FoodType}</td>
                             <td>
                               <span
-                                className={`badge ${
-                                  user.Approved === "Approved"
+                                className={`badge ${user.Approved === "Approved"
                                     ? "badge-success"
                                     : "badge-warning"
-                                }`}
+                                  }`}
                               >
                                 {user.Approved}
                               </span>
@@ -268,7 +279,7 @@ const ApproveNonApprove = () => {
                               </div>
                             </td>
                             <td>
-                              <div className="dropdown text-center">
+                              <div className="dropdown text-center" ref={dropdownRef}>
                                 <button
                                   className="dropdown-button"
                                   onClick={() => handleDropdownToggle(index)}
