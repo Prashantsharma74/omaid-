@@ -7,7 +7,7 @@ import "dropify";
 const AddFitzone = () => {
   const location = useLocation(); // Get location
   const [isAlert, setIsAlert] = useState(false);
-  
+
   // Initialize state for input fields
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -31,6 +31,10 @@ const AddFitzone = () => {
     setIsAlert(false);
   };
 
+  const handleBack = () => {
+    window.history.back();
+  };
+
   return (
     <main className="app-content">
       <div className="app-title tile p-3">
@@ -39,6 +43,23 @@ const AddFitzone = () => {
             <span className="mr-4">&nbsp; Add Fitzone</span>
           </h1>
         </div>
+      </div>
+      <div
+        className="d-flex"
+        style={{ alignItems: "center", justifyContent: "space-between" }}
+      >
+        <button
+          className="btn mb-2 ms-2"
+          style={{
+            backgroundColor: "#002538",
+            color: "white",
+          }}
+          type="button"
+          onClick={handleBack}
+        >
+          <i className="fa-solid fa-arrow-left" style={{ color: "#fff" }}></i>{" "}
+          &nbsp;Previous
+        </button>
       </div>
       <div className="row">
         <div

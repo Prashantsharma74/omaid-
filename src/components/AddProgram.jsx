@@ -22,6 +22,11 @@ const AddProgram = () => {
     setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
   };
 
+  // Function to go back to the previous page
+  const handleBack = () => {
+    window.history.back();
+  };
+
   const handleCross = () => {
     setIsAlert(false);
   };
@@ -71,6 +76,18 @@ const AddProgram = () => {
           <span className="mr-4 fw-bold">&nbsp;Add Program</span>
         </h1>
       </div>
+      <button
+        className="btn mb-2 ms-2"
+        style={{
+          backgroundColor: "#002538",
+          color: "white",
+        }}
+        type="button"
+        onClick={handleBack}
+      >
+        <i className="fa-solid fa-arrow-left" style={{ color: "#fff" }}></i>{" "}
+        &nbsp;Previous
+      </button>
       <div className="row justify-content-center">
         <div className="col-md-8 px-5">
           <div className="tile">
