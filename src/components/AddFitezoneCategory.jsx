@@ -3,7 +3,7 @@ import Swal from "sweetalert2";
 
 const AddFitezoneCategory = ({ onClose }) => {
   const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
+  const [duration, setDuration] = useState("");
   const [errors, setErrors] = useState({});
 
   const validateForm = () => {
@@ -13,8 +13,8 @@ const AddFitezoneCategory = ({ onClose }) => {
       formErrors.title = "Title is required.";
     }
 
-    if (!description.trim()) {
-      formErrors.description = "Duration is required.";
+    if (!duration.trim()) {
+      formErrors.duration = "Duration is required.";
     }
 
     setErrors(formErrors);
@@ -41,35 +41,34 @@ const AddFitezoneCategory = ({ onClose }) => {
 
     const formData = {
       title,
-      description,
+      duration,
     };
 
     console.log("Form data:", formData);
 
     // Reset form
     setTitle("");
-    setDescription("");
+    setDuration("");
     setErrors({});
     onClose();
   };
 
   return (
-    <>
+    <div className="" style={{ position: "relative" }}>
+      <button className="cross-button" aria-label="Close" onClick={onClose}>
+        <i className="fa-solid fa-times"></i>
+      </button>
       <div
-        className="case-status d-flex justify-content-between align-items-center"
+        className="case-status d-flex justify-content-center text-align-center"
         style={{
           backgroundColor: "#002538",
           color: "#fff",
           height: "50px",
           borderRadius: "10px 10px 0px 0px",
-          padding: "0 15px",
-          width: "100%",
+          textAlign: "center",
         }}
       >
         <h4 className="mt-2">Add Category</h4>
-        <button className="cross-button" aria-label="Close" onClick={onClose}>
-          <i className="fa-solid fa-times"></i>
-        </button>
       </div>
       <div className="tile-body p-3">
         <form onSubmit={handleSubmit}>
@@ -90,13 +89,13 @@ const AddFitezoneCategory = ({ onClose }) => {
           <div className="mb-3 w-100">
             <label className="form-label">Duration</label>
             <input
-              className={`form-control ${errors.description ? "is-invalid" : ""}`}
+              className={`form-control ${errors.duration ? "is-invalid" : ""}`}
               placeholder="Enter Duration"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              value={duration}
+              onChange={(e) => setDuration(e.target.value)}
             />
-            {errors.description && (
-              <div className="invalid-feedback">{errors.description}</div>
+            {errors.duration && (
+              <div className="invalid-feedback">{errors.duration}</div>
             )}
           </div>
 
@@ -107,7 +106,7 @@ const AddFitezoneCategory = ({ onClose }) => {
           </div>
         </form>
       </div>
-    </>
+    </div>
   );
 };
 
