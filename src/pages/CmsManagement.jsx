@@ -17,6 +17,7 @@ const CmsManagement = () => {
   const [editingItem, setEditingItem] = useState(null);
   const [errors, setErrors] = useState({ pageName: "", editorContent: "" });
   const [openDropdown, setOpenDropdown] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const dropdownRef = useRef(null);
 
   const fetchData = () => {
@@ -102,9 +103,9 @@ const CmsManagement = () => {
       prevData.map((item) =>
         item.srNum === srNum
           ? {
-              ...item,
-              status: item.status === "Active" ? "Inactive" : "Active",
-            }
+            ...item,
+            status: item.status === "Active" ? "Inactive" : "Active",
+          }
           : item
       )
     );
@@ -174,35 +175,15 @@ const CmsManagement = () => {
     });
   };
 
-  // Edit CMS page
+  const handleClose = () => {
+    setIsModalOpen(false);
+  };  
+
   const handleEdit = (item) => {
     setEditingItem(item);
     setPageName(item.title);
-    setEditorContent(item.content); // Update editorContent state with the content
-    if (editorRef.current) {
-      editorRef.current.setContent(item.content); // Set content in the editor
-    }
-    setOpenDropdown(null);
-  };
-
-  // Delete CMS page
-  const handleDelete = (srNum) => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        setTableData((prevData) =>
-          prevData.filter((item) => item.srNum !== srNum)
-        );
-        Swal.fire("Deleted!", "Your page has been deleted.", "success");
-      }
-    });
+    setEditorContent(item.content);
+    setIsModalOpen(true);
   };
 
   const resetForm = () => {
@@ -220,84 +201,8 @@ const CmsManagement = () => {
       <div className="app-title tile p-3">
         <div>
           <h1>
-            <span className="mr-4 fw-bold">&nbsp;Add CMS</span>
+            <span className="mr-4 fw-bold">&nbsp;CMS</span>
           </h1>
-        </div>
-      </div>
-      <div className="row">
-        <div className="col-md-12 px-5">
-          <div className="tile">
-            <div
-              className="case-status d-flex justify-content-center text-align-center"
-              style={{
-                backgroundColor: "#002538",
-                color: "#fff",
-                height: "50px",
-                borderRadius: "10px 10px 0px 0px",
-                textAlign: "center",
-                width: "100%",
-              }}
-            >
-              <h4 style={{ marginTop: "12px" }}>Add CMS</h4>
-            </div>
-            <div className="tile-body p-3">
-              <div className="bs-component">
-                <form onSubmit={handleSubmit}>
-                  <div className="row">
-                    <div className="col-lg-12 mt-2">
-                      <label className="form-label" htmlFor="pageName">
-                        Page Name
-                      </label>
-                      <input
-                        className={`form-control ${
-                          errors.pageName ? "is-invalid" : ""
-                        }`}
-                        name="pageName"
-                        id="pageName"
-                        type="text"
-                        placeholder="Page Name"
-                        value={pageName}
-                        onChange={(e) => setPageName(e.target.value)}
-                      />
-                      {errors.pageName && (
-                        <div className="invalid-feedback">
-                          {errors.pageName}
-                        </div>
-                      )}
-                    </div>
-                    <div className="col-lg-12 mt-2">
-                      <label className="form-label" htmlFor="editorContent">
-                        Page Content
-                      </label>
-                      <div>
-                        <Editor
-                          apiKey={api_key}
-                          onEditorChange={(content) =>
-                            setEditorContent(content)
-                          }
-                          value={editorContent} // Controlled editor value
-                          onInit={(evt, editor) => (editorRef.current = editor)}
-                        />
-                      </div>
-                      {errors.editorContent && (
-                        <div className="invalid-feedback d-block">
-                          {errors.editorContent}
-                        </div>
-                      )}
-                    </div>
-                    <div className="col-lg-12 col-sm-12 col-xs-12 col-md-12 mt-2 text-center">
-                      <button
-                        className="btn custom-btn text-white mt-2 w-20pr"
-                        type="submit"
-                      >
-                        {editingItem ? "Update Page" : "Add Page"}
-                      </button>
-                    </div>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
       <div className="row">
@@ -402,11 +307,10 @@ const CmsManagement = () => {
                                     aria-expanded={openDropdown === row.srNum}
                                   >
                                     <i
-                                      className={`fa fa-ellipsis-v ${
-                                        openDropdown === row.srNum
-                                          ? "rotate-icon"
-                                          : ""
-                                      }`}
+                                      className={`fa fa-ellipsis-v ${openDropdown === row.srNum
+                                        ? "rotate-icon"
+                                        : ""
+                                        }`}
                                     ></i>
                                   </button>
                                   {openDropdown === row.srNum && (
@@ -420,15 +324,6 @@ const CmsManagement = () => {
                                       >
                                         <i className="fa fa-edit"></i> Edit
                                       </a>
-                                      {/* <a
-                                        className="dropdown-item"
-                                        onClick={() => {
-                                          handleDelete(row.srNum);
-                                          setOpenDropdown(null);
-                                        }}
-                                      >
-                                        <i className="fa fa-trash"></i> Delete
-                                      </a> */}
                                     </div>
                                   )}
                                 </div>
@@ -527,6 +422,69 @@ const CmsManagement = () => {
           </div>
         </div>
       </div>
+      {isModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+          <button className="cross-button" aria-label="Close" onClick={handleClose}>
+        <i className="fa-solid fa-times"></i>
+      </button>
+            <div
+              className="case-status d-flex justify-content-center"
+              style={{
+                backgroundColor: "#002538",
+                color: "#fff",
+                height: "50px",
+                borderRadius: "10px 10px 0px 0px",
+                textAlign: "center",
+                width: "100%",
+              }}
+            >
+              <h4 style={{ marginTop: "12px" }}>{editingItem ? "Edit CMS" : "Add CMS"}</h4>
+            </div>
+            <div className="tile-body p-3">
+              <form onSubmit={handleSubmit}>
+                <div className="row">
+                  <div className="col-lg-12 mt-2">
+                    <label className="form-label" htmlFor="editorContent">
+                      Page Content
+                    </label>
+                    <div>
+                      <Editor
+                        apiKey={api_key}
+                        onEditorChange={(content) =>
+                          setEditorContent(content)
+                        }
+                        value={editorContent}
+                        onInit={(evt, editor) => (editorRef.current = editor)}
+                      />
+                    </div>
+                    {errors.editorContent && (
+                      <div className="invalid-feedback d-block">
+                        {errors.editorContent}
+                      </div>
+                    )}
+                  </div>
+                  <div className="col-lg-12 text-center mt-2">
+                    <button
+                      className="btn custom-btn text-white mt-2 w-20pr"
+                      type="submit"
+                    >
+                      {editingItem ? "Update Page" : "Add Page"}
+                    </button>
+                    <button
+                      className="btn btn-secondary mt-2 w-20pr"
+                      style={{ marginLeft: "10px" }}
+                      onClick={() => setIsModalOpen(false)}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 };

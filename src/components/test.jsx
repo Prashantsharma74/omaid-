@@ -1,288 +1,225 @@
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import * as XLSX from "xlsx";
+import React, { useEffect, useRef, useState } from "react";
+import { Editor } from "@tinymce/tinymce-react";
+import Swal from "sweetalert2";
 
-const DietPlan = () => {
-  const DEFAULT_ITEMS_PER_PAGE = 10;
-  const [itemsPerPage, setItemsPerPage] = useState(DEFAULT_ITEMS_PER_PAGE);
+const CmsManagement = () => {
+  const editorRef = useRef(null);
+  const api_key = "3e4i7xmjvw1ebtnzlwcfxtlk0tuwjfui4s1w0l2pibtj6egn";
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const [tableData, setTableData] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
-  const [openDropdown, setOpenDropdown] = useState(null);
-
-  const visiblePages = 4;
-
-  const getPaginationButtons = () => {
-    const buttons = [];
-    let startPage = Math.max(0, currentPage - Math.floor(visiblePages / 2));
-    let endPage = Math.min(totalPages - 1, startPage + visiblePages - 1);
-
-    if (endPage - startPage < visiblePages - 1) {
-      startPage = Math.max(0, endPage - visiblePages + 1);
-    }
-
-    for (let i = startPage; i <= endPage; i++) {
-      const isActive = i === currentPage;
-      buttons.push(
-        <button
-          key={i}
-          style={{
-            padding: "7px 10px",
-            backgroundColor: isActive ? "#002538" : "#e9ecef",
-            color: isActive ? "white" : "#002538",
-            border: "1px solid lightgrey",
-          }}
-          className={`page-btn ${isActive ? "active" : ""}`}
-          onClick={() => handlePageChange(i)}
-        >
-          {i + 1}
-        </button>
-      );
-    }
-
-    return buttons;
-  };
-
-  const formatDate = (date) => {
-    return new Intl.DateTimeFormat("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "2-digit",
-    }).format(new Date(date));
-  };
-
-  const fetchData = () => {
-    setTimeout(() => {
-      const users = [
-        {
-          srNum: 1,
-          createdAt: formatDate("2023-10-02"), // Hardcoded date
-          title: "Title 1",
-          description: "Description 1",
-          status: "Active",
-        },
-      ];
-      setTableData(users);
-      setLoading(false);
-    }, 1000);
-  };
+  const [pageName, setPageName] = useState("");
+  const [editorContent, setEditorContent] = useState("");
+  const [editingItem, setEditingItem] = useState(null);
+  const [errors, setErrors] = useState({ pageName: "", editorContent: "" });
 
   useEffect(() => {
     fetchData();
   }, []);
 
-  const handleItemsPerPageChange = (e) => {
-    setItemsPerPage(Number(e.target.value));
-    setCurrentPage(0);
+  const fetchData = () => {
+    setTimeout(() => {
+      setTableData([
+        {
+          srNum: 1,
+          title: "About us",
+          content: "This is the content of the About us page.",
+          status: "Active",
+        },
+      ]);
+      setLoading(false);
+    }, 1000);
   };
 
-  const handleSearchChange = (e) => {
-    setSearchTerm(e.target.value);
-    setCurrentPage(0);
+  const handleEdit = (item) => {
+    setEditingItem(item);
+    setPageName(item.title);
+    setEditorContent(item.content);
+    setIsModalOpen(true);
   };
 
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    let newErrors = { pageName: "", editorContent: "" };
+
+    if (!pageName) {
+      newErrors.pageName = "Page Name is required.";
+    }
+
+    if (!editorContent || editorContent.trim() === "") {
+      newErrors.editorContent = "Page Content is required.";
+    }
+
+    if (newErrors.pageName || newErrors.editorContent) {
+      setErrors(newErrors);
+      return;
+    }
+
+    Swal.fire({
+      title: editingItem ? "Update Item?" : "Add New Item?",
+      text: editingItem
+        ? "Are you sure you want to update this item?"
+        : "Are you sure you want to add this item?",
+      icon: "warning",
+      showCancelButton: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        if (editingItem) {
+          setTableData((prevData) =>
+            prevData.map((item) =>
+              item.srNum === editingItem.srNum
+                ? { ...item, title: pageName, content: editorContent }
+                : item
+            )
+          );
+        } else {
+          const newItem = {
+            srNum: tableData.length + 1,
+            title: pageName,
+            content: editorContent,
+            status: "Active",
+          };
+          setTableData((prevData) => [...prevData, newItem]);
+        }
+        resetForm();
+        Swal.fire("Success!", "Your item has been saved.", "success");
+        setIsModalOpen(false); // Close modal
+      }
+    });
   };
 
-  const toggleStatus = (srNum) => {
-    setTableData((prevData) =>
-      prevData.map((item) =>
-        item.srNum === srNum
-          ? {
-              ...item,
-              status: item.status === "Active" ? "Inactive" : "Active",
-            }
-          : item
-      )
-    );
+  const resetForm = () => {
+    setPageName("");
+    setEditorContent("");
+    setErrors({ pageName: "", editorContent: "" });
+    setEditingItem(null);
+    if (editorRef.current) {
+      editorRef.current.setContent("");
+    }
   };
-
-  const handleFileUpload = (event) => {
-    const file = event.target.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const binaryStr = e.target.result;
-      const workbook = XLSX.read(binaryStr, { type: "binary" });
-      const sheetName = workbook.SheetNames[0];
-      const sheet = workbook.Sheets[sheetName];
-      const data = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-
-      const newData = data.slice(1).map((row, index) => ({
-        srNum: tableData.length + index + 1,
-        createdAt: formatDate("2023-10-02"), // Hardcoded date for uploads
-        title: row[0] || "No Title",
-        description: row[1] || "No Description",
-        status: row[2] || "Inactive",
-      }));
-
-      setTableData((prevData) => [...prevData, ...newData]);
-    };
-
-    reader.onerror = (error) => {
-      console.error("Error reading file:", error);
-      alert("Failed to read file. Please try again.");
-    };
-
-    reader.readAsBinaryString(file);
-  };
-
-  const filteredData = tableData.filter(
-    (user) =>
-      user.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.description.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
-  const paginatedData = filteredData.slice(
-    currentPage * itemsPerPage,
-    (currentPage + 1) * itemsPerPage
-  );
 
   return (
     <main className="app-content">
-      <div className="app-title tile p-3">
-        <h1 className="fw-bold">Diet Plan</h1>
-      </div>
-
-      <div className="row mb-5">
-        <div className="col-md-12 px-5">
-          <div className="bt-ad-emp">
-            <Link to="/data-manage/diet-plan/add-diet" className="add-btt btn">
-              <i className="fa-regular fa-plus"></i> Add Diet
-            </Link>
-            <a className="add-btt btn" style={{ marginLeft: "30px" }}>
-              <label htmlFor="upload-excel">
-                Upload Nutrition &nbsp;{" "}
-                <i className="fa-regular fa-file-csv"></i>
-                <input
-                  type="file"
-                  id="upload-excel"
-                  style={{ display: "none" }}
-                  accept=".xlsx,.xls"
-                  onChange={handleFileUpload}
-                />
-              </label>
-            </a>
-          </div>
-        </div>
-      </div>
-
       <div className="row">
         <div className="col-md-12 px-5">
           <div className="tile p-3">
-            <div className="tile-body">
-              <div className="table-responsive">
-                <div
-                  className="table-controls"
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                  }}
-                >
-                  <div className="items-per-page-container">
-                    <select
-                      value={itemsPerPage}
-                      onChange={handleItemsPerPageChange}
-                      className="items-per-page-select"
-                    >
-                      <option value={10}>10</option>
-                      <option value={25}>25</option>
-                      <option value={50}>50</option>
-                    </select>
-                    <span
-                      className="entries-text"
-                      style={{ marginLeft: "10px" }}
-                    >
-                      entries per page
-                    </span>
-                  </div>
-                  <div className="search-container">
-                    <span
-                      className="search-text"
-                      style={{ marginRight: "10px" }}
-                    >
-                      Search:
-                    </span>
-                    <input
-                      type="text"
-                      value={searchTerm}
-                      onChange={handleSearchChange}
-                      className="search-input"
-                    />
-                  </div>
-                </div>
-                {loading ? (
-                  <div
-                    style={{
-                      height: "200px",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <div className="loader"></div>
-                  </div>
-                ) : (
-                  <div className="table-responsive">
-                    <table
-                      className="table table-bordered table-hover dt-responsive mt-2"
-                      id="data-table"
-                    >
-                      <thead>
-                        <tr>
-                          <th>Sr. num</th>
-                          <th>Created At</th>
-                          <th>Title</th>
-                          <th>Description</th>
-                          <th>Status</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {paginatedData.map((row, index) => (
-                          <tr key={row.srNum}>
-                            <td>{currentPage * itemsPerPage + index + 1}</td>
-                            <td>{row.createdAt}</td>
-                            <td>{row.title}</td>
-                            <td>{row.description}</td>
-                            <td>
-                              <div className="form-check form-switch">
-                                <input
-                                  className="form-check-input"
-                                  type="checkbox"
-                                  role="switch"
-                                  checked={row.status === "Active"}
-                                  onChange={() => toggleStatus(row.srNum)}
-                                />
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                    <div
-                      className="pagination"
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                      }}
-                    >
-                      <div>{getPaginationButtons()}</div>
-                    </div>
-                  </div>
-                )}
-              </div>
+            <h1 className="text-center">CMS Management</h1>
+            <div className="table-responsive">
+              <table className="table table-bordered mt-2">
+                <thead>
+                  <tr>
+                    <th>Sr. num</th>
+                    <th>Page name</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {tableData.map((row, index) => (
+                    <tr key={index}>
+                      <td>{index + 1}</td>
+                      <td>{row.title}</td>
+                      <td>{row.status}</td>
+                      <td>
+                        <button onClick={() => handleEdit(row)}>
+                          Edit
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
       </div>
+
+      {isModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <div
+              className="case-status d-flex justify-content-center"
+              style={{
+                backgroundColor: "#002538",
+                color: "#fff",
+                height: "50px",
+                borderRadius: "10px 10px 0px 0px",
+                textAlign: "center",
+                width: "100%",
+              }}
+            >
+              <h4 style={{ marginTop: "12px" }}>{editingItem ? "Edit CMS" : "Add CMS"}</h4>
+            </div>
+            <div className="tile-body p-3">
+              <form onSubmit={handleSubmit}>
+                <div className="row">
+                  <div className="col-lg-12 mt-2">
+                    <label className="form-label" htmlFor="pageName">
+                      Page Name
+                    </label>
+                    <input
+                      className={`form-control ${
+                        errors.pageName ? "is-invalid" : ""
+                      }`}
+                      name="pageName"
+                      id="pageName"
+                      type="text"
+                      placeholder="Page Name"
+                      value={pageName}
+                      onChange={(e) => setPageName(e.target.value)}
+                    />
+                    {errors.pageName && (
+                      <div className="invalid-feedback">
+                        {errors.pageName}
+                      </div>
+                    )}
+                  </div>
+                  <div className="col-lg-12 mt-2">
+                    <label className="form-label" htmlFor="editorContent">
+                      Page Content
+                    </label>
+                    <div>
+                      <Editor
+                        apiKey={api_key}
+                        onEditorChange={(content) =>
+                          setEditorContent(content)
+                        }
+                        value={editorContent}
+                        onInit={(evt, editor) => (editorRef.current = editor)}
+                      />
+                    </div>
+                    {errors.editorContent && (
+                      <div className="invalid-feedback d-block">
+                        {errors.editorContent}
+                      </div>
+                    )}
+                  </div>
+                  <div className="col-lg-12 text-center mt-2">
+                    <button
+                      className="btn custom-btn text-white mt-2 w-20pr"
+                      type="submit"
+                    >
+                      {editingItem ? "Update Page" : "Add Page"}
+                    </button>
+                    <button
+                      className="btn btn-secondary mt-2 w-20pr"
+                      onClick={() => setIsModalOpen(false)}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 };
 
-export default DietPlan;
+export default CmsManagement;
