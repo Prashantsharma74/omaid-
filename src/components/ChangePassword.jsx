@@ -62,9 +62,8 @@ const ChangePassword = () => {
             <div className="input-group flex-nowrap">
               <input
                 type={isPasswordVisible ? "text" : "password"}
-                className={`form-control password-field ${
-                  oldPasswordError ? "is-invalid" : ""
-                }`}
+                className={`form-control password-field ${oldPasswordError ? "is-invalid" : ""
+                  }`}
                 id="old-password"
                 placeholder="**********"
                 autoComplete="off"
@@ -105,9 +104,8 @@ const ChangePassword = () => {
             <div className="input-group flex-nowrap">
               <input
                 type={isPasswordVisible2 ? "text" : "password"}
-                className={`form-control password-field ${
-                  newPasswordError ? "is-invalid" : ""
-                }`}
+                className={`form-control password-field ${newPasswordError ? "is-invalid" : ""
+                  }`}
                 id="new-password"
                 placeholder="Enter Password"
                 autoComplete="off"
@@ -147,9 +145,8 @@ const ChangePassword = () => {
             <div className="input-group flex-nowrap">
               <input
                 type={isPasswordVisible3 ? "text" : "password"}
-                className={`form-control password-field ${
-                  confirmPasswordError ? "is-invalid" : ""
-                }`}
+                className={`form-control password-field ${confirmPasswordError ? "is-invalid" : ""
+                  }`}
                 id="confirm-password"
                 placeholder="Enter Confirm Password"
                 autoComplete="off"
@@ -184,7 +181,7 @@ const ChangePassword = () => {
             )}
           </div>
           <div className="col-lg-12 mt-3">
-            <button className="btn  text-white col-lg-w-25" style={{backgroundColor:"#6c757d",color:"white"}}>
+            <button className="btn  text-white col-lg-w-25" style={{ backgroundColor: "#6c757d", color: "white" }}>
               {" "}
               Clear
             </button>

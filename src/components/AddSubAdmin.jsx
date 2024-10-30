@@ -1,205 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Swal from "sweetalert2";
 
 const AddSubAdmin = ({ user, onClose }) => {
-  const countries = [
-    "Afghanistan",
-    "Albania",
-    "Algeria",
-    "Andorra",
-    "Angola",
-    "Argentina",
-    "Armenia",
-    "Australia",
-    "Austria",
-    "Azerbaijan",
-    "Bahamas",
-    "Bahrain",
-    "Bangladesh",
-    "Barbados",
-    "Belarus",
-    "Belgium",
-    "Belize",
-    "Benin",
-    "Bhutan",
-    "Bolivia",
-    "Bosnia and Herzegovina",
-    "Botswana",
-    "Brazil",
-    "Brunei",
-    "Bulgaria",
-    "Burkina Faso",
-    "Burundi",
-    "Cabo Verde",
-    "Cambodia",
-    "Cameroon",
-    "Canada",
-    "Central African Republic",
-    "Chad",
-    "Chile",
-    "China",
-    "Colombia",
-    "Comoros",
-    "Congo",
-    "Costa Rica",
-    "Croatia",
-    "Cuba",
-    "Cyprus",
-    "Czech Republic",
-    "Democratic Republic of the Congo",
-    "Denmark",
-    "Djibouti",
-    "Dominica",
-    "Dominican Republic",
-    "Ecuador",
-    "Egypt",
-    "El Salvador",
-    "Equatorial Guinea",
-    "Eritrea",
-    "Estonia",
-    "Eswatini",
-    "Ethiopia",
-    "Fiji",
-    "Finland",
-    "France",
-    "Gabon",
-    "Gambia",
-    "Georgia",
-    "Germany",
-    "Ghana",
-    "Greece",
-    "Grenada",
-    "Guatemala",
-    "Guinea",
-    "Guinea-Bissau",
-    "Guyana",
-    "Haiti",
-    "Honduras",
-    "Hungary",
-    "Iceland",
-    "India",
-    "Indonesia",
-    "Iran",
-    "Iraq",
-    "Ireland",
-    "Israel",
-    "Italy",
-    "Jamaica",
-    "Japan",
-    "Jordan",
-    "Kazakhstan",
-    "Kenya",
-    "Kiribati",
-    "Kuwait",
-    "Kyrgyzstan",
-    "Laos",
-    "Latvia",
-    "Lebanon",
-    "Lesotho",
-    "Liberia",
-    "Libya",
-    "Liechtenstein",
-    "Lithuania",
-    "Luxembourg",
-    "Madagascar",
-    "Malawi",
-    "Malaysia",
-    "Maldives",
-    "Mali",
-    "Malta",
-    "Marshall Islands",
-    "Mauritania",
-    "Mauritius",
-    "Mexico",
-    "Micronesia",
-    "Moldova",
-    "Monaco",
-    "Mongolia",
-    "Montenegro",
-    "Morocco",
-    "Mozambique",
-    "Myanmar",
-    "Namibia",
-    "Nauru",
-    "Nepal",
-    "Netherlands",
-    "New Zealand",
-    "Nicaragua",
-    "Niger",
-    "Nigeria",
-    "North Macedonia",
-    "Norway",
-    "Oman",
-    "Pakistan",
-    "Palau",
-    "Palestine",
-    "Panama",
-    "Papua New Guinea",
-    "Paraguay",
-    "Peru",
-    "Philippines",
-    "Poland",
-    "Portugal",
-    "Qatar",
-    "Romania",
-    "Russia",
-    "Rwanda",
-    "Saint Kitts and Nevis",
-    "Saint Lucia",
-    "Saint Vincent and the Grenadines",
-    "Samoa",
-    "San Marino",
-    "Sao Tome and Principe",
-    "Saudi Arabia",
-    "Senegal",
-    "Serbia",
-    "Seychelles",
-    "Sierra Leone",
-    "Singapore",
-    "Slovakia",
-    "Slovenia",
-    "Solomon Islands",
-    "Somalia",
-    "South Africa",
-    "South Korea",
-    "South Sudan",
-    "Spain",
-    "Sri Lanka",
-    "Sudan",
-    "Suriname",
-    "Sweden",
-    "Switzerland",
-    "Syria",
-    "Tajikistan",
-    "Tanzania",
-    "Thailand",
-    "Togo",
-    "Tonga",
-    "Trinidad and Tobago",
-    "Tunisia",
-    "Turkey",
-    "Turkmenistan",
-    "Tuvalu",
-    "Uganda",
-    "Ukraine",
-    "United Arab Emirates",
-    "United Kingdom",
-    "United States",
-    "Uruguay",
-    "Uzbekistan",
-    "Vanuatu",
-    "Vatican City",
-    "Venezuela",
-    "Vietnam",
-    "Yemen",
-    "Zambia",
-    "Zimbabwe",
-  ];
-
-  const handleBlur = () => {
-    setSuggestions([]);
-  };
-
+  const countries = ["United States", "Canada", "Mexico", "United Kingdom", "India", "Australia"];
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -213,11 +16,10 @@ const AddSubAdmin = ({ user, onClose }) => {
   const [suggestions, setSuggestions] = useState([]);
   const [errors, setErrors] = useState({});
   const [isEditMode, setIsEditMode] = useState(false);
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-
-  const handlePasswordVisibility = () => {
-    setIsPasswordVisible((prev) => !prev);
-  };
+  const [inputValue, setInputValue] = useState('');
+  const [filteredSuggestions, setFilteredSuggestions] = useState([]);
+  const [activeSuggestionIndex, setActiveSuggestionIndex] = useState(-1);
+  const autocompleteRef = useRef(null);
 
   useEffect(() => {
     if (user) {
@@ -288,52 +90,34 @@ const AddSubAdmin = ({ user, onClose }) => {
     setErrors({ ...errors, [id]: "" });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    if (!validateForm()) return;
-
-    Swal.fire({
-      title: "Sub-Admin Added!",
-      text: `Sub-Admin added successfully`,
-      icon: "success",
-      confirmButtonText: "OK",
-    });
-
-    setFormData({
-      name: "",
-      email: "",
-      hospital: "",
-      location: "",
-      phone: "",
-      designation: "",
-      password: "",
-    });
+  const handleLocationChange = (e) => {
+    const value = e.target.value;
+    setFormData({ ...formData, location: value });
+    setSearchTerm(value);
+    setSuggestions(value ? countries.filter((country) => country.toLowerCase().includes(value.toLowerCase())) : []);
   };
 
   const handleUpdate = (e) => {
     e.preventDefault();
-
     if (!validateForm()) return;
-
-    Swal.fire({
-      title: "Sub-Admin Updated!",
-      text: `Sub-Admin details updated successfully`,
-      icon: "success",
-      confirmButtonText: "OK",
-    });
-
-    setFormData({
-      name: "",
-      email: "",
-      hospital: "",
-      location: "",
-      phone: "",
-      designation: "",
-      password: "",
-    });
+    Swal.fire({ title: "Sub-Admin Updated!", text: `Sub-Admin details updated successfully`, icon: "success", confirmButtonText: "OK" });
+    setFormData({ name: "", email: "", hospital: "", location: "", phone: "", designation: "", password: "" });
     setIsEditMode(false);
   };
+
+  const handleSuggestionClick = (suggestion) => {
+    setFormData({ ...formData, location: suggestion });
+    setSearchTerm(suggestion);
+    setSuggestions([]);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!validateForm()) return;
+    Swal.fire({ title: "Sub-Admin Added!", text: `Sub-Admin added successfully`, icon: "success", confirmButtonText: "OK" });
+    setFormData({ name: "", email: "", hospital: "", location: "", phone: "", designation: "", password: "" });
+  };
+
 
   const handleClose = () => {
     setFormData({
@@ -399,9 +183,8 @@ const AddSubAdmin = ({ user, onClose }) => {
             <div className="mb-3 col-md-6">
               <label className="form-label">Hospital/Clinic Name</label>
               <input
-                className={`form-control ${
-                  errors.hospital ? "is-invalid" : ""
-                }`}
+                className={`form-control ${errors.hospital ? "is-invalid" : ""
+                  }`}
                 id="hospital"
                 type="text"
                 placeholder="Enter Hospital/Clinic name"
@@ -412,34 +195,52 @@ const AddSubAdmin = ({ user, onClose }) => {
                 <div className="invalid-feedback">{errors.hospital}</div>
               )}
             </div>
-            <div className="mb-3 col-md-6">
+            <div className="mb-3 col-md-6" style={{ position: "relative" }}>
               <label className="form-label">Location</label>
-              <select
-                placeholder="Enter Country"
+              <input
                 id="location"
-                className={`form-control ${
-                  errors.location ? "is-invalid" : ""
-                }`}
-                value={formData.location}
-                onChange={(e) => {
-                  setFormData({ ...formData, location: e.target.value });
-                  setSearchTerm(e.target.value);
-                  setSuggestions([]);
-                }}
+                type="text"
+                className={`form-control ${errors.location ? "is-invalid" : ""}`}
+                placeholder="Enter Country"
+                value={searchTerm}
+                onChange={handleLocationChange}
                 onFocus={() => setSuggestions(countries)}
-              >
-                <option value="" disabled>
-                  Select a country
-                </option>
-                {suggestions.map((country, index) => (
-                  <option key={index} value={country}>
-                    {country}
-                  </option>
-                ))}
-              </select>
-              {errors.location && (
-                <span className="text-danger">{errors.location}</span>
+              />
+
+              {/* Autocomplete suggestions dropdown */}
+              {suggestions.length > 0 && (
+                <div
+                  className="autocomplete-suggestions"
+                  style={{
+                    position: "absolute",
+                    top: "100%",  // Position directly below the input
+                    left: "0",
+                    right: "0",
+                    backgroundColor: "#fff",
+                    border: "1px solid #ccc",
+                    zIndex: 1000,  // Make sure it appears above other content
+                    maxHeight: "180px",  // Optional: limit height for scrolling
+                    overflowY: "auto"
+                  }}
+                >
+                  {suggestions.map((country, index) => (
+                    <div
+                      key={index}
+                      className="autocomplete-item"
+                      onClick={() => handleSuggestionClick(country)}
+                      style={{
+                        padding: "8px",
+                        cursor: "pointer",
+                        borderBottom: "1px solid #f1f1f1"
+                      }}
+                    >
+                      {country}
+                    </div>
+                  ))}
+                </div>
               )}
+
+              {errors.location && <span className="text-danger">{errors.location}</span>}
             </div>
             <div className="mb-3 col-md-6">
               <label className="form-label">Phone Number</label>
@@ -466,9 +267,8 @@ const AddSubAdmin = ({ user, onClose }) => {
             <div className="mb-3 col-md-6">
               <label className="form-label">Designation</label>
               <input
-                className={`form-control ${
-                  errors.designation ? "is-invalid" : ""
-                }`}
+                className={`form-control ${errors.designation ? "is-invalid" : ""
+                  }`}
                 id="designation"
                 type="text"
                 placeholder="Enter Designation"
@@ -482,9 +282,8 @@ const AddSubAdmin = ({ user, onClose }) => {
             <div className="mb-3 col-md-6">
               <label className="form-label">Password</label>
               <input
-                className={`form-control ${
-                  errors.password ? "is-invalid" : ""
-                }`}
+                className={`form-control ${errors.password ? "is-invalid" : ""
+                  }`}
                 id="password"
                 placeholder="Enter Password"
                 value={formData.password}
