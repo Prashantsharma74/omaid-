@@ -11,6 +11,8 @@ const ManageProgram = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
   const [openDropdown, setOpenDropdown] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalProgramData, setModalProgramData] = useState(null);
 
   const dropdownRef = useRef(null);
   const visiblePages = 4;
@@ -136,8 +138,9 @@ const ManageProgram = () => {
     (currentPage + 1) * itemsPerPage
   );
 
-  const handleEdit = (user) => {
-    navigate("/manage-program/add-program", { state: { program: user } });
+  const openModal = (program = null) => {
+    setModalProgramData(program);
+    setIsModalOpen(true);
   };
 
   return (
@@ -150,15 +153,15 @@ const ManageProgram = () => {
         </div>
       </div>
 
-      {/* <div className="row mb-5">
+      <div className="row mb-5">
         <div className="col-md-12 px-5">
           <div className="bt-ad-emp">
-            <Link to="/manage-program/add-program" className="add-btt btn">
+            <button onClick={() => openModal()} className="add-btt btn">
               <i className="fa-regular fa-plus"></i> Add Program
-            </Link>
+            </button>
           </div>
         </div>
-      </div> */}
+      </div>
       <div className="row mt-4">
         <div className="col-md-12 px-5">
           <div className="tile">
@@ -284,22 +287,22 @@ const ManageProgram = () => {
                                   >
                                     <i
                                       className={`fa fa-ellipsis-v ${openDropdown === user.srNum
-                                          ? "rotate-icon"
-                                          : ""
+                                        ? "rotate-icon"
+                                        : ""
                                         }`}
                                     ></i>
                                   </button>
                                   {openDropdown === user.srNum && (
                                     <div className="dropdown-menu show">
-                                      {/* <a
+                                      <a
                                         className="dropdown-item"
                                         onClick={() => {
-                                          handleEdit(user);
+                                          openModal(user);
                                           setOpenDropdown(null);
                                         }}
                                       >
                                         <i className="fa fa-edit"></i> Edit
-                                      </a> */}
+                                      </a>
                                       <a
                                         className="dropdown-item"
                                         onClick={() => {
@@ -319,10 +322,10 @@ const ManageProgram = () => {
                       </tbody>
                     </table>
                     <div
-                      className="pagination"
+                      className="pagination mt-4 mb-2"
                       style={{
                         display: "flex",
-                        alignItems: "center",
+                        alignItems: "flex-start",
                         justifyContent: "space-between",
                       }}
                     >
@@ -346,7 +349,6 @@ const ManageProgram = () => {
                           className="page-btn"
                           onClick={() => handlePageChange(0)}
                           disabled={currentPage === 0}
-                          aria-label="First Page"
                         >
                           &laquo;
                         </button>
@@ -360,7 +362,6 @@ const ManageProgram = () => {
                           className="page-btn"
                           onClick={() => handlePageChange(currentPage - 1)}
                           disabled={currentPage === 0}
-                          aria-label="Previous Page"
                         >
                           &#x3c;
                         </button>
@@ -375,7 +376,6 @@ const ManageProgram = () => {
                           className="page-btn"
                           onClick={() => handlePageChange(currentPage + 1)}
                           disabled={currentPage >= totalPages - 1}
-                          aria-label="Next Page"
                         >
                           &#x3e;
                         </button>
@@ -390,7 +390,6 @@ const ManageProgram = () => {
                           className="page-btn"
                           onClick={() => handlePageChange(totalPages - 1)}
                           disabled={currentPage >= totalPages - 1}
-                          aria-label="Last Page"
                         >
                           &raquo;
                         </button>
@@ -403,6 +402,13 @@ const ManageProgram = () => {
           </div>
         </div>
       </div>
+      {isModalOpen && (
+        <AddProgram
+          isOpen={isModalOpen}
+          setIsOpen={setIsModalOpen}
+          programData={modalProgramData}
+        />
+      )}
     </main>
   );
 };

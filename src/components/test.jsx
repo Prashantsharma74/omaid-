@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import AddProgram from "../components/AddProgram";
 
@@ -12,10 +12,41 @@ const ManageProgram = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [openDropdown, setOpenDropdown] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedProgram, setSelectedProgram] = useState(null); // Store the program to edit
-  
+  const [modalProgramData, setModalProgramData] = useState(null);
+
   const dropdownRef = useRef(null);
   const visiblePages = 4;
+
+  const getPaginationButtons = () => {
+    const buttons = [];
+    let startPage = Math.max(0, currentPage - Math.floor(visiblePages / 2));
+    let endPage = Math.min(totalPages - 1, startPage + visiblePages - 1);
+
+    if (endPage - startPage < visiblePages - 1) {
+      startPage = Math.max(0, endPage - visiblePages + 1);
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      const isActive = i === currentPage;
+      buttons.push(
+        <button
+          key={i}
+          style={{
+            padding: "7px 10px",
+            backgroundColor: isActive ? "#002538" : "#e9ecef",
+            color: isActive ? "white" : "#002538",
+            border: "1px solid lightgrey",
+          }}
+          className={`page-btn ${isActive ? "active" : ""}`}
+          onClick={() => handlePageChange(i)}
+        >
+          {i + 1}
+        </button>
+      );
+    }
+
+    return buttons;
+  };
 
   const fetchData = () => {
     setTimeout(() => {
@@ -30,6 +61,7 @@ const ManageProgram = () => {
           status: "Active",
         },
       ];
+
       setTableData(users);
       setLoading(false);
     }, 1000);
@@ -42,7 +74,9 @@ const ManageProgram = () => {
         setOpenDropdown(null);
       }
     };
+
     document.addEventListener("mousedown", handleClickOutside);
+
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
@@ -67,87 +101,239 @@ const ManageProgram = () => {
     });
   };
 
-  const handleAdd = () => {
-    setSelectedProgram(null); // For add, no program is selected
-    setIsModalOpen(true);
+  const handleItemsPerPageChange = (e) => {
+    setItemsPerPage(Number(e.target.value));
+    setCurrentPage(0);
   };
 
-  const handleEdit = (program) => {
-    setSelectedProgram(program); // Set the program to edit
-    setIsModalOpen(true);
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(0);
   };
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setSelectedProgram(null);
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  const toggleStatus = (srNum) => {
+    setTableData((prevData) =>
+      prevData.map((item) =>
+        item.srNum === srNum
+          ? {
+              ...item,
+              status: item.status === "Active" ? "Inactive" : "Active",
+            }
+          : item
+      )
+    );
+  };
+
+  const filteredData = tableData.filter((user) =>
+    user.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+  const paginatedData = filteredData.slice(
+    currentPage * itemsPerPage,
+    (currentPage + 1) * itemsPerPage
+  );
+
+  const openModal = (program = null) => {
+    setModalProgramData(program);
+    setIsModalOpen(true);
   };
 
   return (
     <main className="app-content">
       <div className="app-title tile p-3">
-        <div>
-          <h1>
-            <span className="mr-4 fw-bold">&nbsp; Manage Program</span>
-          </h1>
-        </div>
+        <h1>
+          <span className="mr-4 fw-bold">&nbsp; Manage Program</span>
+        </h1>
       </div>
 
       <div className="row mb-5">
         <div className="col-md-12 px-5">
-          <div className="bt-ad-emp">
-            <button onClick={handleAdd} className="add-btt btn">
-              <i className="fa-regular fa-plus"></i> Add Program
-            </button>
-          </div>
+          <button onClick={() => openModal()} className="btn add-btt">
+            <i className="fa-regular fa-plus"></i> Add Program
+          </button>
         </div>
       </div>
 
       <div className="row mt-4">
-        {/* Table content and other elements remain the same */}
-        <tbody>
-          {paginatedData.map((user, index) => (
-            <tr key={user.srNum}>
-              <td>{currentPage * itemsPerPage + index + 1}</td>
-              <td>{user.title}</td>
-              <td>
-                <div className="form-check form-switch">
-                  <input
-                    className="form-check-input"
-                    type="checkbox"
-                    role="switch"
-                    checked={user.status === "Active"}
-                    onChange={() => toggleStatus(user.srNum)}
-                  />
-                </div>
-              </td>
-              <td>
-                <button
-                  className="btn"
-                  onClick={() => handleEdit(user)}
+        <div className="col-md-12 px-5">
+          <div className="tile">
+            <div className="tile-body p-3">
+              <div className="table-responsive">
+                <div
+                  className="table-controls"
                   style={{
-                    borderBottom: "3px solid #002538",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
                   }}
-                  title="Manage Program"
                 >
-                  Edit
-                </button>
-              </td>
-              {/* Other table columns */}
-            </tr>
-          ))}
-        </tbody>
-      </div>
-
-      {/* Add Program Modal */}
-      {isModalOpen && (
-        <div className="modal">
-          <div className="modal-content">
-            <button className="close-btn" onClick={handleCloseModal}>
-              &times;
-            </button>
-            <AddProgram program={selectedProgram} onClose={handleCloseModal} />
+                  <div className="items-per-page-container">
+                    <select
+                      value={itemsPerPage}
+                      onChange={handleItemsPerPageChange}
+                      className="items-per-page-select"
+                    >
+                      <option value={10}>10</option>
+                      <option value={25}>25</option>
+                      <option value={50}>50</option>
+                    </select>
+                    <span
+                      className="entries-text"
+                      style={{ marginLeft: "10px" }}
+                    >
+                      entries per page
+                    </span>
+                  </div>
+                  <div className="search-container">
+                    <span
+                      className="search-text"
+                      style={{ marginRight: "10px" }}
+                    >
+                      Search:
+                    </span>
+                    <input
+                      type="text"
+                      value={searchTerm}
+                      onChange={handleSearchChange}
+                      className="search-input"
+                    />
+                  </div>
+                </div>
+                {loading ? (
+                  <div
+                    style={{
+                      height: "200px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <div className="loader"></div>
+                  </div>
+                ) : (
+                  <table
+                    className="table table-bordered table-hover dt-responsive mt-2"
+                    id="data-table"
+                  >
+                    <thead>
+                      <tr>
+                        <th>S.No</th>
+                        <th>Program</th>
+                        <th>Status</th>
+                        <th>Manage Program</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {paginatedData.map((user, index) => (
+                        <tr key={user.srNum}>
+                          <td>{currentPage * itemsPerPage + index + 1}</td>
+                          <td>{user.title}</td>
+                          <td>
+                            <div className="form-check form-switch">
+                              <input
+                                className="form-check-input"
+                                type="checkbox"
+                                role="switch"
+                                checked={user.status === "Active"}
+                                onChange={() => toggleStatus(user.srNum)}
+                              />
+                            </div>
+                          </td>
+                          <td>
+                            <Link
+                              className="btn"
+                              to="/manage-program/manage"
+                              style={{
+                                borderBottom: "3px solid #002538",
+                              }}
+                              title="Manage Program"
+                            >
+                              Open Program
+                            </Link>
+                          </td>
+                          <td>
+                            <div
+                              ref={dropdownRef}
+                              className="dropdown text-center"
+                            >
+                              <button
+                                className="dropdown-button"
+                                onClick={() =>
+                                  setOpenDropdown(
+                                    openDropdown === user.srNum
+                                      ? null
+                                      : user.srNum
+                                  )
+                                }
+                                aria-haspopup="true"
+                                aria-expanded={openDropdown === user.srNum}
+                              >
+                                <i
+                                  className={`fa fa-ellipsis-v ${
+                                    openDropdown === user.srNum
+                                      ? "rotate-icon"
+                                      : ""
+                                  }`}
+                                ></i>
+                              </button>
+                              {openDropdown === user.srNum && (
+                                <div className="dropdown-menu show">
+                                  <a
+                                    className="dropdown-item"
+                                    onClick={() => {
+                                      openModal(user);
+                                      setOpenDropdown(null);
+                                    }}
+                                  >
+                                    <i className="fa fa-edit"></i> Edit
+                                  </a>
+                                  <a
+                                    className="dropdown-item"
+                                    onClick={() => {
+                                      handleDelete(user.srNum);
+                                      setOpenDropdown(null);
+                                    }}
+                                  >
+                                    <i className="fa fa-trash"></i> Delete
+                                  </a>
+                                </div>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+              </div>
+              <div className="pagination">
+                <span className="pagination-info">
+                  Showing {currentPage * itemsPerPage + 1} to{" "}
+                  {Math.min(
+                    (currentPage + 1) * itemsPerPage,
+                    filteredData.length
+                  )}{" "}
+                  of {filteredData.length} entries
+                </span>
+                <div>{getPaginationButtons()}</div>
+              </div>
+            </div>
           </div>
         </div>
+      </div>
+
+      {isModalOpen && (
+        <AddProgram
+          isOpen={isModalOpen}
+          setIsOpen={setIsModalOpen}
+          programData={modalProgramData}
+        />
       )}
     </main>
   );
