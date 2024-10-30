@@ -238,7 +238,7 @@ const AddBlogs = () => {
             </div>
             <div className="modal-footer">
               <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>Close</button>
-              <button type="button" className="btn ms-2" style={{ backgroundColor: "#002538", color: "white" }} onClick={handleSaveCategory} style={{ backgroundColor: "#002538", color: "white", marginLeft: "10px" }}>Save Category</button>
+              <button type="button" className="btn ms-2" style={{ backgroundColor: "#002538", color: "white", marginLeft: "10px"  }} onClick={handleSaveCategory}>Save Category</button>
             </div>
           </div>
           <div className="mt-3 modal-content animated-modal">
