@@ -284,19 +284,19 @@ const ManageProgram = () => {
                                   >
                                     <i
                                       className={`fa fa-ellipsis-v ${openDropdown === user.srNum
-                                          ? "rotate-icon"
-                                          : ""
+                                        ? "rotate-icon"
+                                        : ""
                                         }`}
                                     ></i>
                                   </button>
                                   {openDropdown === user.srNum && (
                                     <div className="dropdown-menu show">
-                                      <a
+                                      <Link to="/manage-program/add-program"
                                         className="dropdown-item"
                                         onClick={handleEdit}
                                       >
                                         <i className="fa fa-edit"></i> Edit
-                                      </a>
+                                      </Link>
                                       <a
                                         className="dropdown-item"
                                         onClick={() => {
@@ -395,11 +395,11 @@ const ManageProgram = () => {
                     </div>
                   </div>
                 )}
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
     </main >
   );
 };
