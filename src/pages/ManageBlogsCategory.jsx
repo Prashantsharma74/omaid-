@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
@@ -12,6 +12,7 @@ const ManageBlogsCategory = () => {
   const [openDropdown, setOpenDropdown] = useState(null);
   const navigate = useNavigate();
 
+  const dropdownRef = useRef(null)
   const visiblePages = 4;
 
   const getPaginationButtons = () => {
@@ -62,6 +63,17 @@ const ManageBlogsCategory = () => {
 
   useEffect(() => {
     fetchData();
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setOpenDropdown(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, []);
 
   const handleItemsPerPageChange = (e) => {
@@ -83,9 +95,9 @@ const ManageBlogsCategory = () => {
       prevData.map((item) =>
         item.srNum === srNum
           ? {
-              ...item,
-              status: item.status === "Active" ? "Inactive" : "Active",
-            }
+            ...item,
+            status: item.status === "Active" ? "Inactive" : "Active",
+          }
           : item
       )
     );
@@ -239,7 +251,7 @@ const ManageBlogsCategory = () => {
                               </div>
                             </td>
                             <td>
-                              <div className="dropdown text-center">
+                              <div className="dropdown text-center" ref={dropdownRef}>
                                 <button
                                   className="dropdown-button"
                                   onClick={() =>
@@ -253,11 +265,10 @@ const ManageBlogsCategory = () => {
                                   aria-expanded={openDropdown === row.srNum}
                                 >
                                   <i
-                                    className={`fa fa-ellipsis-v ${
-                                      openDropdown === row.srNum
+                                    className={`fa fa-ellipsis-v ${openDropdown === row.srNum
                                         ? "rotate-icon"
                                         : ""
-                                    }`}
+                                      }`}
                                   ></i>
                                 </button>
                                 {openDropdown === row.srNum && (

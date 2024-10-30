@@ -1,220 +1,151 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Editor } from "@tinymce/tinymce-react";
+import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import AddProgram from "../components/AddProgram";
 
-const CmsManagement = () => {
-  const editorRef = useRef(null);
-  const api_key = "3e4i7xmjvw1ebtnzlwcfxtlk0tuwjfui4s1w0l2pibtj6egn";
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [itemsPerPage, setItemsPerPage] = useState(10);
+const ManageProgram = () => {
+  const DEFAULT_ITEMS_PER_PAGE = 10;
+  const [itemsPerPage, setItemsPerPage] = useState(DEFAULT_ITEMS_PER_PAGE);
   const [tableData, setTableData] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [pageName, setPageName] = useState("");
-  const [editorContent, setEditorContent] = useState("");
-  const [editingItem, setEditingItem] = useState(null);
-  const [errors, setErrors] = useState({ pageName: "", editorContent: "" });
-
-  useEffect(() => {
-    fetchData();
-  }, []);
+  const [openDropdown, setOpenDropdown] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedProgram, setSelectedProgram] = useState(null); // Store the program to edit
+  
+  const dropdownRef = useRef(null);
+  const visiblePages = 4;
 
   const fetchData = () => {
     setTimeout(() => {
-      setTableData([
+      const users = [
         {
           srNum: 1,
-          title: "About us",
-          content: "This is the content of the About us page.",
+          title: "Title 1",
+          description: "Description for Title 1",
+          image:
+            "https://images.unsplash.com/photo-1576158113928-4c240eaaf360?w=500&auto=format&fit=crop&q=60",
+          duration: "2 hours",
           status: "Active",
         },
-      ]);
+      ];
+      setTableData(users);
       setLoading(false);
     }, 1000);
   };
 
-  const handleEdit = (item) => {
-    setEditingItem(item);
-    setPageName(item.title);
-    setEditorContent(item.content);
-    setIsModalOpen(true);
-  };
+  useEffect(() => {
+    fetchData();
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setOpenDropdown(null);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    let newErrors = { pageName: "", editorContent: "" };
-
-    if (!pageName) {
-      newErrors.pageName = "Page Name is required.";
-    }
-
-    if (!editorContent || editorContent.trim() === "") {
-      newErrors.editorContent = "Page Content is required.";
-    }
-
-    if (newErrors.pageName || newErrors.editorContent) {
-      setErrors(newErrors);
-      return;
-    }
-
+  const handleDelete = (srNum) => {
     Swal.fire({
-      title: editingItem ? "Update Item?" : "Add New Item?",
-      text: editingItem
-        ? "Are you sure you want to update this item?"
-        : "Are you sure you want to add this item?",
+      title: "Are you sure?",
+      text: "You will not be able to recover this program!",
       icon: "warning",
       showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
     }).then((result) => {
       if (result.isConfirmed) {
-        if (editingItem) {
-          setTableData((prevData) =>
-            prevData.map((item) =>
-              item.srNum === editingItem.srNum
-                ? { ...item, title: pageName, content: editorContent }
-                : item
-            )
-          );
-        } else {
-          const newItem = {
-            srNum: tableData.length + 1,
-            title: pageName,
-            content: editorContent,
-            status: "Active",
-          };
-          setTableData((prevData) => [...prevData, newItem]);
-        }
-        resetForm();
-        Swal.fire("Success!", "Your item has been saved.", "success");
-        setIsModalOpen(false); // Close modal
+        setTableData((prevData) =>
+          prevData.filter((item) => item.srNum !== srNum)
+        );
+        Swal.fire("Deleted!", "Your program has been deleted.", "success");
       }
     });
   };
 
-  const resetForm = () => {
-    setPageName("");
-    setEditorContent("");
-    setErrors({ pageName: "", editorContent: "" });
-    setEditingItem(null);
-    if (editorRef.current) {
-      editorRef.current.setContent("");
-    }
+  const handleAdd = () => {
+    setSelectedProgram(null); // For add, no program is selected
+    setIsModalOpen(true);
+  };
+
+  const handleEdit = (program) => {
+    setSelectedProgram(program); // Set the program to edit
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedProgram(null);
   };
 
   return (
     <main className="app-content">
-      <div className="row">
+      <div className="app-title tile p-3">
+        <div>
+          <h1>
+            <span className="mr-4 fw-bold">&nbsp; Manage Program</span>
+          </h1>
+        </div>
+      </div>
+
+      <div className="row mb-5">
         <div className="col-md-12 px-5">
-          <div className="tile p-3">
-            <h1 className="text-center">CMS Management</h1>
-            <div className="table-responsive">
-              <table className="table table-bordered mt-2">
-                <thead>
-                  <tr>
-                    <th>Sr. num</th>
-                    <th>Page name</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {tableData.map((row, index) => (
-                    <tr key={index}>
-                      <td>{index + 1}</td>
-                      <td>{row.title}</td>
-                      <td>{row.status}</td>
-                      <td>
-                        <button onClick={() => handleEdit(row)}>
-                          Edit
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+          <div className="bt-ad-emp">
+            <button onClick={handleAdd} className="add-btt btn">
+              <i className="fa-regular fa-plus"></i> Add Program
+            </button>
           </div>
         </div>
       </div>
 
-      {isModalOpen && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <div
-              className="case-status d-flex justify-content-center"
-              style={{
-                backgroundColor: "#002538",
-                color: "#fff",
-                height: "50px",
-                borderRadius: "10px 10px 0px 0px",
-                textAlign: "center",
-                width: "100%",
-              }}
-            >
-              <h4 style={{ marginTop: "12px" }}>{editingItem ? "Edit CMS" : "Add CMS"}</h4>
-            </div>
-            <div className="tile-body p-3">
-              <form onSubmit={handleSubmit}>
-                <div className="row">
-                  <div className="col-lg-12 mt-2">
-                    <label className="form-label" htmlFor="pageName">
-                      Page Name
-                    </label>
-                    <input
-                      className={`form-control ${
-                        errors.pageName ? "is-invalid" : ""
-                      }`}
-                      name="pageName"
-                      id="pageName"
-                      type="text"
-                      placeholder="Page Name"
-                      value={pageName}
-                      onChange={(e) => setPageName(e.target.value)}
-                    />
-                    {errors.pageName && (
-                      <div className="invalid-feedback">
-                        {errors.pageName}
-                      </div>
-                    )}
-                  </div>
-                  <div className="col-lg-12 mt-2">
-                    <label className="form-label" htmlFor="editorContent">
-                      Page Content
-                    </label>
-                    <div>
-                      <Editor
-                        apiKey={api_key}
-                        onEditorChange={(content) =>
-                          setEditorContent(content)
-                        }
-                        value={editorContent}
-                        onInit={(evt, editor) => (editorRef.current = editor)}
-                      />
-                    </div>
-                    {errors.editorContent && (
-                      <div className="invalid-feedback d-block">
-                        {errors.editorContent}
-                      </div>
-                    )}
-                  </div>
-                  <div className="col-lg-12 text-center mt-2">
-                    <button
-                      className="btn custom-btn text-white mt-2 w-20pr"
-                      type="submit"
-                    >
-                      {editingItem ? "Update Page" : "Add Page"}
-                    </button>
-                    <button
-                      className="btn btn-secondary mt-2 w-20pr"
-                      onClick={() => setIsModalOpen(false)}
-                    >
-                      Cancel
-                    </button>
-                  </div>
+      <div className="row mt-4">
+        {/* Table content and other elements remain the same */}
+        <tbody>
+          {paginatedData.map((user, index) => (
+            <tr key={user.srNum}>
+              <td>{currentPage * itemsPerPage + index + 1}</td>
+              <td>{user.title}</td>
+              <td>
+                <div className="form-check form-switch">
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    role="switch"
+                    checked={user.status === "Active"}
+                    onChange={() => toggleStatus(user.srNum)}
+                  />
                 </div>
-              </form>
-            </div>
+              </td>
+              <td>
+                <button
+                  className="btn"
+                  onClick={() => handleEdit(user)}
+                  style={{
+                    borderBottom: "3px solid #002538",
+                  }}
+                  title="Manage Program"
+                >
+                  Edit
+                </button>
+              </td>
+              {/* Other table columns */}
+            </tr>
+          ))}
+        </tbody>
+      </div>
+
+      {/* Add Program Modal */}
+      {isModalOpen && (
+        <div className="modal">
+          <div className="modal-content">
+            <button className="close-btn" onClick={handleCloseModal}>
+              &times;
+            </button>
+            <AddProgram program={selectedProgram} onClose={handleCloseModal} />
           </div>
         </div>
       )}
@@ -222,4 +153,4 @@ const CmsManagement = () => {
   );
 };
 
-export default CmsManagement;
+export default ManageProgram;

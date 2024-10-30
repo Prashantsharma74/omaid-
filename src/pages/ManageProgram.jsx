@@ -118,9 +118,9 @@ const ManageProgram = () => {
       prevData.map((item) =>
         item.srNum === srNum
           ? {
-              ...item,
-              status: item.status === "Active" ? "Inactive" : "Active",
-            }
+            ...item,
+            status: item.status === "Active" ? "Inactive" : "Active",
+          }
           : item
       )
     );
@@ -150,7 +150,7 @@ const ManageProgram = () => {
         </div>
       </div>
 
-      <div className="row mb-5">
+      {/* <div className="row mb-5">
         <div className="col-md-12 px-5">
           <div className="bt-ad-emp">
             <Link to="/manage-program/add-program" className="add-btt btn">
@@ -158,7 +158,7 @@ const ManageProgram = () => {
             </Link>
           </div>
         </div>
-      </div>
+      </div> */}
       <div className="row mt-4">
         <div className="col-md-12 px-5">
           <div className="tile">
@@ -283,16 +283,15 @@ const ManageProgram = () => {
                                     aria-expanded={openDropdown === user.srNum}
                                   >
                                     <i
-                                      className={`fa fa-ellipsis-v ${
-                                        openDropdown === user.srNum
+                                      className={`fa fa-ellipsis-v ${openDropdown === user.srNum
                                           ? "rotate-icon"
                                           : ""
-                                      }`}
+                                        }`}
                                     ></i>
                                   </button>
                                   {openDropdown === user.srNum && (
                                     <div className="dropdown-menu show">
-                                      <a
+                                      {/* <a
                                         className="dropdown-item"
                                         onClick={() => {
                                           handleEdit(user);
@@ -300,7 +299,7 @@ const ManageProgram = () => {
                                         }}
                                       >
                                         <i className="fa fa-edit"></i> Edit
-                                      </a>
+                                      </a> */}
                                       <a
                                         className="dropdown-item"
                                         onClick={() => {

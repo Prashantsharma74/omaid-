@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 const FitzoneManagement = () => {
@@ -11,6 +11,7 @@ const FitzoneManagement = () => {
   const [openDropdown, setOpenDropdown] = useState(null);
   const navigate = useNavigate();
 
+  const dropdownRef = useRef(null);
   const visiblePages = 4;
 
   const getPaginationButtons = () => {
@@ -66,6 +67,17 @@ const FitzoneManagement = () => {
 
   useEffect(() => {
     fetchData();
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setOpenDropdown(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, []);
 
   const toggleStatus = (srNum) => {
@@ -225,7 +237,7 @@ const FitzoneManagement = () => {
                               </Link>
                             </td>
                             <td>
-                              <div className="dropdown text-center">
+                              <div className="dropdown text-center" ref={dropdownRef}>
                                 <button
                                   className="dropdown-button"
                                   onClick={() =>
@@ -240,8 +252,8 @@ const FitzoneManagement = () => {
                                 >
                                   <i
                                     className={`fa fa-ellipsis-v ${openDropdown === row.srNum
-                                        ? "rotate-icon"
-                                        : ""
+                                      ? "rotate-icon"
+                                      : ""
                                       }`}
                                   ></i>
                                 </button>

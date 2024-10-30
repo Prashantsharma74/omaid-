@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
 
 const FitzoneSession = () => {
@@ -16,6 +16,7 @@ const FitzoneSession = () => {
     setOpenDropdownIndex(openDropdownIndex === index ? null : index);
   };
 
+  const dropdownRef = useRef(null);
   const visiblePages = 4;
 
   const getPaginationButtons = () => {
@@ -78,6 +79,17 @@ const FitzoneSession = () => {
 
   useEffect(() => {
     fetchData();
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setOpenDropdownIndex(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, []);
 
   const handleItemsPerPageChange = (e) => {
@@ -229,7 +241,7 @@ const FitzoneSession = () => {
                               </div>
                             </td>
                             <td>
-                              <div className="dropdown text-center">
+                              <div className="dropdown text-center" ref={dropdownRef}>
                                 <button
                                   className="dropdown-button"
                                   onClick={() => handleDropdownToggle(index)}

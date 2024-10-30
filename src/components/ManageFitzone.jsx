@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
 const ManageFitzone = () => {
@@ -22,6 +22,8 @@ const ManageFitzone = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
   const [openDropdownIndex, setOpenDropdownIndex] = useState(null);
+
+  const dropdownRef = useRef(null);
 
   const handleDropdownToggle = (index) => {
     setOpenDropdownIndex(openDropdownIndex === index ? null : index);
@@ -84,10 +86,24 @@ const ManageFitzone = () => {
     (currentPage + 1) * itemsPerPage
   );
 
-    // Function to go back to the previous page
-    const handleBack = () => {
-      window.history.back();
+  // Function to go back to the previous page
+  const handleBack = () => {
+    window.history.back();
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setOpenDropdownIndex(null);
+      }
     };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [])
 
   return (
     <main className="app-content">
@@ -167,7 +183,7 @@ const ManageFitzone = () => {
                         <td>{currentPage * itemsPerPage + index + 1}</td>
                         <td>{user.title}</td>
                         <td>
-                          <div className="dropdown text-center">
+                          <div className="dropdown text-center" ref={dropdownRef}>
                             <button
                               className="dropdown-button"
                               onClick={() => handleDropdownToggle(index)}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 
@@ -11,6 +11,8 @@ const Diet = () => {
   const [itemsPerPage, setItemsPerPage] = useState(DEFAULT_ITEMS_PER_PAGE);
   const [currentPage, setCurrentPage] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
+
+  const dropdownRef = useRef(null);
 
   const handleDropdownToggle = (index) => {
     setOpenDropdownIndex(openDropdownIndex === index ? null : index);
@@ -29,6 +31,17 @@ const Diet = () => {
 
   useEffect(() => {
     fetchData();
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setOpenDropdownIndex(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, []);
 
   const visiblePages = 4;
@@ -240,7 +253,7 @@ const Diet = () => {
                             </div>
                           </td>
                           <td>
-                            <div className="dropdown text-center">
+                            <div className="dropdown text-center" ref={dropdownRef}>
                               <button
                                 className="dropdown-button"
                                 onClick={() => handleDropdownToggle(index)}
