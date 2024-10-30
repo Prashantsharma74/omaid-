@@ -159,7 +159,6 @@ const PushNotification = () => {
                 backgroundColor: "#002538",
                 color: "#fff",
                 height: "50px",
-                borderRadius: "10px 10px 0px 0px",
               }}
             >
               <h4 className="mt-2">Add Message</h4>

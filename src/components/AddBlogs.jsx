@@ -123,7 +123,7 @@ const AddBlogs = () => {
       <div className="row">
         <div className="col-md-10 px-5 w-100" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
           <div className="tile w-75">
-            <div className="case-status d-flex justify-content-center" style={{ backgroundColor: "#002538", color: "#fff", height: "50px", borderRadius: "10px 10px 0px 0px", textAlign: "center", width: "100%" }}>
+            <div className="case-status d-flex justify-content-center" style={{ backgroundColor: "#002538", color: "#fff", height: "50px", textAlign: "center", width: "100%" }}>
               <h4 className="mt-2">Add Blogs</h4>
             </div>
             <div className="tile-body p-3">

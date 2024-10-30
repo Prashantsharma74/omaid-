@@ -174,7 +174,6 @@ const AddUser = ({ user, onClose }) => {
           backgroundColor: "#002538",
           color: "#fff",
           height: "50px",
-          borderRadius: "10px 10px 0px 0px",
           textAlign: "center",
         }}
       >
