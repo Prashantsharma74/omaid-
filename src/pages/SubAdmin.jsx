@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { format } from "date-fns";
 import Swal from "sweetalert2";
 import AddSubAdmin from "../components/AddSubAdmin";
@@ -13,8 +13,6 @@ const SubAdmin = () => {
   const [openDropdown, setOpenDropdown] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
   const [showModal, setShowModal] = useState(false);
-
-  const dropdownRef = useRef(null);
   const visiblePages = 4;
 
   const getPaginationButtons = () => {
@@ -50,16 +48,14 @@ const SubAdmin = () => {
 
   const handleFormSubmit = (user) => {
     if (user.srNum) {
-      // If srNum exists, update the existing user
       setTableData((prevData) =>
         prevData.map((u) => (u.srNum === user.srNum ? user : u))
       );
     } else {
-      // Otherwise, add a new user
       const newUser = {
         ...user,
-        srNum: tableData.length + 1, // Assign a new srNum for the new user
-        createdAt: new Date().toISOString().split("T")[0], // Set current date
+        srNum: tableData.length + 1,
+        createdAt: new Date().toISOString().split("T")[0],
       };
       setTableData((prevData) => [...prevData, newUser]);
     }
@@ -84,6 +80,7 @@ const SubAdmin = () => {
           phone: "1234567801",
           designation: "Doctor",
           password: "password123",
+          status: "Active",
         },
         {
           srNum: 2,
@@ -95,6 +92,7 @@ const SubAdmin = () => {
           phone: "1234567801",
           designation: "Doctor",
           password: "password123",
+          status: "Active",
         },
       ];
       setTableData(users);
@@ -104,18 +102,6 @@ const SubAdmin = () => {
 
   useEffect(() => {
     fetchData();
-
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setOpenDropdown(null);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
   }, []);
 
   const handleItemsPerPageChange = (e) => {
@@ -167,8 +153,8 @@ const SubAdmin = () => {
   const handleEdit = (srNum) => {
     const user = tableData.find((u) => u.srNum === srNum);
     if (user) {
-      setSelectedUser(user); // Set selected user for editing
-      setShowModal(true); // Open the modal
+      setSelectedUser(user);
+      setShowModal(true);
     }
   };
 
@@ -181,6 +167,7 @@ const SubAdmin = () => {
     currentPage * itemsPerPage,
     (currentPage + 1) * itemsPerPage
   );
+
   return (
     <main className="app-content">
       <div className="app-title tile p-3">
@@ -188,7 +175,6 @@ const SubAdmin = () => {
           <h1 className="">
             <span className="mr-4 fw-bold">&nbsp;All Sub Admins</span>
           </h1>
-          <p></p>
         </div>
       </div>
       <div className="row">
@@ -222,14 +208,7 @@ const SubAdmin = () => {
           <div className="tile p-3">
             <div className="tile-body">
               <div className="table-responsive">
-                <div
-                  className="table-controls"
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                  }}
-                >
+                <div className="table-controls d-flex align-items-center justify-content-between">
                   <div className="items-per-page-container">
                     <select
                       value={itemsPerPage}
@@ -240,20 +219,10 @@ const SubAdmin = () => {
                       <option value={25}>25</option>
                       <option value={50}>50</option>
                     </select>
-                    <span
-                      className="entries-text"
-                      style={{ marginLeft: "10px" }}
-                    >
-                      entries per page
-                    </span>
+                    <span className="entries-text ml-2">&nbsp;entries per page</span>
                   </div>
                   <div className="search-container">
-                    <span
-                      className="search-text"
-                      style={{ marginRight: "10px" }}
-                    >
-                      Search:
-                    </span>
+                    <span className="search-text mr-2">Search:&nbsp;</span>
                     <input
                       type="text"
                       value={searchTerm}
@@ -263,14 +232,7 @@ const SubAdmin = () => {
                   </div>
                 </div>
                 {loading ? (
-                  <div
-                    style={{
-                      height: "200px",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
+                  <div className="d-flex justify-content-center align-items-center" style={{ height: "200px" }}>
                     <div className="loader"></div>
                   </div>
                 ) : (
@@ -279,8 +241,8 @@ const SubAdmin = () => {
                       <thead>
                         <tr>
                           <th>S.No</th>
-                          <th>Created At </th>
-                          <th>User Name </th>
+                          <th>Created At</th>
+                          <th>User Name</th>
                           <th>Email ID</th>
                           <th>Hospital/Clinic Name</th>
                           <th>Designation</th>
@@ -291,11 +253,9 @@ const SubAdmin = () => {
                       </thead>
                       <tbody>
                         {paginatedData.map((user, index) => (
-                          <tr key={index}>
+                          <tr key={user.srNum}>
                             <td>{index + 1 + currentPage * itemsPerPage}</td>
-                            <td>
-                              {format(new Date(user.createdAt), "dd MMMM yyyy")}
-                            </td>
+                            <td>{format(new Date(user.createdAt), "dd MMMM yyyy")}</td>
                             <td>{user.username}</td>
                             <td>{user.email}</td>
                             <td>{user.hospital}</td>
@@ -306,58 +266,27 @@ const SubAdmin = () => {
                                 <input
                                   className="form-check-input"
                                   type="checkbox"
-                                  role="switch"
-                                  id={`toggle-${user.srNum}`}
                                   checked={user.status === "Active"}
-                                  onChange={() =>
-                                    handleToggleStatus(user.srNum)
-                                  }
+                                  onChange={() => handleToggleStatus(user.srNum)}
                                 />
                               </div>
                             </td>
                             <td>
-                              <div
-                                className="dropdown text-center"
-                                ref={dropdownRef}
-                              >
+                              <div className="dropdown text-center">
                                 <button
                                   className="dropdown-button"
-                                  onClick={() =>
-                                    setOpenDropdown(
-                                      openDropdown === user.srNum
-                                        ? null
-                                        : user.srNum
-                                    )
-                                  }
+                                  onClick={() => setOpenDropdown(openDropdown === user.srNum ? null : user.srNum)}
                                   aria-haspopup="true"
                                   aria-expanded={openDropdown === user.srNum}
                                 >
-                                  <i
-                                    className={`fa fa-ellipsis-v ${
-                                      openDropdown === user.srNum
-                                        ? "rotate-icon"
-                                        : ""
-                                    }`}
-                                  ></i>
+                                  <i className={`fa fa-ellipsis-v ${openDropdown === user.srNum ? "rotate-icon" : ""}`}></i>
                                 </button>
                                 {openDropdown === user.srNum && (
                                   <div className="dropdown-menu show">
-                                    <a
-                                      className="dropdown-item"
-                                      onClick={() => {
-                                        handleEdit(user.srNum);
-                                        setOpenDropdown(null);
-                                      }}
-                                    >
+                                    <a className="dropdown-item" onClick={() => { handleEdit(user.srNum); setOpenDropdown(null); }}>
                                       <i className="fa fa-edit"></i> Edit
                                     </a>
-                                    <a
-                                      className="dropdown-item"
-                                      onClick={() => {
-                                        handleDelete(user.srNum);
-                                        setOpenDropdown(null);
-                                      }}
-                                    >
+                                    <a className="dropdown-item" onClick={() => { handleDelete(user.srNum); setOpenDropdown(null); }}>
                                       <i className="fa fa-trash"></i> Delete
                                     </a>
                                   </div>
@@ -368,78 +297,38 @@ const SubAdmin = () => {
                         ))}
                       </tbody>
                     </table>
-                    <div
-                      className="pagination mt-4 mb-2"
-                      style={{
-                        display: "flex",
-                        alignItems: "flex-start",
-                        justifyContent: "space-between",
-                      }}
-                    >
+                    <div className="pagination mt-4 mb-2 d-flex align-items-start justify-content-between">
                       <span className="pagination-info">
-                        Showing {currentPage * itemsPerPage + 1} to{" "}
-                        {Math.min(
-                          (currentPage + 1) * itemsPerPage,
-                          filteredData.length
-                        )}{" "}
-                        of {filteredData.length} entries
+                        Showing {currentPage * itemsPerPage + 1} to {Math.min((currentPage + 1) * itemsPerPage, filteredData.length)} of {filteredData.length} entries
                       </span>
                       <div>
-                        <button
-                          style={{
+                        <button  style={{
                             padding: "7px 10px",
                             backgroundColor: "#e9ecef",
                             color: "#002538",
                             border: "1px solid lightgrey",
                             borderRadius: "5px 0px 0px 5px",
-                          }}
-                          className="page-btn"
-                          onClick={() => handlePageChange(0)}
-                          disabled={currentPage === 0}
-                        >
-                          &laquo;
-                        </button>
-                        <button
-                          style={{
+                          }} className="page-btn" onClick={() => handlePageChange(0)} disabled={currentPage === 0}>&laquo;</button>
+                        <button style={{
                             padding: "7px 10px",
                             backgroundColor: "#e9ecef",
                             color: "#002538",
                             border: "1px solid lightgrey",
-                          }}
-                          className="page-btn"
-                          onClick={() => handlePageChange(currentPage - 1)}
-                          disabled={currentPage === 0}
-                        >
-                          &#x3c;
-                        </button>
+                          }} className="page-btn" onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 0}>&#x3c;</button>
                         {getPaginationButtons()}
-                        <button
-                          style={{
+                        <button  style={{
                             padding: "7px 10px",
                             backgroundColor: "#e9ecef",
                             color: "#002538",
                             border: "1px solid lightgrey",
-                          }}
-                          className="page-btn"
-                          onClick={() => handlePageChange(currentPage + 1)}
-                          disabled={currentPage >= totalPages - 1}
-                        >
-                          &#x3e;
-                        </button>
-                        <button
-                          style={{
+                          }} className="page-btn" onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage >= totalPages - 1}>&#x3e;</button>
+                        <button style={{
                             padding: "7px 10px",
                             backgroundColor: "#e9ecef",
                             color: "#002538",
                             border: "1px solid lightgrey",
                             borderRadius: "0px 5px 5px 0px",
-                          }}
-                          className="page-btn"
-                          onClick={() => handlePageChange(totalPages - 1)}
-                          disabled={currentPage >= totalPages - 1}
-                        >
-                          &raquo;
-                        </button>
+                          }} className="page-btn" onClick={() => handlePageChange(totalPages - 1)} disabled={currentPage >= totalPages - 1}>&raquo;</button>
                       </div>
                     </div>
                   </div>

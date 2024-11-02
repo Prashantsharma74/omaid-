@@ -1,183 +1,337 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
+import { format } from "date-fns";
 import Swal from "sweetalert2";
+import AddSubAdmin from "../components/AddSubAdmin";
 
-const AddSubAdmin = ({ user, onClose }) => {
-  const countries = ["United States", "Canada", "Mexico", "United Kingdom", "India", "Australia"];
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    hospital: "",
-    location: "",
-    phone: "",
-    designation: "",
-    password: "",
-  });
+const SubAdmin = () => {
+  const DEFAULT_ITEMS_PER_PAGE = 10;
+  const [itemsPerPage, setItemsPerPage] = useState(DEFAULT_ITEMS_PER_PAGE);
+  const [tableData, setTableData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
-  const [suggestions, setSuggestions] = useState([]);
-  const [errors, setErrors] = useState({});
-  const [isEditMode, setIsEditMode] = useState(false);
-  const [showSuggestions, setShowSuggestions] = useState(false);
-  const [showAddButton, setShowAddButton] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState(null);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const visiblePages = 4;
+  const dropdownRef = useRef(null);
+
+  const getPaginationButtons = () => {
+    const buttons = [];
+    let startPage = Math.max(0, currentPage - Math.floor(visiblePages / 2));
+    let endPage = Math.min(totalPages - 1, startPage + visiblePages - 1);
+
+    if (endPage - startPage < visiblePages - 1) {
+      startPage = Math.max(0, endPage - visiblePages + 1);
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      const isActive = i === currentPage;
+      buttons.push(
+        <button
+          key={i}
+          style={{
+            padding: "7px 10px",
+            backgroundColor: isActive ? "#002538" : "#e9ecef",
+            color: isActive ? "white" : "#002538",
+            border: "1px solid lightgrey",
+          }}
+          className={`page-btn ${isActive ? "active" : ""}`}
+          onClick={() => handlePageChange(i)}
+        >
+          {i + 1}
+        </button>
+      );
+    }
+
+    return buttons;
+  };
+
+  const handleFormSubmit = (user) => {
+    if (user.srNum) {
+      setTableData((prevData) =>
+        prevData.map((u) => (u.srNum === user.srNum ? user : u))
+      );
+    } else {
+      const newUser = {
+        ...user,
+        srNum: tableData.length + 1,
+        createdAt: new Date().toISOString().split("T")[0],
+      };
+      setTableData((prevData) => [...prevData, newUser]);
+    }
+    Swal.fire({
+      title: user.srNum ? "Sub-Admin Updated!" : "Sub-Admin Added!",
+      icon: "success",
+    });
+    setShowModal(false);
+    setSelectedUser(null);
+  };
+
+  const fetchData = () => {
+    setTimeout(() => {
+      const users = [
+        {
+          srNum: 1,
+          createdAt: "2023-01-01",
+          username: "John Doe",
+          email: "john.doe@example.com",
+          hospital: "Hospital A",
+          location: "India",
+          phone: "1234567801",
+          designation: "Doctor",
+          password: "password123",
+          status: "Active",
+        },
+        {
+          srNum: 2,
+          createdAt: "2023-01-01",
+          username: "Prashant Sharma",
+          email: "prashant@example.com",
+          hospital: "Hospital A",
+          location: "India",
+          phone: "1234567801",
+          designation: "Doctor",
+          password: "password123",
+          status: "Active",
+        },
+      ];
+      setTableData(users);
+      setLoading(false);
+    }, 1000);
+  };
 
   useEffect(() => {
-    if (user) {
-      setFormData({
-        name: user.username,
-        email: user.email,
-        hospital: user.hospital,
-        location: user.location,
-        phone: user.phone,
-        designation: user.designation,
-        password: user.password,
-      });
-      setIsEditMode(true);
-    }
-  }, [user]);
+    fetchData();
+  }, []);
 
-  const validateForm = () => {
-    const newErrors = {};
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setOpenDropdown(null);
+      }
+    };
 
-    if (!formData.name) newErrors.name = "Name is required.";
-    if (!formData.email) newErrors.email = "Email is required.";
-    if (!formData.hospital) newErrors.hospital = "Hospital/Clinic name is required.";
-    if (!formData.location) newErrors.location = "Location is required.";
-    if (!formData.phone) newErrors.phone = "Phone number is required.";
-    if (!formData.designation) newErrors.designation = "Designation is required.";
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
-    if (!formData.password && !isEditMode) {
-      newErrors.password = "Password is required.";
-    } else if (formData.password && formData.password.length < 8) {
-      newErrors.password = "Password must be at least 8 characters long.";
-    } else if (!/[A-Z]/.test(formData.password)) {
-      newErrors.password = "Password must contain at least one uppercase letter.";
-    } else if (!/[a-z]/.test(formData.password)) {
-      newErrors.password = "Password must contain at least one lowercase letter.";
-    } else if (!/[0-9]/.test(formData.password)) {
-      newErrors.password = "Password must contain at least one numeric digit.";
-    } else if (!/[!@#$%^&*(),.?":{}|<>]/.test(formData.password)) {
-      newErrors.password = "Password must contain at least one special character.";
-    }
-
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (formData.email && !emailPattern.test(formData.email)) {
-      newErrors.email = "Please enter a valid email address.";
-    }
-
-    if (formData.phone && (!/^\d{10}$/.test(formData.phone.replace(/[-\s]/g, "")) || formData.phone.length !== 10)) {
-      newErrors.phone = "Phone number must be a 10-digit numeric value.";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+  const handleItemsPerPageChange = (e) => {
+    setItemsPerPage(Number(e.target.value));
+    setCurrentPage(0);
   };
 
-  const handleChange = (e) => {
-    const { id, value } = e.target;
-    setFormData({ ...formData, [id]: value });
-    setErrors({ ...errors, [id]: "" });
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(0);
   };
 
-  const handleLocationChange = (e) => {
-    const value = e.target.value;
-    setFormData({ ...formData, location: value });
-    setSearchTerm(value);
-    const filteredSuggestions = value ? countries.filter((country) => country.toLowerCase().includes(value.toLowerCase())) : [];
-    setSuggestions(filteredSuggestions);
-    setShowAddButton(value && !countries.includes(value));
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
   };
 
-  const handleAddNewLocation = () => {
-    if (searchTerm && !countries.includes(searchTerm)) {
-      setFormData({ ...formData, location: searchTerm });
-      setSuggestions([]);
-      setShowAddButton(false);
-      setSearchTerm("");
-    }
+  const handleToggleStatus = (srNum) => {
+    setTableData((prevData) =>
+      prevData.map((user) =>
+        user.srNum === srNum
+          ? {
+              ...user,
+              status: user.status === "Active" ? "Inactive" : "Active",
+            }
+          : user
+      )
+    );
   };
 
-  const handleSuggestionClick = (suggestion) => {
-    setFormData({ ...formData, location: suggestion });
-    setSearchTerm(suggestion);
-    setSuggestions([]);
-    setShowAddButton(false);
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!validateForm()) return;
-    Swal.fire({ title: "Sub-Admin Added!", text: `Sub-Admin added successfully`, icon: "success", confirmButtonText: "OK" });
-    setFormData({ name: "", email: "", hospital: "", location: "", phone: "", designation: "", password: "" });
-  };
-
-  const handleClose = () => {
-    setFormData({
-      name: "",
-      email: "",
-      hospital: "",
-      location: "",
-      phone: "",
-      designation: "",
-      password: "",
+  const handleDelete = (srNum) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        setTableData((prevData) =>
+          prevData.filter((user) => user.srNum !== srNum)
+        );
+        Swal.fire("Deleted!", "Your user has been deleted.", "success");
+      }
     });
-    setIsEditMode(false);
-    onClose();
   };
+
+  const handleEdit = (srNum) => {
+    const user = tableData.find((u) => u.srNum === srNum);
+    if (user) {
+      setSelectedUser(user);
+      setShowModal(true);
+    }
+  };
+
+  const filteredData = tableData.filter((user) =>
+    user.username.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+  const paginatedData = filteredData.slice(
+    currentPage * itemsPerPage,
+    (currentPage + 1) * itemsPerPage
+  );
 
   return (
-    <div className="" style={{ position: "relative" }}>
-      <button className="cross-button" aria-label="Close" onClick={handleClose}>
-        <i className="fa-solid fa-times"></i>
-      </button>
-      <div className="case-status d-flex justify-content-center text-align-center" style={{ backgroundColor: "#002538", color: "#fff", height: "50px", textAlign: "center" }}>
-        <h4 className="mt-2">Sub-Admin</h4>
+    <main className="app-content">
+      <div className="app-title tile p-3">
+        <div>
+          <h1 className="">
+            <span className="mr-4 fw-bold">&nbsp;All Sub Admins</span>
+          </h1>
+        </div>
       </div>
-      <div className="tile-body p-3">
-        <form onSubmit={isEditMode ? handleUpdate : handleSubmit}>
-          <div className="row">
-            <div className="mb-3 col-md-6" style={{ position: "relative" }}>
-              <label className="form-label">Location</label>
-              <input
-                className={`form-control ${errors.location ? "is-invalid" : ""}`}
-                id="location"
-                type="text"
-                placeholder="Enter Location"
-                value={formData.location}
-                onChange={handleLocationChange}
-                onFocus={() => setShowSuggestions(true)}
-                onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
-              />
-              {showSuggestions && suggestions.length > 0 && (
-                <div style={{
-                  position: "absolute", top: "100%", left: "0", right: "0", backgroundColor: "#fff",
-                  border: "1px solid #ccc", zIndex: 1000, maxHeight: "150px", overflowY: "auto", borderRadius: "4px"
-                }}>
-                  {suggestions.map((country, index) => (
-                    <div key={index} onClick={() => handleSuggestionClick(country)} style={{
-                      padding: "8px", cursor: "pointer", borderBottom: "1px solid #f1f1f1"
-                    }}>
-                      {country}
-                    </div>
-                  ))}
+      <div className="row">
+        <div className="col-md-12 px-5">
+          <div className="bt-ad-emp">
+            <a
+              className="add-btt btn"
+              onClick={() => {
+                setSelectedUser(null);
+                setShowModal(true);
+              }}
+            >
+              <i className="fa-regular fa-plus"></i> Add Sub Admin
+            </a>
+          </div>
+        </div>
+      </div>
+      {showModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <AddSubAdmin
+              user={selectedUser}
+              onClose={() => setShowModal(false)}
+              onSubmit={handleFormSubmit}
+            />
+          </div>
+        </div>
+      )}
+      <div className="row mt-4">
+        <div className="col-md-12 px-5">
+          <div className="tile p-3">
+            <div className="tile-body">
+              <div className="table-responsive">
+                <div className="table-controls d-flex align-items-center justify-content-between">
+                  <div className="items-per-page-container">
+                    <select
+                      value={itemsPerPage}
+                      onChange={handleItemsPerPageChange}
+                      className="items-per-page-select"
+                    >
+                      <option value={10}>10</option>
+                      <option value={25}>25</option>
+                      <option value={50}>50</option>
+                    </select>
+                    <span className="entries-text ml-2">entries per page</span>
+                  </div>
+                  <div className="search-container">
+                    <span className="search-text mr-2">Search:</span>
+                    <input
+                      type="text"
+                      value={searchTerm}
+                      onChange={handleSearchChange}
+                      className="search-input"
+                    />
+                  </div>
                 </div>
-              )}
-              {showAddButton && (
-                <button type="button" onClick={handleAddNewLocation} className="btn p-0" style={{ color: "#002538" }}>
-                  + Add "{searchTerm}"
-                </button>
-              )}
-              {errors.location && <div className="invalid-feedback">{errors.location}</div>}
+                {loading ? (
+                  <div className="d-flex justify-content-center align-items-center" style={{ height: "200px" }}>
+                    <div className="loader"></div>
+                  </div>
+                ) : (
+                  <div className="table-responsive mt-2">
+                    <table className="table table-bordered table-hover dt-responsive">
+                      <thead>
+                        <tr>
+                          <th>S.No</th>
+                          <th>Created At</th>
+                          <th>User Name</th>
+                          <th>Email ID</th>
+                          <th>Hospital/Clinic Name</th>
+                          <th>Designation</th>
+                          <th>Location</th>
+                          <th>Status</th>
+                          <th>Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {paginatedData.map((user, index) => (
+                          <tr key={user.srNum}>
+                            <td>{index + 1 + currentPage * itemsPerPage}</td>
+                            <td>{format(new Date(user.createdAt), "dd MMMM yyyy")}</td>
+                            <td>{user.username}</td>
+                            <td>{user.email}</td>
+                            <td>{user.hospital}</td>
+                            <td>{user.designation}</td>
+                            <td>{user.location}</td>
+                            <td>
+                              <div className="form-check form-switch">
+                                <input
+                                  className="form-check-input"
+                                  type="checkbox"
+                                  checked={user.status === "Active"}
+                                  onChange={() => handleToggleStatus(user.srNum)}
+                                />
+                              </div>
+                            </td>
+                            <td ref={dropdownRef}>
+                              <div className="dropdown text-center">
+                                <button
+                                  className="dropdown-button"
+                                  onClick={() => setOpenDropdown(openDropdown === user.srNum ? null : user.srNum)}
+                                  aria-haspopup="true"
+                                  aria-expanded={openDropdown === user.srNum}
+                                >
+                                  <i className={`fa fa-ellipsis-v ${openDropdown === user.srNum ? "rotate-icon" : ""}`}></i>
+                                </button>
+                                {openDropdown === user.srNum && (
+                                  <div className="dropdown-menu show">
+                                    <a className="dropdown-item" onClick={() => { handleEdit(user.srNum); setOpenDropdown(null); }}>
+                                      <i className="fa fa-edit"></i> Edit
+                                    </a>
+                                    <a className="dropdown-item" onClick={() => { handleDelete(user.srNum); setOpenDropdown(null); }}>
+                                      <i className="fa fa-trash"></i> Delete
+                                    </a>
+                                  </div>
+                                )}
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                    <div className="pagination mt-4 mb-2 d-flex align-items-start justify-content-between">
+                      <span className="pagination-info">
+                        Showing {currentPage * itemsPerPage + 1} to {Math.min((currentPage + 1) * itemsPerPage, filteredData.length)} of {filteredData.length} entries
+                      </span>
+                      <div>
+                        <button className="page-btn" onClick={() => handlePageChange(0)} disabled={currentPage === 0}>&laquo;</button>
+                        <button className="page-btn" onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 0}>&#x3c;</button>
+                        {getPaginationButtons()}
+                        <button className="page-btn" onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage >= totalPages - 1}>&#x3e;</button>
+                        <button className="page-btn" onClick={() => handlePageChange(totalPages - 1)} disabled={currentPage >= totalPages - 1}>&raquo;</button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
-          <div className="mb-3 col-lg-12 text-center">
-            <button className="btn custom-btn text-white w-25" type="submit">
-              <i className="fa-thin fa-paper-plane"></i> &nbsp;
-              {isEditMode ? "Update Sub-Admin" : "Submit"}
-            </button>
-          </div>
-        </form>
+        </div>
       </div>
-    </div>
+    </main>
   );
 };
 
-export default AddSubAdmin;
+export default SubAdmin;
