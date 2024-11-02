@@ -85,6 +85,17 @@ const SubAdmin = () => {
           designation: "Doctor",
           password: "password123",
         },
+        {
+          srNum: 2,
+          createdAt: "2023-01-01",
+          username: "Prashant Sharma",
+          email: "prashant@example.com",
+          hospital: "Hospital A",
+          location: "India",
+          phone: "1234567801",
+          designation: "Doctor",
+          password: "password123",
+        },
       ];
       setTableData(users);
       setLoading(false);
