@@ -169,7 +169,6 @@ const Users = () => {
             <AddUser
               user={selectedUser}
               onClose={() => setShowModal(false)}
-              // onSubmit={handleFormSubmit}
             />
           </div>
         </div>

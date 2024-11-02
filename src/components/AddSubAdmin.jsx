@@ -127,6 +127,31 @@ const AddSubAdmin = ({ user, onClose }) => {
     onClose();
   };
 
+  const handleUpdate = (e) => {
+    e.preventDefault();
+    if (!validateForm()) return;
+
+    Swal.fire({
+      title: "Sub-Admin Updated!",
+      text: `Sub-Admin updated successfully`,
+      icon: "success",
+      confirmButtonText: "OK"
+    });
+
+    setFormData({
+      name: "",
+      email: "",
+      hospital: "",
+      location: "",
+      phone: "",
+      designation: "",
+      password: ""
+    });
+    setIsEditMode(false);
+    onClose(); // Close the modal or form
+  };
+
+
   return (
     <div className="" style={{ position: "relative" }}>
       <button className="cross-button" aria-label="Close" onClick={handleClose}>
