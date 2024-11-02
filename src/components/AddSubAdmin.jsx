@@ -293,10 +293,11 @@ const AddSubAdmin = ({ user, onClose }) => {
             </div>
           </div>
           <div className="mb-3 col-lg-12 text-center">
-            <button className="btn custom-btn text-white w-25" type="submit">
+            <button className={`btn custom-btn text-white ${isEditMode ? "w-50" : "w-25"}`} type="submit">
               <i className="fa-thin fa-paper-plane"></i> &nbsp;
               {isEditMode ? "Update Sub-Admin" : "Submit"}
             </button>
+
           </div>
         </form>
       </div>
