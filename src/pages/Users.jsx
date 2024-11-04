@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import AddUser from "../components/AddUser";
+import TableUser from "../components/TableUser";
 
 const Users = () => {
   const DEFAULT_ITEMS_PER_PAGE = 10;
@@ -59,6 +60,23 @@ const Users = () => {
           accountId: "U002",
           username: "Jane Smith",
           email: "jane.smith@example.com",
+          phone: "1234567891",
+          assignSubAdmin: "Sub-Admin 1",
+          dob: "1991-02-02",
+          height: "165",
+          weight: "65",
+          gender: "female",
+          nutrition: "non-vegan",
+          waterTracking: false,
+          password:"c6s5d45466546"
+        },
+        {
+          id: 2,
+          srNum: 2,
+          status: "Inactive",
+          accountId: "U002",
+          username: "Angel",
+          email: "angel@example.com",
           phone: "1234567891",
           assignSubAdmin: "Sub-Admin 1",
           dob: "1991-02-02",
@@ -266,51 +284,7 @@ const Users = () => {
                               </div>
                             </td>
                             <td>
-                              <div
-                                className="dropdown text-center"
-                                ref={dropdownRef}
-                              >
-                                <button
-                                  className="dropdown-button"
-                                  onClick={() =>
-                                    setOpenDropdown(
-                                      openDropdown === user.srNum ? null : user.srNum
-                                    )
-                                  }
-                                  aria-haspopup="true"
-                                  aria-expanded={openDropdown === user.srNum}
-                                >
-                                  <i
-                                    className={`fa fa-ellipsis-v ${
-                                      openDropdown === user.srNum
-                                        ? "rotate-icon"
-                                        : ""
-                                    }`}
-                                  ></i>
-                                </button>
-                                {openDropdown === user.srNum && (
-                                  <div className="dropdown-menu show">
-                                    <button
-                                      className="dropdown-item"
-                                      onClick={() => {
-                                        handleEdit(user.srNum);
-                                        setOpenDropdown(null);
-                                      }}
-                                    >
-                                      <i className="fa fa-edit"></i> Edit
-                                    </button>
-                                    <button
-                                      className="dropdown-item"
-                                      onClick={() => {
-                                        handleDelete(user.srNum);
-                                        setOpenDropdown(null);
-                                      }}
-                                    >
-                                      <i className="fa fa-trash"></i> Delete
-                                    </button>
-                                  </div>
-                                )}
-                              </div>
+                              <TableUser openDropdown={openDropdown} setOpenDropdown={setOpenDropdown} user={user} handleDelete={handleDelete} handleEdit={handleEdit}/>
                             </td>
                           </tr>
                         ))}
