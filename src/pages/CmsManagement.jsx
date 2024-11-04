@@ -29,6 +29,18 @@ const CmsManagement = () => {
           content: "This is the content of the About us page.",
           status: "Active",
         },
+        {
+          srNum: 2,
+          title: "Terms & Conditions",
+          content: "This is the content of the About us page.",
+          status: "Active",
+        },
+        {
+          srNum: 3,
+          title: "Privacy Policy",
+          content: "This is the content of the About us page.",
+          status: "Inactive",
+        },
       ];
       setTableData(users);
       setLoading(false);
