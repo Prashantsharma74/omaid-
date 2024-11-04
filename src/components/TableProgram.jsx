@@ -1,12 +1,14 @@
 import React, { useEffect, useRef } from "react";
-const TableToggle = ({
-  setOpenDropdown,
-  user,
-  openDropdown,
-  handleEdit,
-  handleDelete,
-}) => {
-  const dropdownRef = useRef(null);
+import { Link } from "react-router-dom";
+
+const TableProgram = ({
+    setOpenDropdown,
+    user,
+    openDropdown,
+    handleEdit,
+    handleDelete,
+  }) => {
+    const dropdownRef = useRef(null);
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -21,7 +23,7 @@ const TableToggle = ({
     };
   }, [openDropdown, setOpenDropdown, user.srNum]);
   return (
-    <div className="dropdown text-center" ref={dropdownRef}>
+    <div ref={dropdownRef} className="dropdown text-center">
       <button
         className="dropdown-button"
         onClick={() =>
@@ -38,15 +40,13 @@ const TableToggle = ({
       </button>
       {openDropdown === user.srNum && (
         <div className="dropdown-menu show">
-          <a
+          <Link
+            to="/manage-program/add-program"
             className="dropdown-item"
-            onClick={() => {
-              handleEdit(user.srNum);
-              setOpenDropdown(null);
-            }}
+            onClick={handleEdit}
           >
             <i className="fa fa-edit"></i> Edit
-          </a>
+          </Link>
           <a
             className="dropdown-item"
             onClick={() => {
@@ -61,4 +61,5 @@ const TableToggle = ({
     </div>
   );
 };
-export default TableToggle;
+
+export default TableProgram;

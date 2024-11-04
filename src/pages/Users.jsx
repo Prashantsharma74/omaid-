@@ -14,7 +14,6 @@ const Users = () => {
   const [openDropdown, setOpenDropdown] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const navigate = useNavigate();
 
   const dropdownRef = useRef(null);
   const visiblePages = 4;
