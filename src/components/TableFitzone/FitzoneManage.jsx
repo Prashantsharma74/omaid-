@@ -25,12 +25,17 @@ const FitzoneManage = ({
     <div className="dropdown text-center" ref={dropdownRef}>
       <button
         className="dropdown-button"
-        onClick={() => handleDropdownToggle(user.id)}
+        onClick={() => handleDropdownToggle(user.srNum)}
         aria-haspopup="true"
+        aria-expanded={openDropdownIndex === user.srNum}
       >
-        <i className="fa fa-ellipsis-v"></i>
+        <i
+          className={`fa fa-ellipsis-v ${
+            openDropdownIndex === user.srNum ? "rotate-icon" : ""
+          }`}
+        ></i>
       </button>
-      {openDropdownIndex === user.id && (
+      {openDropdownIndex === user.srNum && (
         <div className="dropdown-menu show">
           <Link to={user.url} className="dropdown-item">
             <i className="fa fa-edit"></i> Edit

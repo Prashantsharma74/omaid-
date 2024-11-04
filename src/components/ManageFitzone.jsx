@@ -1,19 +1,18 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
 import FitzoneManage from "./TableFitzone/FitzoneManage";
 
 const ManageFitzone = () => {
   const DEFAULT_ITEMS_PER_PAGE = 10;
   const initialData = [
-    { title: "Introduction", id: 1, url: "/fitzone-manage/manage/edit-intro" },
+    { title: "Introduction", srNum: 1, url: "/fitzone-manage/manage/edit-intro" },
     {
       title: "Category Management",
-      id: 2,
+      srNum: 2,
       url: "/fitzone-manage/manage/category",
     },
     {
       title: "Session Management",
-      id: 3,
+      srNum: 3,
       url: "/fitzone-manage/manage/session",
     },
   ];
@@ -24,8 +23,8 @@ const ManageFitzone = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [openDropdownIndex, setOpenDropdownIndex] = useState(null);
 
-  const handleDropdownToggle = (index) => {
-    setOpenDropdownIndex(openDropdownIndex === index ? null : index);
+  const handleDropdownToggle = (id) => {
+    setOpenDropdownIndex(openDropdownIndex === id ? null : id);
   };
 
   const visiblePages = 4;
@@ -84,24 +83,9 @@ const ManageFitzone = () => {
     (currentPage + 1) * itemsPerPage
   );
 
-  // Function to go back to the previous page
   const handleBack = () => {
     window.history.back();
   };
-
-  // useEffect(() => {
-  //   const handleClickOutside = (event) => {
-  //     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-  //       setOpenDropdownIndex(null);
-  //     }
-  //   };
-
-  //   document.addEventListener("mousedown", handleClickOutside);
-
-  //   return () => {
-  //     document.removeEventListener("mousedown", handleClickOutside);
-  //   };
-  // }, [])
 
   return (
     <main className="app-content">
@@ -177,11 +161,16 @@ const ManageFitzone = () => {
                   </thead>
                   <tbody>
                     {paginatedData.map((user, index) => (
-                      <tr key={user.id}>
+                      <tr key={index}>
                         <td>{currentPage * itemsPerPage + index + 1}</td>
                         <td>{user.title}</td>
                         <td>
-                          <FitzoneManage handleDropdownToggle={handleDropdownToggle} openDropdownIndex={openDropdownIndex} setOpenDropdownIndex={setOpenDropdownIndex} user={user}/>
+                          <FitzoneManage
+                            handleDropdownToggle={handleDropdownToggle}
+                            openDropdownIndex={openDropdownIndex}
+                            setOpenDropdownIndex={setOpenDropdownIndex}
+                            user={user}
+                          />
                         </td>
                       </tr>
                     ))}
