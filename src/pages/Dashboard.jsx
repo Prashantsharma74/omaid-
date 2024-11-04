@@ -58,7 +58,9 @@ const Dashboard = () => {
                   <i className="icon fa-sharp fa-light fa-users"></i>
                   <div className="info">
                     <h4>Total Active User</h4>
-                    <p><b>500</b></p>
+                    <p>
+                      <b>500</b>
+                    </p>
                   </div>
                 </div>
               </Link>
@@ -69,7 +71,9 @@ const Dashboard = () => {
                   <i className="icon fa-light fa-user-group"></i>
                   <div className="info">
                     <h4>Total Sub-Admin</h4>
-                    <p><b>12</b></p>
+                    <p>
+                      <b>12</b>
+                    </p>
                   </div>
                 </div>
               </Link>
@@ -80,7 +84,9 @@ const Dashboard = () => {
                   <i className="icon fa-light fa-rocket"></i>
                   <div className="info">
                     <h4>Total sessions</h4>
-                    <p><b>3</b></p>
+                    <p>
+                      <b>3</b>
+                    </p>
                   </div>
                 </div>
               </Link>
@@ -91,7 +97,9 @@ const Dashboard = () => {
                   <i className="icon fa-thin fa-file-lines"></i>
                   <div className="info">
                     <h4>Total Blogs</h4>
-                    <p><b>4</b></p>
+                    <p>
+                      <b>4</b>
+                    </p>
                   </div>
                 </div>
               </Link>
@@ -102,7 +110,9 @@ const Dashboard = () => {
                   <i className="icon fa-light fa-file-chart-column"></i>
                   <div className="info">
                     <h4>Total Programs</h4>
-                    <p><b>6</b></p>
+                    <p>
+                      <b>6</b>
+                    </p>
                   </div>
                 </div>
               </Link>
@@ -135,14 +145,30 @@ const Dashboard = () => {
             <div className="tile-body">
               <div className="row">
                 <div className="col-lg-12">
-                  <div id="clock" className="d-flex">
+                  <div
+                    id="clock"
+                    className="d-flex"
+                    style={{
+                      width: "200px",
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  >
                     <p>
                       <i className="fa-sharp fa-regular fa-clock unit fa-xl pt-3"></i>
                     </p>
-                    <p className="unit dots" id="hours">{hours}</p>
-                    <p className="unit dots" id="minutes">{minutes}</p>
-                    <p className="unit" id="seconds">{seconds}</p>
-                    <p className="unit" id="ampm">{ampm}</p>
+                    <p className="unit dots" id="hours">
+                      {hours}
+                    </p>
+                    <p className="unit dots" id="minutes">
+                      {minutes}
+                    </p>
+                    <p className="unit" id="seconds">
+                      {seconds}
+                    </p>
+                    <p className="unit" id="ampm">
+                      {ampm}
+                    </p>
                   </div>
                 </div>
                 <div className="col-lg-12 p-3">
@@ -159,7 +185,8 @@ const Dashboard = () => {
                   </h6>
                   {userIP && (
                     <h6>
-                      Your IP address is: <strong className="animated-ip">{userIP}</strong>
+                      Your IP address is:{" "}
+                      <strong className="animated-ip">{userIP}</strong>
                     </h6>
                   )}
                 </div>

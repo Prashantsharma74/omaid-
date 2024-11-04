@@ -7,10 +7,16 @@ const AddFood = () => {
   const userData = location.state ? location.state.user : null;
 
   // State variables
-  const [foodName, setFoodName] = useState(userData ? userData.FoodCategory : "");
-  const [category, setCategory] = useState(userData ? userData.FoodCategory : "");
+  const [foodName, setFoodName] = useState(
+    userData ? userData.FoodCategory : ""
+  );
+  const [category, setCategory] = useState(
+    userData ? userData.FoodCategory : ""
+  );
   const [foodType, setFoodType] = useState(userData ? userData.FoodType : "");
-  const [approvalStatus, setApprovalStatus] = useState(userData ? userData.Approved : "");
+  const [approvalStatus, setApprovalStatus] = useState(
+    userData ? userData.Approved : ""
+  );
   const [image, setImage] = useState(null); // State for uploaded image
   const [categories, setCategories] = useState(["Fruits", "Vegetables"]); // Predefined categories
   const [newCategory, setNewCategory] = useState(""); // New category input
@@ -18,6 +24,7 @@ const AddFood = () => {
   const [showModal, setShowModal] = useState(false); // Track modal visibility
   const [errors, setErrors] = useState({}); // State for storing field-specific errors
   const [foodItems, setFoodItems] = useState([]); // State to store food items
+  const [closeCategory, setCloseCategory] = useState(false);
 
   useEffect(() => {
     if (userData) {
@@ -90,6 +97,10 @@ const AddFood = () => {
     resetForm();
   };
 
+  const handleCross = () => {
+    setCloseCategory(false);
+  };
+
   const resetForm = () => {
     setFoodName("");
     setCategory("");
@@ -117,17 +128,17 @@ const AddFood = () => {
 
   const handleDeleteCategory = (index) => {
     Swal.fire({
-      title: 'Are you sure?',
+      title: "Are you sure?",
       text: "You won't be able to revert this!",
-      icon: 'warning',
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
-      confirmButtonText: 'Yes, delete it!',
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
     }).then((result) => {
       if (result.isConfirmed) {
         setCategories((prev) => prev.filter((_, i) => i !== index)); // Remove the category
-        Swal.fire('Deleted!', 'Your category has been deleted.', 'success');
+        Swal.fire("Deleted!", "Your category has been deleted.", "success");
       }
     });
   };
@@ -203,7 +214,9 @@ const AddFood = () => {
                   <div className="mb-3 w-100">
                     <label className="form-label">Food Name</label>
                     <input
-                      className={`form-control ${errors.foodName ? "is-invalid" : ""}`}
+                      className={`form-control ${
+                        errors.foodName ? "is-invalid" : ""
+                      }`}
                       type="text"
                       placeholder="Enter food name"
                       value={foodName}
@@ -217,7 +230,9 @@ const AddFood = () => {
                     <label className="form-label">Category</label>
                     <div className="d-flex align-items-center">
                       <select
-                        className={`form-select ${errors.category ? "is-invalid" : ""}`}
+                        className={`form-select ${
+                          errors.category ? "is-invalid" : ""
+                        }`}
                         value={category}
                         onChange={(e) => setCategory(e.target.value)}
                       >
@@ -247,7 +262,9 @@ const AddFood = () => {
                   <div className="mb-3 col-lg-12">
                     <label className="form-label">Food Type</label>
                     <input
-                      className={`form-control ${errors.foodType ? "is-invalid" : ""}`}
+                      className={`form-control ${
+                        errors.foodType ? "is-invalid" : ""
+                      }`}
                       type="text"
                       placeholder="Enter food type"
                       value={foodType}
@@ -270,11 +287,17 @@ const AddFood = () => {
                           checked={approvalStatus === "Approved"}
                           onChange={(e) => setApprovalStatus(e.target.value)}
                         />
-                        <label className="form-check-label" style={{ marginLeft: "5px" }}>
+                        <label
+                          className="form-check-label"
+                          style={{ marginLeft: "5px" }}
+                        >
                           Approved
                         </label>
                       </div>
-                      <div className="form-check" style={{ marginLeft: "10px" }}>
+                      <div
+                        className="form-check"
+                        style={{ marginLeft: "10px" }}
+                      >
                         <input
                           className="form-check-input"
                           type="radio"
@@ -283,18 +306,26 @@ const AddFood = () => {
                           checked={approvalStatus === "Non Approved"}
                           onChange={(e) => setApprovalStatus(e.target.value)}
                         />
-                        <label className="form-check-label" style={{ marginLeft: "5px" }}>
+                        <label
+                          className="form-check-label"
+                          style={{ marginLeft: "5px" }}
+                        >
                           Non Approved
                         </label>
                       </div>
                     </div>
                     {errors.approvalStatus && (
-                      <div className="invalid-feedback">{errors.approvalStatus}</div>
+                      <div className="invalid-feedback">
+                        {errors.approvalStatus}
+                      </div>
                     )}
                   </div>
 
                   <div className="mb-3 text-center mt-3">
-                    <button className="btn custom-btn text-white w-50" type="submit">
+                    <button
+                      className="btn custom-btn text-white w-50"
+                      type="submit"
+                    >
                       Submit
                     </button>
                   </div>
@@ -307,7 +338,26 @@ const AddFood = () => {
 
       {/* Add New Category Modal */}
       {showModal && (
-        <div className="modal-overlay" style={{ display: "flex", alignItems: "center", justifyContent: "flex-start", flexDirection: "column" }}>
+        <div
+          className="modal-overlay"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "flex-start",
+            flexDirection: "column",
+          }}
+        >
+          {closeCategory && (
+                <div className="alert alert-dismissible alert-success">
+                  <button
+                    className="btn-close"
+                    type="button"
+                    data-bs-dismiss="alert"
+                    onClick={handleCross}
+                  ></button>
+                  x
+                </div>
+              )}
           <div className="modal-content animated-modal">
             <div className="modal-header">
               <h5 className="modal-title">Add New Category</h5>
@@ -347,12 +397,12 @@ const AddFood = () => {
                     src={newCategoryImage}
                     alt="New Category Icon"
                     className="mt-2"
-                    style={{ maxWidth: '100px', maxHeight: '100px' }}
+                    style={{ maxWidth: "100px", maxHeight: "100px" }}
                   />
                 )}
               </div>
             </div>
-            <div className="modal-footer">
+            <div style={{ width: "100%" }}>
               <button
                 type="button"
                 className="btn btn-secondary"
@@ -389,8 +439,19 @@ const AddFood = () => {
                       <img src={newCategoryImage} alt="icon" />
                     </td>
                     <td>
-                      <button className="btn btn-warning" onClick={() => handleEditCategory(index)}>Edit</button>
-                      <button className="btn btn-danger" style={{ marginLeft: "10px" }} onClick={() => handleDeleteCategory(index)}>Delete</button>
+                      <button
+                        className="btn btn-warning"
+                        onClick={() => handleEditCategory(index)}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        className="btn btn-danger"
+                        style={{ marginLeft: "10px" }}
+                        onClick={() => handleDeleteCategory(index)}
+                      >
+                        Delete
+                      </button>
                     </td>
                   </tr>
                 ))}
