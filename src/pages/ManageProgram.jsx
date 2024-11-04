@@ -69,7 +69,9 @@ const ManageProgram = () => {
     fetchData();
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setOpenDropdown(null);
+        if (openDropdown === user.srNum) {
+          setOpenDropdown(null);
+        }
       }
     };
 
@@ -118,9 +120,9 @@ const ManageProgram = () => {
       prevData.map((item) =>
         item.srNum === srNum
           ? {
-            ...item,
-            status: item.status === "Active" ? "Inactive" : "Active",
-          }
+              ...item,
+              status: item.status === "Active" ? "Inactive" : "Active",
+            }
           : item
       )
     );
@@ -283,15 +285,17 @@ const ManageProgram = () => {
                                     aria-expanded={openDropdown === user.srNum}
                                   >
                                     <i
-                                      className={`fa fa-ellipsis-v ${openDropdown === user.srNum
-                                        ? "rotate-icon"
-                                        : ""
-                                        }`}
+                                      className={`fa fa-ellipsis-v ${
+                                        openDropdown === user.srNum
+                                          ? "rotate-icon"
+                                          : ""
+                                      }`}
                                     ></i>
                                   </button>
                                   {openDropdown === user.srNum && (
                                     <div className="dropdown-menu show">
-                                      <Link to="/manage-program/add-program"
+                                      <Link
+                                        to="/manage-program/add-program"
                                         className="dropdown-item"
                                         onClick={handleEdit}
                                       >
@@ -400,7 +404,7 @@ const ManageProgram = () => {
           </div>
         </div>
       </div>
-    </main >
+    </main>
   );
 };
 

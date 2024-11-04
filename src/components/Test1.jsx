@@ -1,10 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { format } from "date-fns";
 import Swal from "sweetalert2";
 import AddSubAdmin from "../components/AddSubAdmin";
-import TableSubAdmin from "../components/TableSubAdmin";
+import TableToggle from "./TableToggle";
 
-const SubAdmin = () => {
+const Test1 = () => {
   const DEFAULT_ITEMS_PER_PAGE = 10;
   const [itemsPerPage, setItemsPerPage] = useState(DEFAULT_ITEMS_PER_PAGE);
   const [tableData, setTableData] = useState([]);
@@ -15,7 +15,8 @@ const SubAdmin = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const visiblePages = 4;
-  const dropdownRef = useRef(null);
+
+  console.log(openDropdown);
 
   const getPaginationButtons = () => {
     const buttons = [];
@@ -153,6 +154,8 @@ const SubAdmin = () => {
   };
 
   const handleEdit = (srNum) => {
+    console.log(srNum);
+    
     const user = tableData.find((u) => u.srNum === srNum);
     if (user) {
       setSelectedUser(user);
@@ -169,25 +172,6 @@ const SubAdmin = () => {
     currentPage * itemsPerPage,
     (currentPage + 1) * itemsPerPage
   );
-
-useEffect(() => {
-  const handleClickOutside = (event) => {
-    if (
-      dropdownRef.current &&
-      !dropdownRef.current.contains(event.target)
-    ) {
-      if (openDropdown === selectedUser?.srNum) {
-        setOpenDropdown(null);
-      }
-    }
-  };
-
-  document.addEventListener("mousedown", handleClickOutside);
-  return () => {
-    document.removeEventListener("mousedown", handleClickOutside);
-  };
-}, [openDropdown, selectedUser]);
-
 
   return (
     <main className="app-content">
@@ -240,10 +224,10 @@ useEffect(() => {
                       <option value={25}>25</option>
                       <option value={50}>50</option>
                     </select>
-                    <span className="entries-text ml-2">&nbsp;entries per page</span>
+                    <span className="entries-text ml-2">entries per page</span>
                   </div>
                   <div className="search-container">
-                    <span className="search-text mr-2">Search:&nbsp;</span>
+                    <span className="search-text mr-2">Search:</span>
                     <input
                       type="text"
                       value={searchTerm}
@@ -253,7 +237,10 @@ useEffect(() => {
                   </div>
                 </div>
                 {loading ? (
-                  <div className="d-flex justify-content-center align-items-center" style={{ height: "200px" }}>
+                  <div
+                    className="d-flex justify-content-center align-items-center"
+                    style={{ height: "200px" }}
+                  >
                     <div className="loader"></div>
                   </div>
                 ) : (
@@ -276,7 +263,9 @@ useEffect(() => {
                         {paginatedData.map((user, index) => (
                           <tr key={user.srNum}>
                             <td>{index + 1 + currentPage * itemsPerPage}</td>
-                            <td>{format(new Date(user.createdAt), "dd MMMM yyyy")}</td>
+                            <td>
+                              {format(new Date(user.createdAt), "dd MMMM yyyy")}
+                            </td>
                             <td>{user.username}</td>
                             <td>{user.email}</td>
                             <td>{user.hospital}</td>
@@ -288,12 +277,14 @@ useEffect(() => {
                                   className="form-check-input"
                                   type="checkbox"
                                   checked={user.status === "Active"}
-                                  onChange={() => handleToggleStatus(user.srNum)}
+                                  onChange={() =>
+                                    handleToggleStatus(user.srNum)
+                                  }
                                 />
                               </div>
                             </td>
                             <td>
-                              <TableSubAdmin openDropdown={openDropdown} setOpenDropdown={setOpenDropdown} user={user} handleDelete={handleDelete} handleEdit={handleEdit}/>
+                              <TableToggle openDropdown={openDropdown} setOpenDropdown={setOpenDropdown} user={user} handleDelete={handleDelete} handleEdit={handleEdit}/>
                             </td>
                           </tr>
                         ))}
@@ -301,36 +292,43 @@ useEffect(() => {
                     </table>
                     <div className="pagination mt-4 mb-2 d-flex align-items-start justify-content-between">
                       <span className="pagination-info">
-                        Showing {currentPage * itemsPerPage + 1} to {Math.min((currentPage + 1) * itemsPerPage, filteredData.length)} of {filteredData.length} entries
+                        Showing {currentPage * itemsPerPage + 1} to{" "}
+                        {Math.min(
+                          (currentPage + 1) * itemsPerPage,
+                          filteredData.length
+                        )}{" "}
+                        of {filteredData.length} entries
                       </span>
                       <div>
-                        <button  style={{
-                            padding: "7px 10px",
-                            backgroundColor: "#e9ecef",
-                            color: "#002538",
-                            border: "1px solid lightgrey",
-                            borderRadius: "5px 0px 0px 5px",
-                          }} className="page-btn" onClick={() => handlePageChange(0)} disabled={currentPage === 0}>&laquo;</button>
-                        <button style={{
-                            padding: "7px 10px",
-                            backgroundColor: "#e9ecef",
-                            color: "#002538",
-                            border: "1px solid lightgrey",
-                          }} className="page-btn" onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 0}>&#x3c;</button>
+                        <button
+                          className="page-btn"
+                          onClick={() => handlePageChange(0)}
+                          disabled={currentPage === 0}
+                        >
+                          &laquo;
+                        </button>
+                        <button
+                          className="page-btn"
+                          onClick={() => handlePageChange(currentPage - 1)}
+                          disabled={currentPage === 0}
+                        >
+                          &#x3c;
+                        </button>
                         {getPaginationButtons()}
-                        <button  style={{
-                            padding: "7px 10px",
-                            backgroundColor: "#e9ecef",
-                            color: "#002538",
-                            border: "1px solid lightgrey",
-                          }} className="page-btn" onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage >= totalPages - 1}>&#x3e;</button>
-                        <button style={{
-                            padding: "7px 10px",
-                            backgroundColor: "#e9ecef",
-                            color: "#002538",
-                            border: "1px solid lightgrey",
-                            borderRadius: "0px 5px 5px 0px",
-                          }} className="page-btn" onClick={() => handlePageChange(totalPages - 1)} disabled={currentPage >= totalPages - 1}>&raquo;</button>
+                        <button
+                          className="page-btn"
+                          onClick={() => handlePageChange(currentPage + 1)}
+                          disabled={currentPage >= totalPages - 1}
+                        >
+                          &#x3e;
+                        </button>
+                        <button
+                          className="page-btn"
+                          onClick={() => handlePageChange(totalPages - 1)}
+                          disabled={currentPage >= totalPages - 1}
+                        >
+                          &raquo;
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -344,4 +342,4 @@ useEffect(() => {
   );
 };
 
-export default SubAdmin;
+export default Test1;
