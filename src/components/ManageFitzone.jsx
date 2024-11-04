@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import FitzoneManage from "./TableFitzone/FitzoneManage";
 
 const ManageFitzone = () => {
   const DEFAULT_ITEMS_PER_PAGE = 10;
@@ -22,8 +23,6 @@ const ManageFitzone = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
   const [openDropdownIndex, setOpenDropdownIndex] = useState(null);
-
-  const dropdownRef = useRef(null);
 
   const handleDropdownToggle = (index) => {
     setOpenDropdownIndex(openDropdownIndex === index ? null : index);
@@ -61,7 +60,6 @@ const ManageFitzone = () => {
     return buttons;
   };
 
-
   const handleItemsPerPageChange = (e) => {
     setItemsPerPage(Number(e.target.value));
     setCurrentPage(0);
@@ -91,19 +89,19 @@ const ManageFitzone = () => {
     window.history.back();
   };
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setOpenDropdownIndex(null);
-      }
-    };
+  // useEffect(() => {
+  //   const handleClickOutside = (event) => {
+  //     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+  //       setOpenDropdownIndex(null);
+  //     }
+  //   };
 
-    document.addEventListener("mousedown", handleClickOutside);
+  //   document.addEventListener("mousedown", handleClickOutside);
 
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [])
+  //   return () => {
+  //     document.removeEventListener("mousedown", handleClickOutside);
+  //   };
+  // }, [])
 
   return (
     <main className="app-content">
@@ -183,22 +181,7 @@ const ManageFitzone = () => {
                         <td>{currentPage * itemsPerPage + index + 1}</td>
                         <td>{user.title}</td>
                         <td>
-                          <div className="dropdown text-center" ref={dropdownRef}>
-                            <button
-                              className="dropdown-button"
-                              onClick={() => handleDropdownToggle(index)}
-                              aria-haspopup="true"
-                            >
-                              <i className="fa fa-ellipsis-v"></i>
-                            </button>
-                            {openDropdownIndex === index && (
-                              <div className="dropdown-menu show">
-                                <Link to={user.url} className="dropdown-item">
-                                  <i className="fa fa-edit"></i> Edit
-                                </Link>
-                              </div>
-                            )}
-                          </div>
+                          <FitzoneManage handleDropdownToggle={handleDropdownToggle} openDropdownIndex={openDropdownIndex} setOpenDropdownIndex={setOpenDropdownIndex} user={user}/>
                         </td>
                       </tr>
                     ))}
