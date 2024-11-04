@@ -11,6 +11,7 @@ const ManageProgram = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
   const [openDropdown, setOpenDropdown] = useState(null);
+  const navigate = useNavigate();
 
   const dropdownRef = useRef(null);
   const visiblePages = 4;
@@ -294,7 +295,7 @@ const ManageProgram = () => {
                                   </button>
                                   {openDropdown === user.srNum && (
                                     <div className="dropdown-menu show">
-                                      <button 
+                                      <button
                                         className="dropdown-item"
                                         onClick={handleEdit}
                                       >
