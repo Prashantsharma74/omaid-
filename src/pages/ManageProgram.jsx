@@ -294,13 +294,12 @@ const ManageProgram = () => {
                                   </button>
                                   {openDropdown === user.srNum && (
                                     <div className="dropdown-menu show">
-                                      <a
-                                        href="/manage-program/add-program"
+                                      <button 
                                         className="dropdown-item"
                                         onClick={handleEdit}
                                       >
                                         <i className="fa fa-edit"></i> Edit
-                                      </a>
+                                      </button>
                                       <a
                                         className="dropdown-item"
                                         onClick={() => {
