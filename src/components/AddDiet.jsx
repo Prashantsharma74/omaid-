@@ -63,6 +63,10 @@ const AddDiet = () => {
     setIsAlert(false);
   };
 
+  const handleBack = () => {
+    window.history.back();
+  };
+
   return (
     <main className="app-content">
       <div className="app-title tile p-3">
@@ -72,6 +76,15 @@ const AddDiet = () => {
           </h1>
         </div>
       </div>
+      <button
+        className="btn mb-2 ms-2"
+        style={{ backgroundColor: "#002538", color: "white" }}
+        type="button"
+        onClick={handleBack}
+      >
+        <i className="fa-solid fa-arrow-left" style={{ color: "#fff" }}></i> &nbsp;Previous
+      </button>
+
       <div className="row justify-content-center">
         <div className="col-md-8 px-5">
           <div className="tile">

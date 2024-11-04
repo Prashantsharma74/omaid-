@@ -54,38 +54,43 @@ const AddSubAdmin = ({ user, onClose }) => {
 
   const validateForm = () => {
     const newErrors = {};
-
-    if (!formData.name) newErrors.name = "Name is required.";
+  
+    // Name validation
+    if (!formData.name) {
+      newErrors.name = "Name is required.";
+    } else {
+      const namePattern = /^[A-Za-z\s]+$/; // regex to allow only letters and spaces
+      if (!namePattern.test(formData.name)) {
+        newErrors.name = "Name should only contain letters.";
+      }
+    }
+  
+    // Other validations
     if (!formData.email) newErrors.email = "Email is required.";
-    if (!formData.hospital)
-      newErrors.hospital = "Hospital/Clinic name is required.";
+    if (!formData.hospital) newErrors.hospital = "Hospital/Clinic name is required.";
     if (!formData.location) newErrors.location = "Location is required.";
     if (!formData.phone) newErrors.phone = "Phone number is required.";
-    if (!formData.designation)
-      newErrors.designation = "Designation is required.";
-
+    if (!formData.designation) newErrors.designation = "Designation is required.";
+  
     if (!formData.password && !isEditMode) {
       newErrors.password = "Password is required.";
     } else if (formData.password && formData.password.length < 8) {
       newErrors.password = "Password must be at least 8 characters long.";
     } else if (!/[A-Z]/.test(formData.password)) {
-      newErrors.password =
-        "Password must contain at least one uppercase letter.";
+      newErrors.password = "Password must contain at least one uppercase letter.";
     } else if (!/[a-z]/.test(formData.password)) {
-      newErrors.password =
-        "Password must contain at least one lowercase letter.";
+      newErrors.password = "Password must contain at least one lowercase letter.";
     } else if (!/[0-9]/.test(formData.password)) {
       newErrors.password = "Password must contain at least one numeric digit.";
     } else if (!/[!@#$%^&*(),.?":{}|<>]/.test(formData.password)) {
-      newErrors.password =
-        "Password must contain at least one special character.";
+      newErrors.password = "Password must contain at least one special character.";
     }
-
+  
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (formData.email && !emailPattern.test(formData.email)) {
       newErrors.email = "Please enter a valid email address.";
     }
-
+  
     if (
       formData.phone &&
       (!/^\d{10}$/.test(formData.phone.replace(/[-\s]/g, "")) ||
@@ -93,7 +98,7 @@ const AddSubAdmin = ({ user, onClose }) => {
     ) {
       newErrors.phone = "Phone number must be a 10-digit numeric value.";
     }
-
+  
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };

@@ -38,6 +38,10 @@ const AddCategory = () => {
     setIsAlert(false);
   };
 
+  const handleBack = () => {
+    window.history.back();
+  };
+
   return (
     <main className="app-content">
       <div className="app-title tile p-3">
@@ -48,6 +52,15 @@ const AddCategory = () => {
           <p></p>
         </div>
       </div>
+      <button
+        className="btn mb-2 ms-2"
+        style={{ backgroundColor: "#002538", color: "white" }}
+        type="button"
+        onClick={handleBack}
+      >
+        <i className="fa-solid fa-arrow-left" style={{ color: "#fff" }}></i> &nbsp;Previous
+      </button>
+
       <div className="row">
         <div
           className="col-md-10 px-5 w-100"
