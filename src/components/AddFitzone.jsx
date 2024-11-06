@@ -3,32 +3,94 @@ import { useLocation } from "react-router-dom"; // Import useLocation
 import "dropify/dist/css/dropify.css";
 import $ from "jquery";
 import "dropify";
+import Swal from "sweetalert2";
 
 const AddFitzone = () => {
   const location = useLocation(); // Get location
   const [isAlert, setIsAlert] = useState(false);
 
   // Initialize state for input fields
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
+  const [formData, setFormData] = useState({
+    name: "",
+    description: "",
+    file: null,
+  });
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    $(".dropify").dropify(); // Initialize dropify on component mount
+    // Initialize Dropify
+    $(".dropify").dropify();
 
+    // Pre-fill the form if redirected with data for editing
     if (location.state && location.state.row) {
-      const { name, description } = location.state.row; // Destructure the row data
-      setName(name);
-      setDescription(description);
+      const { name, description } = location.state.row;
+      setFormData({ name, description, file: null });
     }
   }, [location.state]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setIsAlert(true); // Show success alert on submit
+
+    // Field validation
+    const formErrors = {};
+    if (!formData.name) formErrors.name = "Name is required.";
+    if (!formData.description) formErrors.description = "Description is required.";
+    if (!formData.file) formErrors.file = "File upload is required.";
+
+    if (formData.file) {
+      const file = formData.file[0];
+      const validTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+      if (!validTypes.includes(file.type)) {
+        formErrors.file = "Invalid file type. Allowed types are JPG, PNG, GIF, and WEBP.";
+      }
+      if (file.size > 6 * 1024 * 1024) {
+        formErrors.file = "File size is too large. Maximum size is 6MB.";
+      }
+    }
+
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
+    } else {
+      setErrors({});
+      console.log("Form data submitted successfully:", formData);
+
+      Swal.fire({
+        title: "Success!",
+        text: "Fitzone added successfully.",
+        icon: "success",
+        confirmButtonText: "OK",
+      });
+
+      // Reset form and Dropify after submission
+      setFormData({ name: "", description: "", file: null });
+      const dropifyElement = $(".dropify").dropify();
+      dropifyElement.data("dropify").resetPreview();
+      dropifyElement.data("dropify").clearElement();
+    }
   };
 
-  const handleCross = () => {
-    setIsAlert(false);
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleFileChange = (e) => {
+    const files = e.target.files;
+    setFormData((prevData) => ({
+      ...prevData,
+      file: files,
+    }));
+
+    if (files.length > 0) {
+      setErrors((prevErrors) => {
+        const newErrors = { ...prevErrors };
+        delete newErrors.file;
+        return newErrors;
+      });
+    }
   };
 
   const handleBack = () => {
@@ -91,9 +153,13 @@ const AddFitzone = () => {
                     className="form-control"
                     type="text"
                     placeholder="Enter Program Title"
-                    value={name} // Bind input value
-                    onChange={(e) => setName(e.target.value)} // Update state on change
+                    name="name"
+                    value={formData.name}
+                    onChange={handleInputChange}
                   />
+                  {errors.name && (
+                    <small className="text-danger">{errors.name}</small>
+                  )}
                 </div>
 
                 <div className="mb-3 col-md-6 w-100">
@@ -102,9 +168,13 @@ const AddFitzone = () => {
                     rows={6}
                     className="form-control"
                     placeholder="Enter Program Description"
-                    value={description} // Bind input value
-                    onChange={(e) => setDescription(e.target.value)} // Update state on change
+                    name="description"
+                    value={formData.description}
+                    onChange={handleInputChange}
                   ></textarea>
+                  {errors.description && (
+                    <small className="text-danger">{errors.description}</small>
+                  )}
                 </div>
 
                 <div className="form-group mb-0 pb-0">
@@ -113,10 +183,13 @@ const AddFitzone = () => {
                     type="file"
                     className="dropify"
                     data-height="100"
-                    required
                     multiple
                     accept=".jpg,.jpeg,.png,.gif,.webp,.pdf"
+                    onChange={handleFileChange}
                   />
+                  {errors.file && (
+                    <small className="text-danger">{errors.file}</small>
+                  )}
                   <small className="form-text text-muted upload-info mt-2 mb-2">
                     Maximum Image Size: Up to 6MB per upload
                   </small>

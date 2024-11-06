@@ -236,9 +236,9 @@ const FitzoneManagement = () => {
                                 />
                               </div>
                             </td>
-                            <td>
+                            <td style={{display:"flex",alignItems:"center",justifyContent:"center"}}>
                               <Link
-                                className="btn ctb"
+                                className="btns btns-first"
                                 to="/fitzone-manage/manage"
                                 style={{
                                   borderBottom: "3px solid #002538",

@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import "dropify/dist/css/dropify.css";
 import $ from "jquery";
 import "dropify";
 import { useLocation } from "react-router-dom";
+import Select from "react-select";
 
 const AddProgram = () => {
   const location = useLocation();
   const programData = location.state?.program;
+  const dropifyRef = useRef(null);
   const [isAlert, setIsAlert] = useState(false);
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
@@ -22,7 +24,6 @@ const AddProgram = () => {
     setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
   };
 
-  // Function to go back to the previous page
   const handleBack = () => {
     window.history.back();
   };
@@ -32,19 +33,28 @@ const AddProgram = () => {
   };
 
   useEffect(() => {
-    $(".dropify").dropify();
+    // Initialize Dropify
+    const dropifyElement = $(".dropify").dropify();
 
-    $(".dropify").on("change", function () {
-      const fileName = $(this).val().split("\\").pop();
-      setFormData((prevData) => ({ ...prevData, image: fileName }));
+    // Handle file input change event
+    $(".dropify").on("change", function (event) {
+      const file = event.target.files[0];
+      setFormData((prevData) => ({ ...prevData, image: file }));
+      setErrors((prevErrors) => ({ ...prevErrors, image: "" }));
     });
+
+    // Cleanup Dropify instance on component unmount
+    return () => {
+      if (dropifyElement) {
+        $(".dropify").dropify("destroy");
+      }
+    };
   }, []);
 
   const validate = () => {
     const newErrors = {};
     if (!formData.title) newErrors.title = "Title is required.";
-    if (!formData.description)
-      newErrors.description = "Description is required.";
+    if (!formData.description) newErrors.description = "Description is required.";
     if (!formData.image) newErrors.image = "Image is required.";
     if (!formData.duration) newErrors.duration = "Duration is required.";
 
@@ -63,10 +73,20 @@ const AddProgram = () => {
       console.log("Updating Program: ", formData);
     } else {
       console.log("Adding Program: ", formData);
-      // Call your add API here
     }
 
     setIsAlert(true);
+  };
+
+  // Options for Duration dropdown
+  const durationOptions = Array.from({ length: 12 }, (_, i) => ({
+    value: i + 1,
+    label: `${i + 1} Week Plan`,
+  }));
+
+  const handleDurationChange = (selectedOption) => {
+    setFormData((prevData) => ({ ...prevData, duration: selectedOption.value }));
+    setErrors((prevErrors) => ({ ...prevErrors, duration: "" }));
   };
 
   return (
@@ -105,17 +125,7 @@ const AddProgram = () => {
             </div>
             <div className="tile-body p-3">
               <div className="bs-component mb-3">
-                {isAlert && (
-                  <div className="alert alert-dismissible alert-success">
-                    <button
-                      className="btn-close"
-                      type="button"
-                      onClick={handleCross}
-                    ></button>
-                    <strong>Well done!</strong> Program{" "}
-                    {programData ? "updated" : "added"} successfully.
-                  </div>
-                )}
+                
               </div>
               <form onSubmit={handleSubmit}>
                 <div className="row">
@@ -157,10 +167,8 @@ const AddProgram = () => {
                     <label className="form-label">Upload Image</label>
                     <input
                       type="file"
-                      className="dropify"
+                      className={`dropify ${errors.image ? "is-invalid" : ""}`}
                       data-height="100"
-                      required
-                      multiple
                       accept=".jpg,.jpeg,.png,.gif,.webp,.pdf"
                     />
                     {errors.image && (
@@ -170,30 +178,24 @@ const AddProgram = () => {
                       Maximum Image Size: Up to 6MB per upload
                     </small>
                   </div>
-                  <div
-                    className="mb-3 col-md-12"
-                    style={{
-                      display: "flex",
-                      alignItems: "flex-start",
-                      flexDirection: "column",
-                    }}
-                  >
+                  <div className="mb-3 col-md-12">
                     <label className="form-label">Duration</label>
-                    <input
-                      className={`form-control ${
+                    <Select
+                    placeholder="Select Plan"
+                      options={durationOptions}
+                      value={durationOptions.find(
+                        (option) => option.value === formData.duration
+                      )}
+                      onChange={handleDurationChange}
+                      className={`${
                         errors.duration ? "is-invalid" : ""
                       }`}
-                      name="duration"
-                      type="text"
-                      placeholder="Enter Duration"
-                      value={formData.duration}
-                      onChange={handleChange}
-                      min="0" // Ensure duration can't be negative
                     />
                     {errors.duration && (
                       <div className="invalid-feedback">{errors.duration}</div>
                     )}
                   </div>
+
                   <div className="mb-3 col-lg-12 text-center">
                     <button
                       className="btn custom-btn text-white w-25"
