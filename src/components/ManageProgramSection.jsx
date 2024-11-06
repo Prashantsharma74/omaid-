@@ -211,7 +211,7 @@ const ManageProgramSection = () => {
                             className="btns btns-first"
                             style={{ padding: "5px 20px" }}
                           >
-                            Edit
+                            Manage
                           </Link>
                         </td>
                       </tr>

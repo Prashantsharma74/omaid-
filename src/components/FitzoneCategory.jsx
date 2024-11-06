@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { format } from "date-fns";
 import Swal from "sweetalert2";
 import AddFitezoneCategory from "./AddFitezoneCategory";
+import FitzoneCategoryTable from "./TableFitzone/FitzoneCategoryTable";
 
 const FitzoneCategory = () => {
   const DEFAULT_ITEMS_PER_PAGE = 10;
@@ -78,6 +79,12 @@ const FitzoneCategory = () => {
           categoryName: "Fruits",
           status: "Active",
         },
+        {
+          id: 2,
+          createdAt: "2023-01-01",
+          categoryName: "Chicken",
+          status: "Inactive",
+        },
       ];
       setTableData(categories);
       setLoading(false);
@@ -119,9 +126,9 @@ const FitzoneCategory = () => {
       prevData.map((category) =>
         category.id === id
           ? {
-            ...category,
-            status: category.status === "Active" ? "Inactive" : "Active",
-          }
+              ...category,
+              status: category.status === "Active" ? "Inactive" : "Active",
+            }
           : category
       )
     );
@@ -138,7 +145,9 @@ const FitzoneCategory = () => {
       confirmButtonText: "Yes, delete it!",
     }).then((result) => {
       if (result.isConfirmed) {
-        setTableData((prevData) => prevData.filter((category) => category.id !== id));
+        setTableData((prevData) =>
+          prevData.filter((category) => category.id !== id)
+        );
         Swal.fire("Deleted!", "Your category has been deleted.", "success");
       }
     });
@@ -175,7 +184,8 @@ const FitzoneCategory = () => {
           </h1>
         </div>
       </div>
-      <div className="flex"
+      <div
+        className="flex"
         style={{ alignItems: "center", justifyContent: "space-between" }}
       >
         <button
@@ -306,7 +316,10 @@ const FitzoneCategory = () => {
                           <tr key={category.id}>
                             <td>{index + 1 + currentPage * itemsPerPage}</td>
                             <td>
-                              {format(new Date(category.createdAt), "dd MMMM yyyy")}
+                              {format(
+                                new Date(category.createdAt),
+                                "dd MMMM yyyy"
+                              )}
                             </td>
                             <td>{category.categoryName}</td>
                             <td>
@@ -316,50 +329,20 @@ const FitzoneCategory = () => {
                                   type="checkbox"
                                   role="switch"
                                   checked={category.status === "Active"}
-                                  onChange={() => handleToggleStatus(category.id)}
+                                  onChange={() =>
+                                    handleToggleStatus(category.id)
+                                  }
                                 />
                               </div>
                             </td>
                             <td>
-                              <div className="dropdown text-center" ref={dropdownRef}>
-                                <button
-                                  className="dropdown-button"
-                                  onClick={() =>
-                                    setOpenDropdown(
-                                      openDropdown === category.id ? null : category.id
-                                    )
-                                  }
-                                  aria-haspopup="true"
-                                  aria-expanded={openDropdown === category.id}
-                                >
-                                  <i
-                                    className={`fa fa-ellipsis-v ${openDropdown === category.id ? "rotate-icon" : ""
-                                      }`}
-                                  ></i>
-                                </button>
-                                {openDropdown === category.id && (
-                                  <div className="dropdown-menu show">
-                                    <a
-                                      className="dropdown-item"
-                                      onClick={() => {
-                                        handleEdit(category.id);
-                                        setOpenDropdown(null);
-                                      }}
-                                    >
-                                      <i className="fa fa-edit"></i> Edit
-                                    </a>
-                                    <a
-                                      className="dropdown-item"
-                                      onClick={() => {
-                                        handleDelete(category.id);
-                                        setOpenDropdown(null);
-                                      }}
-                                    >
-                                      <i className="fa fa-trash"></i> Delete
-                                    </a>
-                                  </div>
-                                )}
-                              </div>
+                              <FitzoneCategoryTable
+                                setOpenDropdown={setOpenDropdown}
+                                user={category}
+                                openDropdown={openDropdown}
+                                handleEdit={handleEdit}
+                                handleDelete={handleDelete}
+                              />
                             </td>
                           </tr>
                         ))}

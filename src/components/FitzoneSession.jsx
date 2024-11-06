@@ -57,7 +57,7 @@ const FitzoneSession = () => {
         {
           SNo: 1,
           LastEdit: "2024-10-01",
-          FoodCategory: "Fruits",
+          category: "Yoga",
           FoodType: "Citrus",
           Approved: "Approved",
           Status: "Active",
@@ -65,7 +65,7 @@ const FitzoneSession = () => {
         {
           SNo: 2,
           LastEdit: "2024-10-02",
-          FoodCategory: "Vegetables",
+          category: "Meditation",
           FoodType: "Root",
           Approved: "Non Approved",
           Status: "Inactive",
@@ -107,7 +107,7 @@ const FitzoneSession = () => {
   };
 
   const filteredData = tableData.filter((user) =>
-    user.FoodCategory.toLowerCase().includes(searchTerm.toLowerCase())
+    user.category.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);

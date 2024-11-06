@@ -1,10 +1,15 @@
 import React, { useState } from "react";
 import FitzoneManage from "./TableFitzone/FitzoneManage";
+import { Link } from "react-router-dom";
 
 const ManageFitzone = () => {
   const DEFAULT_ITEMS_PER_PAGE = 10;
   const initialData = [
-    { title: "Introduction", srNum: 1, url: "/fitzone-manage/manage/edit-intro" },
+    {
+      title: "Introduction",
+      srNum: 1,
+      url: "/fitzone-manage/manage/edit-intro",
+    },
     {
       title: "Category Management",
       srNum: 2,
@@ -164,13 +169,18 @@ const ManageFitzone = () => {
                       <tr key={index}>
                         <td>{currentPage * itemsPerPage + index + 1}</td>
                         <td>{user.title}</td>
-                        <td>
-                          <FitzoneManage
-                            handleDropdownToggle={handleDropdownToggle}
-                            openDropdownIndex={openDropdownIndex}
-                            setOpenDropdownIndex={setOpenDropdownIndex}
-                            user={user}
-                          />
+                        <td style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                          }}>
+                          <Link
+                            to={user.url}
+                            className="btns btns-first"
+                            style={{ padding: "5px 20px" }}
+                          >
+                            Manage
+                          </Link>
                         </td>
                       </tr>
                     ))}

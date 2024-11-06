@@ -37,9 +37,7 @@ const FitzoneManage = ({
       </button>
       {openDropdownIndex === user.srNum && (
         <div className="dropdown-menu show">
-          <Link to={user.url} className="dropdown-item">
-            <i className="fa fa-edit"></i> Edit
-          </Link>
+          
         </div>
       )}
     </div>
