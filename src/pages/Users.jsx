@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import AddUser from "../components/AddUser";
 import TableUser from "../components/TableUser";

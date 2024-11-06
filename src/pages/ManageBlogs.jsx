@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useRef, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2"; // Import SweetAlert2
+import ManageBlogsTable from "../components/TableFitzone/ManageBlogsTable";
+import notfound from "../assets/images/notfound.png"
 
 const ManageBlogs = () => {
   const DEFAULT_ITEMS_PER_PAGE = 10;
@@ -9,7 +11,11 @@ const ManageBlogs = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
+  const [openDropdown, setOpenDropdown] = useState(null);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const navigate = useNavigate();
 
+  const dropdownRef = useRef(null);
   const visiblePages = 4;
 
   const getPaginationButtons = () => {
@@ -47,11 +53,21 @@ const ManageBlogs = () => {
     setTimeout(() => {
       const users = [
         {
+          srNum: 1,
           Title: "Post Title 1",
           Description: "Description for post 1",
           Category: "Category A",
           Status: "Published",
           "Publish/Private": "Publish",
+          Image: "image1.jpg",
+        },
+        {
+          srNum: 2,
+          Title: "Post Title 2",
+          Description: "Description for post 2",
+          Category: "Category A",
+          Status: "Published",
+          "Publish/Private": "Private",
           Image: "image1.jpg",
         },
       ];
@@ -62,6 +78,17 @@ const ManageBlogs = () => {
 
   useEffect(() => {
     fetchData();
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setOpenDropdown(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, []);
 
   const handleItemsPerPageChange = (e) => {
@@ -91,6 +118,35 @@ const ManageBlogs = () => {
     );
   };
 
+  const handleEdit = (srNum) => {
+    const user = tableData.find((u) => u.srNum === srNum);
+    if (user) {
+      navigate("/blogs/manage-blogs/add-blogs");
+      setSelectedUser(user);
+      console.log(user);
+    }
+  };
+
+  const handleDelete = (srNum) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "Cancel",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        setTableData((prevData) =>
+          prevData.filter((user) => user.srNum !== srNum)
+        );
+        Swal.fire("Deleted!", "The blog post has been deleted.", "success");
+      }
+    });
+  };
+
   const handlePublishPrivateChange = (index, newValue) => {
     const currentItem = tableData[index];
 
@@ -107,9 +163,7 @@ const ManageBlogs = () => {
         if (result.isConfirmed) {
           setTableData((prevData) =>
             prevData.map((item, i) =>
-              i === index
-                ? { ...item, "Publish/Private": newValue }
-                : item
+              i === index ? { ...item, "Publish/Private": newValue } : item
             )
           );
 
@@ -130,6 +184,10 @@ const ManageBlogs = () => {
     currentPage * itemsPerPage,
     (currentPage + 1) * itemsPerPage
   );
+
+  const handleActionButtonClick = (index) => {
+    setOpenDropdownIndex((prevIndex) => (prevIndex === index ? null : index));
+  };
 
   return (
     <main className="app-content">
@@ -217,42 +275,60 @@ const ManageBlogs = () => {
                           <th>Category</th>
                           <th>Status</th>
                           <th>Publish/Private</th>
+                          <th>Action</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {paginatedData.map((row, index) => (
-                          <tr key={index}>
-                            <td>{index + 1 + currentPage * itemsPerPage}</td>
-                            <td>{row.Title}</td>
-                            <td>{row.Description}</td>
-                            <td>{row.Category}</td>
-                            <td>
-                              <div className="form-check form-switch">
-                                <input
-                                  className="form-check-input"
-                                  type="checkbox"
-                                  role="switch"
-                                  checked={row.Status === "Published"}
-                                  onChange={() => toggleStatus(index)}
-                                />
-                              </div>
-                            </td>
-                            <td>
-                              <select
-                                value={row["Publish/Private"]}
-                                onChange={(e) =>
-                                  handlePublishPrivateChange(
-                                    index,
-                                    e.target.value
-                                  )
-                                }
-                              >
-                                <option value="Publish">Publish</option>
-                                <option value="Private">Private</option>
-                              </select>
+                        {paginatedData.length === 0 ? (
+                          <tr>
+                            <td colSpan="7" className="text-center">
+                              <img src={notfound} alt="" />
                             </td>
                           </tr>
-                        ))}
+                        ) : (
+                          paginatedData.map((row, index) => (
+                            <tr key={index}>
+                              <td>{index + 1 + currentPage * itemsPerPage}</td>
+                              <td>{row.Title}</td>
+                              <td>{row.Description}</td>
+                              <td>{row.Category}</td>
+                              <td>
+                                <div className="form-check form-switch">
+                                  <input
+                                    className="form-check-input"
+                                    type="checkbox"
+                                    role="switch"
+                                    checked={row.Status === "Published"}
+                                    onChange={() => toggleStatus(index)}
+                                  />
+                                </div>
+                              </td>
+                              <td>
+                                <select
+                                  value={row["Publish/Private"]}
+                                  onChange={(e) =>
+                                    handlePublishPrivateChange(
+                                      index,
+                                      e.target.value
+                                    )
+                                  }
+                                >
+                                  <option value="Publish">Publish</option>
+                                  <option value="Private">Private</option>
+                                </select>
+                              </td>
+                              <td>
+                                <ManageBlogsTable
+                                  openDropdown={openDropdown}
+                                  setOpenDropdown={setOpenDropdown}
+                                  user={row}
+                                  handleDelete={handleDelete}
+                                  handleEdit={handleEdit}
+                                />
+                              </td>
+                            </tr>
+                          ))
+                        )}
                       </tbody>
                     </table>
 

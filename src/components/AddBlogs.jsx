@@ -1,26 +1,34 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
+import { Editor } from "@tinymce/tinymce-react";
 import Swal from "sweetalert2";
 
 const AddBlogs = () => {
   const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
+  const [editorContent, setEditorContent] = useState("");
   const [image, setImage] = useState(null);
   const [isImageAdded, setIsImageAdded] = useState(false);
-  const [categories, setCategories] = useState([{ name: "Tech", icon: null }, { name: "Health", icon: null }, { name: "Lifestyle", icon: null }]);
+  const [categories, setCategories] = useState([
+    { name: "Tech", icon: null },
+    { name: "Health", icon: null },
+    { name: "Lifestyle", icon: null },
+  ]);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [newCategory, setNewCategory] = useState("");
   const [newCategoryImage, setNewCategoryImage] = useState(null);
   const [status, setStatus] = useState("Public");
   const [showModal, setShowModal] = useState(false);
   const [errors, setErrors] = useState({});
-  const [editIndex, setEditIndex] = useState(null); // Track index of category being edited
+  const [editIndex, setEditIndex] = useState(null);
+
+  const editorRef = useRef(null);
+  const api_key = "3e4i7xmjvw1ebtnzlwcfxtlk0tuwjfui4s1w0l2pibtj6egn";
 
   const openEditModal = (index) => {
     const category = categories[index];
-    setNewCategory(category.name); // Set category name to input
-    setNewCategoryImage(category.icon); // Set category icon for preview
-    setEditIndex(index); // Set the index to identify edit mode
-    setShowModal(true); // Open modal
+    setNewCategory(category.name);
+    setNewCategoryImage(category.icon);
+    setEditIndex(index);
+    setShowModal(true);
   };
 
   const handleSaveCategory = () => {
@@ -28,17 +36,32 @@ const AddBlogs = () => {
       const updatedCategories = [...categories];
       if (editIndex !== null) {
         // Edit existing category
-        updatedCategories[editIndex] = { name: newCategory, icon: newCategoryImage };
-        Swal.fire({ icon: "success", title: "Category updated", text: `The category has been updated to "${newCategory}".` });
+        updatedCategories[editIndex] = {
+          name: newCategory,
+          icon: newCategoryImage,
+        };
+        Swal.fire({
+          icon: "success",
+          title: "Category updated",
+          text: `The category has been updated to "${newCategory}".`,
+        });
       } else {
         // Add new category
         updatedCategories.push({ name: newCategory, icon: newCategoryImage });
-        Swal.fire({ icon: "success", title: "Category added", text: `The category "${newCategory}" has been added successfully.` });
+        Swal.fire({
+          icon: "success",
+          title: "Category added",
+          text: `The category "${newCategory}" has been added successfully.`,
+        });
       }
       setCategories(updatedCategories);
       resetModal(); // Reset modal state
     } else {
-      Swal.fire({ icon: "error", title: "Category is empty", text: "Please enter a valid category name!" });
+      Swal.fire({
+        icon: "error",
+        title: "Category is empty",
+        text: "Please enter a valid category name!",
+      });
     }
   };
 
@@ -66,20 +89,32 @@ const AddBlogs = () => {
     });
   };
 
-
   const validateForm = () => {
     let formErrors = {};
+
     if (!title.trim()) formErrors.title = "Title is required.";
-    if (!description.trim()) formErrors.description = "Description is required.";
-    if (!selectedCategory) formErrors.selectedCategory = "Please select a category.";
-    setErrors(formErrors);
-    return Object.keys(formErrors).length === 0;
+
+    if (!editorContent.trim() || !/<[^>]+>/.test(editorContent)) {
+      formErrors.description = "Description is required.";
+    }
+
+    if (!selectedCategory.trim())
+      formErrors.selectedCategory = "Please select a category."; // Ensure category is selected
+
+    if (!status.trim()) formErrors.status = "Please select a status."; // Ensure status is selected
+
+    setErrors(formErrors); // Update error state
+    return Object.keys(formErrors).length === 0; // Return true if no errors
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!validateForm()) return;
-    Swal.fire({ icon: "success", title: "Blog added successfully", text: "Your blog has been submitted!" });
+    Swal.fire({
+      icon: "success",
+      title: "Blog added successfully",
+      text: "Your blog has been submitted!",
+    });
     setTitle("");
     setDescription("");
     setImage(null);
@@ -92,6 +127,24 @@ const AddBlogs = () => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      const validTypes = ["image/jpg", "image/jpeg", "image/png"];
+      const maxSize = 5 * 1024 * 1024; // 5MB limit
+      if (!validTypes.includes(file.type)) {
+        Swal.fire({
+          icon: "error",
+          title: "Invalid file type",
+          text: "Please upload a valid image (jpg, jpeg, png).",
+        });
+        return;
+      }
+      if (file.size > maxSize) {
+        Swal.fire({
+          icon: "error",
+          title: "File size exceeded",
+          text: "The image size should be less than 5MB.",
+        });
+        return;
+      }
       setImage(URL.createObjectURL(file));
       setIsImageAdded(true);
     }
@@ -109,7 +162,9 @@ const AddBlogs = () => {
   return (
     <main className="app-content">
       <div className="app-title tile p-3">
-        <h1><span className="mr-4">&nbsp; Add Blogs</span></h1>
+        <h1>
+          <span className="mr-4">&nbsp; Add Blogs</span>
+        </h1>
       </div>
       <button
         className="btn mb-2 ms-2"
@@ -117,13 +172,30 @@ const AddBlogs = () => {
         type="button"
         onClick={handleBack}
       >
-        <i className="fa-solid fa-arrow-left" style={{ color: "#fff" }}></i> &nbsp;Previous
+        <i className="fa-solid fa-arrow-left" style={{ color: "#fff" }}></i>{" "}
+        &nbsp;Previous
       </button>
 
       <div className="row">
-        <div className="col-md-10 px-5 w-100" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div
+          className="col-md-10 px-5 w-100"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
           <div className="tile w-75">
-            <div className="case-status d-flex justify-content-center" style={{ backgroundColor: "#002538", color: "#fff", height: "50px", textAlign: "center", width: "100%" }}>
+            <div
+              className="case-status d-flex justify-content-center"
+              style={{
+                backgroundColor: "#002538",
+                color: "#fff",
+                height: "50px",
+                textAlign: "center",
+                width: "100%",
+              }}
+            >
               <h4 className="mt-2">Add Blogs</h4>
             </div>
             <div className="tile-body p-3">
@@ -131,51 +203,95 @@ const AddBlogs = () => {
                 <div className="mb-3 w-100">
                   <label className="form-label">Title</label>
                   <input
-                    className={`form-control ${errors.title ? "is-invalid" : ""}`}
+                    className={`form-control ${
+                      errors.title ? "is-invalid" : ""
+                    }`}
                     type="text"
                     placeholder="Enter Title Here"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                   />
-                  {errors.title && <div className="invalid-feedback">{errors.title}</div>}
+                  {errors.title && (
+                    <div className="invalid-feedback">{errors.title}</div>
+                  )}
                 </div>
 
                 <div className="mb-3 w-100">
                   <label className="form-label">Description</label>
-                  <textarea
-                    className={`form-control ${errors.description ? "is-invalid" : ""}`}
-                    rows={6}
-                    placeholder="Enter Description"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                  ></textarea>
-                  {errors.description && <div className="invalid-feedback">{errors.description}</div>}
+                  <Editor
+                    apiKey={api_key}
+                    value={editorContent}
+                    onEditorChange={(content, editor) =>
+                      setEditorContent(content)
+                    }
+                    init={{
+                      height: 250,
+                      menubar: false,
+                      plugins: "lists link image",
+                      toolbar:
+                        "bold italic | alignleft aligncenter alignright | bullist numlist",
+                    }}
+                  />
+                  {errors.description && (
+                    <div className="invalid-feedback">{errors.description}</div>
+                  )}
                 </div>
 
                 <div className="form-group">
                   <label className="form-label">Upload Image</label>
                   {!isImageAdded ? (
-                    <div className="dropify-wrapper" style={{ height: "110px" }}>
-                      <input type="file" className="dropify" onChange={handleImageChange} accept=".jpg,.jpeg,.png,.gif,.webp" />
+                    <div
+                      className="dropify-wrapper"
+                      style={{ height: "110px", position: "relative" }}
+                    >
+                      <input
+                        type="file"
+                        className="dropify"
+                        onChange={handleImageChange}
+                        accept=".jpg,.jpeg,.png,.gif,.webp"
+                      />
+                      <div
+                        style={{
+                          position: "absolute",
+                          top: "50%",
+                          left: "50%",
+                          transform: "translate(-50%, -50%)",
+                          color: "#888",
+                          fontSize: "16px",
+                        }}
+                      >
+                        <p>Click or Drag to Upload an Image</p>
+                      </div>
                     </div>
                   ) : (
                     <div className="mt-3">
                       <p className="text-success">Image added successfully.</p>
+                      <img
+                        src={image}
+                        alt="Uploaded"
+                        style={{ maxWidth: "100px", maxHeight: "100px" }}
+                      />
                     </div>
                   )}
                 </div>
 
-                <div className="mb-3 col-lg-12">
+                <div className="mb-3 col-lg-12 mt-2">
                   <label className="form-label">Category</label>
                   <div className="d-flex align-items-center">
                     <select
-                      className={`form-select ${errors.selectedCategory ? "is-invalid" : ""}`}
+                      className={`form-select ${
+                        errors.selectedCategory ? "is-invalid" : ""
+                      }`}
                       value={selectedCategory}
                       onChange={(e) => setSelectedCategory(e.target.value)}
                     >
-                      <option value="" disabled>Select a category</option>
+                      <option value="" disabled>
+                        Select a category
+                      </option>
                       {categories.map((category, index) => (
-                        <option key={index} value={category.name}>{category.name}</option>
+                        <option key={index} value={category.name}>
+                          {category.name}
+                        </option>
                       ))}
                     </select>
                     <button
@@ -187,22 +303,72 @@ const AddBlogs = () => {
                       <i className="fa fa-plus"></i>
                     </button>
                   </div>
+                  {errors.selectedCategory && (
+                    <div className="invalid-feedback">
+                      {errors.selectedCategory}
+                    </div>
+                  )}
                 </div>
 
                 <div className="mt-3 w-100">
                   <label className="form-label">Status</label>
                   <div className="d-flex">
-                    <label className="mr-3">
-                      <input type="radio" value="Public" checked={status === "Public"} onChange={(e) => setStatus(e.target.value)} /> Public
+                    <label
+                      className="mr-3"
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <input
+                        type="radio"
+                        value="Public"
+                        checked={status === "Public"}
+                        onChange={(e) => setStatus(e.target.value)}
+                        className={`form-check-input ${
+                          errors.status ? "is-invalid" : ""
+                        }`} // Add error class if status is invalid
+                      />{" "}
+                      &nbsp; Public
                     </label>
-                    <label>
-                      <input type="radio" value="Private" checked={status === "Private"} onChange={(e) => setStatus(e.target.value)} /> Private
+                    <label
+                      style={{
+                        marginLeft: "20px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <input
+                        type="radio"
+                        value="Private"
+                        checked={status === "Private"}
+                        onChange={(e) => setStatus(e.target.value)}
+                        className={`form-check-input ${
+                          errors.status ? "is-invalid" : ""
+                        }`} // Add error class if status is invalid
+                      />{" "}
+                      &nbsp; Private
                     </label>
                   </div>
+                  {errors.status && (
+                    <div
+                      className="invalid-feedback"
+                      style={{ display: "block" }}
+                    >
+                      {errors.status} {/* Display error message for status */}
+                    </div>
+                  )}
                 </div>
 
                 <div className="mb-3 text-center mt-3">
-                  <button className="btn custom-btn text-white w-50" type="submit">Submit</button>
+                  <button
+                    className="btn custom-btn text-white w-25"
+                    type="submit"
+                  >
+                    <i className="fa-light fa-blog"></i>&nbsp; Add Blog
+                  </button>
                 </div>
               </form>
             </div>
@@ -212,15 +378,35 @@ const AddBlogs = () => {
 
       {/* Add New Category Modal */}
       {showModal && (
-        <div className="modal-overlay" style={{ display: "flex", alignItems: "center", justifyContent: "flex-start", flexDirection: "column" }}>
-          <div className="modal-content animated-modal">
+        <div
+          className="modal-overlay"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "flex-start",
+            flexDirection: "column",
+          }}
+        >
+          <div className="modal-content animated-modal p-0">
             <div className="modal-header">
-              <h5 className="modal-title">Add New Category</h5>
-              <button type="button" className="btn-close" onClick={() => setShowModal(false)}></button>
+              <div
+                className="case-status d-flex justify-content-center"
+                style={{
+                  backgroundColor: "#002538",
+                  color: "#fff",
+                  height: "50px",
+                  textAlign: "center",
+                  width: "100%",
+                }}
+              >
+                <h4 className="mt-2">Add Blogs</h4>
+              </div>
             </div>
-            <div className="modal-body">
+            <div className="modal-body p-2">
               <div className="mb-3">
-                <label htmlFor="newCategory" className="form-label">Category Name</label>
+                <label htmlFor="newCategory" className="form-label">
+                  Category Name
+                </label>
                 <input
                   type="text"
                   className="form-control"
@@ -231,18 +417,55 @@ const AddBlogs = () => {
                 />
               </div>
               <div className="mb-3">
-                <label htmlFor="newCategoryImage" className="form-label">Icon</label>
-                <input type="file" className="form-control" id="newCategoryImage" accept="image/*" onChange={handleNewCategoryImageChange} />
-                {newCategoryImage && <img src={newCategoryImage} alt="New Category Icon" className="mt-2" style={{ maxWidth: '100px', maxHeight: '100px' }} />}
+                <label htmlFor="newCategoryImage" className="form-label">
+                  Icon
+                </label>
+                <input
+                  type="file"
+                  className="form-control"
+                  id="newCategoryImage"
+                  accept="image/*"
+                  onChange={handleNewCategoryImageChange}
+                />
+                {newCategoryImage && (
+                  <img
+                    src={newCategoryImage}
+                    alt="New Category Icon"
+                    className="mt-2"
+                    style={{ maxWidth: "100px", maxHeight: "100px" }}
+                  />
+                )}
               </div>
             </div>
-            <div className="modal-footer">
-              <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>Close</button>
-              <button type="button" className="btn ms-2" style={{ backgroundColor: "#002538", color: "white", marginLeft: "10px"  }} onClick={handleSaveCategory}>Save Category</button>
+            <div
+              className="modal-footer p-2"
+              style={{
+                display: "flex",
+                alignItems: "flex-start",
+                justifyContent: "flex-start",
+              }}
+            >
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={() => setShowModal(false)}
+              >
+                Close
+              </button>
+              <button
+                type="button"
+                className="btn ms-2"
+                style={{
+                  backgroundColor: "#002538",
+                  color: "white",
+                  marginLeft: "10px",
+                }}
+                onClick={handleSaveCategory}
+              >
+                Save Category
+              </button>
             </div>
-          </div>
-          <div className="mt-3 modal-content animated-modal">
-            <table className="table mt-2 table-bordered table-hover dt-responsive">
+            <table className="table mt-3 table-bordered table-hover dt-responsive">
               <thead>
                 <tr>
                   <th>Sr.No</th>
@@ -258,14 +481,28 @@ const AddBlogs = () => {
                     <td>{category.name}</td>
                     <td>
                       {category.icon ? (
-                        <img src={category.icon} alt="icon" style={{ maxWidth: '50px', maxHeight: '50px' }} />
+                        <img
+                          src={category.icon}
+                          alt="icon"
+                          style={{ maxWidth: "50px", maxHeight: "50px" }}
+                        />
                       ) : (
                         "No Icon"
                       )}
                     </td>
                     <td>
-                      <button className="btn btn-warning">Edit</button>
-                      <button className="btn btn-danger" style={{ marginLeft: "10px" }}>Delete</button>
+                      <button
+                        className="btn btn-warning"
+                        style={{ padding: "2px 6px" }}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        className="btn btn-danger"
+                        style={{ marginLeft: "10px", padding: "2px 6px" }}
+                      >
+                        Delete
+                      </button>
                     </td>
                   </tr>
                 ))}

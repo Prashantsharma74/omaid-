@@ -34,14 +34,12 @@ import FitzoneCategory from "./components/FitzoneCategory";
 import FitzoneSession from "./components/FitzoneSession";
 import AddFitezoneCategory from "./components/AddFitezoneCategory";
 import AddFitzoneSession from "./components/AddFitzoneSession";
-import Test1 from "./components/Test1";
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/login" element={<Login />} />
-        <Route path="/test" element={<Test1/>}/>
         <Route element={<ProtectedRoute />}>
           <Route path="/" element={<Dashboard />} />
           <Route path="/sub-admin" element={<SubAdmin />} />

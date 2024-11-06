@@ -19,6 +19,7 @@ const CmsManagement = () => {
   const [openDropdown, setOpenDropdown] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const modalRef = useRef(null);
 
   const fetchData = () => {
     setTimeout(() => {
@@ -32,13 +33,13 @@ const CmsManagement = () => {
         {
           srNum: 2,
           title: "Terms & Conditions",
-          content: "This is the content of the About us page.",
+          content: "This is the content of the Terms & Conditions page.",
           status: "Active",
         },
         {
           srNum: 3,
           title: "Privacy Policy",
-          content: "This is the content of the About us page.",
+          content: "This is the content of the Privacy Policy page.",
           status: "Inactive",
         },
       ];
@@ -59,6 +60,20 @@ const CmsManagement = () => {
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (modalRef.current && !modalRef.current.contains(event.target)) {
+        setIsModalOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside); // Clean up
     };
   }, []);
 
@@ -115,9 +130,9 @@ const CmsManagement = () => {
       prevData.map((item) =>
         item.srNum === srNum
           ? {
-            ...item,
-            status: item.status === "Active" ? "Inactive" : "Active",
-          }
+              ...item,
+              status: item.status === "Active" ? "Inactive" : "Active",
+            }
           : item
       )
     );
@@ -189,7 +204,7 @@ const CmsManagement = () => {
 
   const handleClose = () => {
     setIsModalOpen(false);
-  };  
+  };
 
   const handleEdit = (item) => {
     setEditingItem(item);
@@ -319,14 +334,18 @@ const CmsManagement = () => {
                                     aria-expanded={openDropdown === row.srNum}
                                   >
                                     <i
-                                      className={`fa fa-ellipsis-v ${openDropdown === row.srNum
-                                        ? "rotate-icon"
-                                        : ""
-                                        }`}
+                                      className={`fa fa-ellipsis-v ${
+                                        openDropdown === row.srNum
+                                          ? "rotate-icon"
+                                          : ""
+                                      }`}
                                     ></i>
                                   </button>
                                   {openDropdown === row.srNum && (
-                                    <div className="dropdown-menu show" ref={dropdownRef}>
+                                    <div
+                                      className="dropdown-menu show"
+                                      ref={dropdownRef}
+                                    >
                                       <a
                                         className="dropdown-item"
                                         onClick={() => {
@@ -436,10 +455,15 @@ const CmsManagement = () => {
       </div>
       {isModalOpen && (
         <div className="modal-overlay">
-          <div className="modal-content">
-          <button className="cross-button" aria-label="Close" onClick={handleClose}>
-        <i className="fa-solid fa-times"></i>
-      </button>
+          <div className="modal-content" ref={modalRef}>
+            {" "}
+            <button
+              className="cross-button"
+              aria-label="Close"
+              onClick={handleClose}
+            >
+              <i className="fa-solid fa-times"></i>
+            </button>
             <div
               className="case-status d-flex justify-content-center"
               style={{
@@ -450,7 +474,9 @@ const CmsManagement = () => {
                 width: "100%",
               }}
             >
-              <h4 style={{ marginTop: "12px" }}>{editingItem ? "Edit CMS" : "Add CMS"}</h4>
+              <h4 style={{ marginTop: "12px" }}>
+                {editingItem ? "Edit CMS" : "Add CMS"}
+              </h4>
             </div>
             <div className="tile-body p-3">
               <form onSubmit={handleSubmit}>
@@ -462,9 +488,7 @@ const CmsManagement = () => {
                     <div>
                       <Editor
                         apiKey={api_key}
-                        onEditorChange={(content) =>
-                          setEditorContent(content)
-                        }
+                        onEditorChange={(content) => setEditorContent(content)}
                         value={editorContent}
                         onInit={(evt, editor) => (editorRef.current = editor)}
                       />
