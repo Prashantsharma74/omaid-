@@ -40,36 +40,49 @@ const AddSubAdmin = ({ user, onClose }) => {
 
   const formRef = useRef(null);
 
-  useEffect(() => {
-    if (user) {
-      setFormData({
-        name: user.username,
-        email: user.email,
-        hospital: user.hospital,
-        location: user.location,
-        phone: user.phone,
-        designation: user.designation,
-        password: user.password,
-      });
-      setIsEditMode(true);
+// Inside useEffect, update formData to set location as an object when editing
+useEffect(() => {
+  if (user) {
+    setFormData({
+      name: user.username,
+      email: user.email,
+      hospital: user.hospital,
+      location: user.location ? { value: user.location, label: user.location } : "", // Ensure location is an object for editing
+      phone: user.phone,
+      designation: user.designation,
+      password: user.password,
+    });
+    setIsEditMode(true);
+  }
+
+  const handleClickOutside = (event) => {
+    if (
+      formRef.current &&
+      !formRef.current.contains(event.target) &&
+      !closRef.current.contains(event.target)
+    ) {
+      onClose();
     }
+  };
 
-    const handleClickOutside = (event) => {
-      // Check if the click is outside the form or the cross button
-      if (
-        formRef.current &&
-        !formRef.current.contains(event.target) &&
-        !closRef.current.contains(event.target)
-      ) {
-        onClose();
-      }
-    };
+  document.addEventListener("mousedown", handleClickOutside);
+  return () => {
+    document.removeEventListener("mousedown", handleClickOutside);
+  };
+}, [user, onClose]);
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [user, onClose]);
+// Handle location change in CreatableSelect
+const handleLocationChange = (selectedOption) => {
+  setLocation(selectedOption);
+  setFormData({
+    ...formData,
+    location: selectedOption ? selectedOption.value : "", // Ensure we store the location as a string
+  });
+  if (selectedOption) {
+    setErrors({ ...errors, location: "" });
+  }
+};
+
 
   const customSelectStyles = {
     control: (base, state) => ({
@@ -150,17 +163,6 @@ const AddSubAdmin = ({ user, onClose }) => {
     const { id, value } = e.target;
     setFormData({ ...formData, [id]: value });
     setErrors({ ...errors, [id]: "" });
-  };
-
-  const handleLocationChange = (selectedOption) => {
-    setLocation(selectedOption);
-    setFormData({
-      ...formData,
-      location: selectedOption ? selectedOption.value : "",
-    });
-    if (selectedOption) {
-      setErrors({ ...errors, location: "" });
-    }
   };
 
   const handleSubmit = (e) => {
