@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Swal from "sweetalert2"; // Import SweetAlert2
 import { useLocation } from "react-router-dom";
 
@@ -24,7 +24,9 @@ const AddFood = () => {
   const [showModal, setShowModal] = useState(false); // Track modal visibility
   const [errors, setErrors] = useState({}); // State for storing field-specific errors
   const [foodItems, setFoodItems] = useState([]); // State to store food items
-  const [closeCategory, setCloseCategory] = useState(false);
+  const [isAlert, setIsAlert] = useState(false);
+
+  const closRef = useRef(null);
 
   useEffect(() => {
     if (userData) {
@@ -95,10 +97,6 @@ const AddFood = () => {
 
     // Reset form
     resetForm();
-  };
-
-  const handleCross = () => {
-    setCloseCategory(false);
   };
 
   const resetForm = () => {
@@ -174,6 +172,11 @@ const AddFood = () => {
   // Function to go back to the previous page
   const handleBack = () => {
     window.history.back();
+  };
+
+  const handleCross = () => {
+    resetForm();
+    onClose();
   };
 
   return (
@@ -258,23 +261,6 @@ const AddFood = () => {
                       <div className="invalid-feedback">{errors.category}</div>
                     )}
                   </div>
-
-                  <div className="mb-3 col-lg-12">
-                    <label className="form-label">Food Type</label>
-                    <input
-                      className={`form-control ${
-                        errors.foodType ? "is-invalid" : ""
-                      }`}
-                      type="text"
-                      placeholder="Enter food type"
-                      value={foodType}
-                      onChange={(e) => setFoodType(e.target.value)}
-                    />
-                    {errors.foodType && (
-                      <div className="invalid-feedback">{errors.foodType}</div>
-                    )}
-                  </div>
-
                   <div className="mb-3 col-lg-12">
                     <label className="form-label">Approval Status</label>
                     <div style={{ display: "flex" }}>
@@ -347,17 +333,6 @@ const AddFood = () => {
             flexDirection: "column",
           }}
         >
-          {closeCategory && (
-                <div className="alert alert-dismissible alert-success">
-                  <button
-                    className="btn-close"
-                    type="button"
-                    data-bs-dismiss="alert"
-                    onClick={handleCross}
-                  ></button>
-                  x
-                </div>
-              )}
           <div className="modal-content animated-modal">
             <div className="modal-header">
               <h5 className="modal-title">Add New Category</h5>
@@ -367,6 +342,13 @@ const AddFood = () => {
                 onClick={() => setShowModal(false)}
               ></button>
             </div>
+            <button
+              className="cross-button"
+              aria-label="Close"
+              onClick={handleCross}
+            >
+              <i className="fa-solid fa-times"></i>
+            </button>
             <div className="modal-body">
               <div className="mb-3">
                 <label htmlFor="newCategory" className="form-label">

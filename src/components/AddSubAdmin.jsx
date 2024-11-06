@@ -26,7 +26,7 @@ const AddSubAdmin = ({ user, onClose }) => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [showAddButton, setShowAddButton] = useState(false);
-  const [openDropdown, setOpenDropdown] = useState(null);
+  const formRef = useRef(null);
 
   useEffect(() => {
     if (user) {
@@ -42,19 +42,19 @@ const AddSubAdmin = ({ user, onClose }) => {
       setIsEditMode(true);
     }
     const handleClickOutside = (event) => {
-      if (closRef.current && !closRef.current.contains(event.target)) {
-        setOpenDropdown(null);
+      if (formRef.current && !formRef.current.contains(event.target)) {
+        onClose();
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [user, openDropdown, setOpenDropdown]);
+  }, [user, onClose]);
 
   const validateForm = () => {
     const newErrors = {};
-  
+
     // Name validation
     if (!formData.name) {
       newErrors.name = "Name is required.";
@@ -64,33 +64,38 @@ const AddSubAdmin = ({ user, onClose }) => {
         newErrors.name = "Name should only contain letters.";
       }
     }
-  
+
     // Other validations
     if (!formData.email) newErrors.email = "Email is required.";
-    if (!formData.hospital) newErrors.hospital = "Hospital/Clinic name is required.";
+    if (!formData.hospital)
+      newErrors.hospital = "Hospital/Clinic name is required.";
     if (!formData.location) newErrors.location = "Location is required.";
     if (!formData.phone) newErrors.phone = "Phone number is required.";
-    if (!formData.designation) newErrors.designation = "Designation is required.";
-  
+    if (!formData.designation)
+      newErrors.designation = "Designation is required.";
+
     if (!formData.password && !isEditMode) {
       newErrors.password = "Password is required.";
     } else if (formData.password && formData.password.length < 8) {
       newErrors.password = "Password must be at least 8 characters long.";
     } else if (!/[A-Z]/.test(formData.password)) {
-      newErrors.password = "Password must contain at least one uppercase letter.";
+      newErrors.password =
+        "Password must contain at least one uppercase letter.";
     } else if (!/[a-z]/.test(formData.password)) {
-      newErrors.password = "Password must contain at least one lowercase letter.";
+      newErrors.password =
+        "Password must contain at least one lowercase letter.";
     } else if (!/[0-9]/.test(formData.password)) {
       newErrors.password = "Password must contain at least one numeric digit.";
     } else if (!/[!@#$%^&*(),.?":{}|<>]/.test(formData.password)) {
-      newErrors.password = "Password must contain at least one special character.";
+      newErrors.password =
+        "Password must contain at least one special character.";
     }
-  
+
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (formData.email && !emailPattern.test(formData.email)) {
       newErrors.email = "Please enter a valid email address.";
     }
-  
+
     if (
       formData.phone &&
       (!/^\d{10}$/.test(formData.phone.replace(/[-\s]/g, "")) ||
@@ -98,7 +103,7 @@ const AddSubAdmin = ({ user, onClose }) => {
     ) {
       newErrors.phone = "Phone number must be a 10-digit numeric value.";
     }
-  
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -197,7 +202,7 @@ const AddSubAdmin = ({ user, onClose }) => {
   };
 
   return (
-    <div className="" style={{ position: "relative" }}>
+    <div ref={formRef} style={{ position: "relative" }}>
       <button
         className="cross-button"
         aria-label="Close"
@@ -384,7 +389,7 @@ const AddSubAdmin = ({ user, onClose }) => {
               type="submit"
             >
               <i className="fa-thin fa-paper-plane"></i> &nbsp;
-              {isEditMode ? "Update Sub-Admin" : "Submit"}
+              {isEditMode ? "Update Sub-Admin" : "Add Sub-Admin"}
             </button>
           </div>
         </form>

@@ -4,7 +4,6 @@ import $ from "jquery";
 import "dropify";
 
 const AddFitzoneSession = () => {
-
   const [formData, setFormData] = useState({
     title: "",
     video: "",
@@ -30,6 +29,10 @@ const AddFitzoneSession = () => {
     console.log("Form Data:", formData);
   };
 
+  const handleBack = () => {
+    window.history.back();
+  };
+
   return (
     <main className="app-content">
       <div className="app-title tile p-3">
@@ -37,6 +40,15 @@ const AddFitzoneSession = () => {
           <span className="mr-4">&nbsp; Add Session</span>
         </h1>
       </div>
+      <button
+        className="btn mb-2 ms-2"
+        style={{ backgroundColor: "#002538", color: "white" }}
+        type="button"
+        onClick={handleBack}
+      >
+        <i className="fa-solid fa-arrow-left" style={{ color: "#fff" }}></i>{" "}
+        &nbsp;Previous
+      </button>
       <div className="row">
         <div
           className="col-md-10 px-5 w-100"
@@ -124,6 +136,6 @@ const AddFitzoneSession = () => {
       </div>
     </main>
   );
-}
+};
 
-export default AddFitzoneSession
+export default AddFitzoneSession;

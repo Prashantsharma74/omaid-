@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Swal from "sweetalert2";
 
 const AddUser = ({ user, onClose }) => {
@@ -21,6 +21,7 @@ const AddUser = ({ user, onClose }) => {
 
   // State for error messages
   const [errors, setErrors] = useState({});
+  const formRef = useRef(null);
 
   // Set form data when the user prop changes
   useEffect(() => {
@@ -41,7 +42,16 @@ const AddUser = ({ user, onClose }) => {
       });
       setIsEditMode(true);
     }
-  }, [user]);
+    const handleClickOutside = (event) => {
+      if (formRef.current && !formRef.current.contains(event.target)) {
+        onClose();
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [user, onClose]);
 
   // Handle form field changes and update the formData state
   const handleChange = (e) => {
@@ -164,7 +174,7 @@ const AddUser = ({ user, onClose }) => {
   };
 
   return (
-    <div style={{ position: "relative" }}>
+    <div ref={formRef} style={{ position: "relative" }}>
       <button className="cross-button" aria-label="Close" onClick={handleClose}>
         <i className="fa-solid fa-times"></i>
       </button>

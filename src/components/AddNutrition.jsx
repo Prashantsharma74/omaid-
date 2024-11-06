@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 const AddNutrition = ({ onClose, onSubmit }) => {
   const [formData, setFormData] = useState({
@@ -12,6 +12,8 @@ const AddNutrition = ({ onClose, onSubmit }) => {
   });
 
   const [errors, setErrors] = useState({});
+  
+  const formRef = useRef(null);
 
   const handleChange = (e) => {
     const { id, value } = e.target;
@@ -55,9 +57,21 @@ const AddNutrition = ({ onClose, onSubmit }) => {
     }
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (formRef.current && !formRef.current.contains(event.target)) {
+        onClose();
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  },[onClose])
+
   return (
     <>
-      <div
+      <div ref={formRef}
         className="case-status d-flex justify-content-center text-align-center"
         style={{
           backgroundColor: "#002538",

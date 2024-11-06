@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Swal from "sweetalert2";
 
 const AddFitezoneCategory = ({ onClose }) => {
   const [title, setTitle] = useState("");
   const [duration, setDuration] = useState("");
   const [errors, setErrors] = useState({});
+  const formRef = useRef(null);
 
   const validateForm = () => {
     let formErrors = {};
@@ -53,8 +54,20 @@ const AddFitezoneCategory = ({ onClose }) => {
     onClose();
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (formRef.current && !formRef.current.contains(event.target)) {
+        onClose();
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [onClose]);
+
   return (
-    <div className="" style={{ position: "relative" }}>
+    <div ref={formRef} style={{ position: "relative" }}>
       <button className="cross-button" aria-label="Close" onClick={onClose}>
         <i className="fa-solid fa-times"></i>
       </button>

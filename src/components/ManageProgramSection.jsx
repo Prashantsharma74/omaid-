@@ -181,7 +181,7 @@ const ManageProgramSection = () => {
                         <td>{currentPage * itemsPerPage + index + 1}</td>
                         <td>{user.title}</td>
                         <td>
-                          <div
+                          {/* <div
                             className="dropdown text-center"
                             ref={dropdownRef}
                           >
@@ -199,7 +199,13 @@ const ManageProgramSection = () => {
                                 </Link>
                               </div>
                             )}
-                          </div>
+                          </div> */}
+                          <button
+                            className="btn"
+                            style={{ border: "3px solid #e5e5e5" }}
+                          >
+                            Manage
+                          </button>
                         </td>
                       </tr>
                     ))}
