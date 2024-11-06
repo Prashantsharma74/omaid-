@@ -162,17 +162,6 @@ const AddProgram = () => {
             </div>
             <div className="tile-body p-3">
               <div className="bs-component mb-3">
-                {isAlert && (
-                  <div className="alert alert-dismissible alert-success">
-                    <button
-                      className="btn-close"
-                      type="button"
-                      onClick={handleCross}
-                    ></button>
-                    <strong>Well done!</strong> Program{" "}
-                    {programData ? "updated" : "added"} successfully.
-                  </div>
-                )}
               </div>
               <form onSubmit={handleSubmit}>
                 <div className="row">
