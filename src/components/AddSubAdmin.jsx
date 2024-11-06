@@ -78,7 +78,6 @@ const AddSubAdmin = ({ user, onClose }) => {
       "&:hover": { borderColor: errors.location ? "red" : base.borderColor },
     }),
   };
-  
 
   // Add specific logic for clearing the country input
   const handleClearLocation = () => {
@@ -144,7 +143,7 @@ const AddSubAdmin = ({ user, onClose }) => {
     }
 
     setErrors(newErrors);
-  return Object.keys(newErrors).length === 0;
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleChange = (e) => {
@@ -162,7 +161,7 @@ const AddSubAdmin = ({ user, onClose }) => {
     if (selectedOption) {
       setErrors({ ...errors, location: "" });
     }
-  }  
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -291,31 +290,30 @@ const AddSubAdmin = ({ user, onClose }) => {
               )}
             </div>
             <div className="mb-3 col-md-6" style={{ position: "relative" }}>
-  <label className="form-label">Country</label>
-  <CreatableSelect
-  value={location}
-  options={locationOptions}
-  onChange={handleLocationChange}
-  onCreateOption={(inputValue) => {
-    const newLocation = { value: inputValue, label: inputValue };
-    setLocationOptions([...locationOptions, newLocation]);
-    setLocation(newLocation);
-    setFormData({
-      ...formData,
-      location: inputValue,
-    });
-  }}
-  onClear={handleClearLocation}
-  placeholder="Enter or select Country"
-  classNamePrefix="react-select"
-  styles={customSelectStyles} // Apply custom styles here
-  className={errors.location ? "is-invalid" : ""} // Conditional class
-/>
-  {errors.location && (
-    <div className="invalid-feedback">{errors.location}</div>
-  )}
-</div>
-
+              <label className="form-label">Country</label>
+              <CreatableSelect
+                value={formData.location}
+                options={locationOptions}
+                onChange={handleLocationChange}
+                onCreateOption={(inputValue) => {
+                  const newLocation = { value: inputValue, label: inputValue };
+                  setLocationOptions([...locationOptions, newLocation]);
+                  setLocation(newLocation);
+                  setFormData({
+                    ...formData,
+                    location: inputValue,
+                  });
+                }}
+                onClear={handleClearLocation}
+                placeholder="Enter or select Country"
+                classNamePrefix="react-select"
+                styles={customSelectStyles} // Apply custom styles here
+                className={errors.location ? "is-invalid" : ""} // Conditional class
+              />
+              {errors.location && (
+                <div className="invalid-feedback">{errors.location}</div>
+              )}
+            </div>
 
             <div className="mb-3 col-md-6">
               <label className="form-label">Phone Number</label>

@@ -54,8 +54,22 @@ const AddProgram = () => {
   const validate = () => {
     const newErrors = {};
     if (!formData.title) newErrors.title = "Title is required.";
-    if (!formData.description) newErrors.description = "Description is required.";
-    if (!formData.image) newErrors.image = "Image is required.";
+    if (!formData.description)
+      newErrors.description = "Description is required.";
+    if (!formData.image) {
+      newErrors.image = "Image upload is required.";
+    } else {
+      const file = formData.image[0];
+      const validTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+      if (!validTypes.includes(file.type)) {
+        newErrors.image =
+          "Invalid file type. Allowed types are JPG, PNG, GIF, and WEBP.";
+      }
+      if (file.size > 6 * 1024 * 1024) {
+        newErrors.image = "File size is too large. Maximum size is 6MB.";
+      }
+    }
+
     if (!formData.duration) newErrors.duration = "Duration is required.";
 
     return newErrors;
@@ -69,13 +83,33 @@ const AddProgram = () => {
       return;
     }
 
-    if (programData) {
-      console.log("Updating Program: ", formData);
-    } else {
-      console.log("Adding Program: ", formData);
-    }
+    Swal.fire({
+      title: "Success!",
+      text: `Program ${programData ? "updated" : "added"} successfully.`,
+      icon: "success",
+      confirmButtonText: "OK",
+    });
 
-    setIsAlert(true);
+    setFormData({ title: "", description: "", image: null, duration: "" });
+    const dropifyElement = $(".dropify").dropify();
+    dropifyElement.data("dropify").resetPreview();
+    dropifyElement.data("dropify").clearElement();
+  };
+
+  const handleFileChange = (e) => {
+    const files = e.target.files;
+    setFormData((prevData) => ({
+      ...prevData,
+      image: files,
+    }));
+
+    if (files.length > 0) {
+      setErrors((prevErrors) => {
+        const newErrors = { ...prevErrors };
+        delete newErrors.image;
+        return newErrors;
+      });
+    }
   };
 
   // Options for Duration dropdown
@@ -85,7 +119,10 @@ const AddProgram = () => {
   }));
 
   const handleDurationChange = (selectedOption) => {
-    setFormData((prevData) => ({ ...prevData, duration: selectedOption.value }));
+    setFormData((prevData) => ({
+      ...prevData,
+      duration: selectedOption.value,
+    }));
     setErrors((prevErrors) => ({ ...prevErrors, duration: "" }));
   };
 
@@ -124,6 +161,19 @@ const AddProgram = () => {
               <h4 className="mt-2">Add Program</h4>
             </div>
             <div className="tile-body p-3">
+              <div className="bs-component mb-3">
+                {isAlert && (
+                  <div className="alert alert-dismissible alert-success">
+                    <button
+                      className="btn-close"
+                      type="button"
+                      onClick={handleCross}
+                    ></button>
+                    <strong>Well done!</strong> Program{" "}
+                    {programData ? "updated" : "added"} successfully.
+                  </div>
+                )}
+              </div>
               <form onSubmit={handleSubmit}>
                 <div className="row">
                   <div className="mb-3 col-md-12">
@@ -166,27 +216,26 @@ const AddProgram = () => {
                       type="file"
                       className={`dropify ${errors.image ? "is-invalid" : ""}`}
                       data-height="100"
-                      accept=".jpg,.jpeg,.png,.gif,.webp,.pdf"
+                      accept=".jpg,.jpeg,.png,.gif,.webp"
+                      onChange={handleFileChange}
                     />
                     {errors.image && (
-                      <div className="invalid-feedback">{errors.image}</div>
+                      <small className="text-danger">{errors.image}</small>
                     )}
                     <small className="form-text text-muted upload-info mt-2 mb-2">
                       Maximum Image Size: Up to 6MB per upload
                     </small>
                   </div>
+
                   <div className="mb-3 col-md-12">
                     <label className="form-label">Duration</label>
                     <Select
-                    placeholder="Select Plan"
                       options={durationOptions}
                       value={durationOptions.find(
                         (option) => option.value === formData.duration
                       )}
                       onChange={handleDurationChange}
-                      className={`${
-                        errors.duration ? "is-invalid" : ""
-                      }`}
+                      className={`${errors.duration ? "is-invalid" : ""}`}
                     />
                     {errors.duration && (
                       <div className="invalid-feedback">{errors.duration}</div>
