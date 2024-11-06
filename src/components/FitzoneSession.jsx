@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
+import FitzoneSessionAddTable from './TableFitzone/FitzoneSessionAddTable';
 
 const FitzoneSession = () => {
   const DEFAULT_ITEMS_PER_PAGE = 10;
@@ -241,7 +242,7 @@ const FitzoneSession = () => {
                       <thead>
                         <tr>
                           <th>S.No</th>
-                          <th>Category Name</th>
+                          <th>Session Name</th>
                           <th>Status</th>
                           <th>Action</th>
                         </tr>
@@ -263,31 +264,12 @@ const FitzoneSession = () => {
                               </div>
                             </td>
                             <td>
-                              <div className="dropdown text-center" ref={dropdownRef}>
-                                <button
-                                  className="dropdown-button"
-                                  onClick={() => handleDropdownToggle(index)}
-                                  aria-haspopup="true"
-                                >
-                                  <i className="fa fa-ellipsis-v"></i>
-                                </button>
-                                {openDropdownIndex === index && (
-                                  <div className="dropdown-menu show">
-                                    <button
-                                      className="dropdown-item"
-                                      onClick={() => handleEdit(user)}
-                                    >
-                                      <i className="fa fa-edit"></i> Edit
-                                    </button>
-                                    <a
-                                      className="dropdown-item"
-                                      onClick={() => handleDelete(user.SNo)}
-                                    >
-                                      <i className="fa fa-trash"></i> Delete
-                                    </a>
-                                  </div>
-                                )}
-                              </div>
+                              <FitzoneSessionAddTable 
+                              openDropdownIndex={openDropdownIndex}
+                              setOpenDropdownIndex={setOpenDropdownIndex}
+                              user={user}
+                              handleEdit={handleEdit}
+                              />
                             </td>
                           </tr>
                         ))}
