@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { format } from "date-fns";
+import ApproveNotApproveTable from "./TableFitzone/ApproveNotApproveTable";
 
 const ApproveNonApprove = () => {
   const DEFAULT_ITEMS_PER_PAGE = 10;
@@ -13,11 +14,6 @@ const ApproveNonApprove = () => {
 
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
-
-  const handleDropdownToggle = (index) => {
-    setOpenDropdownIndex(openDropdownIndex === index ? null : index);
-  };
-
   const visiblePages = 4;
 
   const getPaginationButtons = () => {
@@ -280,34 +276,12 @@ const ApproveNonApprove = () => {
                               </div>
                             </td>
                             <td>
-                              <div
-                                className="dropdown text-center"
-                                ref={dropdownRef}
-                              >
-                                <button
-                                  className="dropdown-button"
-                                  onClick={() => handleDropdownToggle(index)}
-                                  aria-haspopup="true"
-                                >
-                                  <i className="fa fa-ellipsis-v"></i>
-                                </button>
-                                {openDropdownIndex === index && (
-                                  <div className="dropdown-menu show">
-                                    <button
-                                      className="dropdown-item"
-                                      onClick={() => handleEdit(user)}
-                                    >
-                                      <i className="fa fa-edit"></i> Edit
-                                    </button>
-                                    <a
-                                      className="dropdown-item"
-                                      onClick={() => handleDelete(user.SNo)}
-                                    >
-                                      <i className="fa fa-trash"></i> Delete
-                                    </a>
-                                  </div>
-                                )}
-                              </div>
+                              <ApproveNotApproveTable
+                                openDropdown={openDropdownIndex}
+                                setOpenDropdown={setOpenDropdownIndex}
+                                user={user}
+                                handleEdit={handleEdit}
+                              />
                             </td>
                           </tr>
                         ))}

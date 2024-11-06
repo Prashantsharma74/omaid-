@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { format } from "date-fns";
+import DietMealTable from "./TableFitzone/DietMealTable";
+import Swal from "sweetalert2";
 
 const Diet = () => {
   const DEFAULT_ITEMS_PER_PAGE = 10;
@@ -13,10 +15,6 @@ const Diet = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
   const dropdownRef = useRef(null);
-
-  const handleDropdownToggle = (index) => {
-    setOpenDropdownIndex(openDropdownIndex === index ? null : index);
-  };
 
   const fetchData = () => {
     setTimeout(() => {
@@ -109,9 +107,9 @@ const Diet = () => {
       prevData.map((item) =>
         item.SNo === sNo
           ? {
-            ...item,
-            Status: item.Status === "Active" ? "Inactive" : "Active",
-          }
+              ...item,
+              Status: item.Status === "Active" ? "Inactive" : "Active",
+            }
           : item
       )
     );
@@ -123,8 +121,21 @@ const Diet = () => {
   };
 
   const handleDelete = (sNo) => {
-    setTableData((prevData) => prevData.filter((item) => item.SNo !== sNo));
-    setOpenDropdownIndex(null);
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        setTableData((prevData) => prevData.filter((item) => item.SNo !== sNo));
+        setOpenDropdownIndex(null);
+        Swal.fire("Deleted!", "Your record has been deleted.", "success");
+      }
+    });
   };
 
   // Function to go back to the previous page
@@ -237,7 +248,7 @@ const Diet = () => {
                     <tbody>
                       {paginatedData.map((diet, index) => (
                         <tr key={diet.SNo}>
-                          <td>{diet.SNo}</td>
+                          <td>{index + 1}</td>
                           <td>
                             {format(new Date(diet.LastEdit), "dd-MM-yyyy")}
                           </td>
@@ -253,31 +264,13 @@ const Diet = () => {
                             </div>
                           </td>
                           <td>
-                            <div className="dropdown text-center" ref={dropdownRef}>
-                              <button
-                                className="dropdown-button"
-                                onClick={() => handleDropdownToggle(index)}
-                                aria-haspopup="true"
-                              >
-                                <i className="fa fa-ellipsis-v"></i>
-                              </button>
-                              {openDropdownIndex === index && (
-                                <div className="dropdown-menu show">
-                                  <button
-                                    className="dropdown-item"
-                                    onClick={() => handleEdit(diet)}
-                                  >
-                                    <i className="fa fa-edit"></i> Edit
-                                  </button>
-                                  <a
-                                    className="dropdown-item"
-                                    onClick={() => handleDelete(diet.SNo)}
-                                  >
-                                    <i className="fa fa-trash"></i> Delete
-                                  </a>
-                                </div>
-                              )}
-                            </div>
+                            <DietMealTable
+                              setOpenDropdown={setOpenDropdownIndex}
+                              openDropdown={openDropdownIndex}
+                              handleEdit={handleEdit}
+                              handleDelete={handleDelete}
+                              user={diet}
+                            />
                           </td>
                         </tr>
                       ))}

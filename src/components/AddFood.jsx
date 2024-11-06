@@ -333,23 +333,22 @@ const AddFood = () => {
             flexDirection: "column",
           }}
         >
-          <div className="modal-content animated-modal">
+          <div className="modal-content animated-modal p-0">
             <div className="modal-header">
-              <h5 className="modal-title">Add New Category</h5>
-              <button
-                type="button"
-                className="btn-close"
-                onClick={() => setShowModal(false)}
-              ></button>
+              <div
+                className="case-status d-flex justify-content-center"
+                style={{
+                  backgroundColor: "#002538",
+                  color: "#fff",
+                  height: "50px",
+                  textAlign: "center",
+                  width: "100%",
+                }}
+              >
+                <h4 className="mt-2">Add New Category</h4>
+              </div>
             </div>
-            <button
-              className="cross-button"
-              aria-label="Close"
-              onClick={handleCross}
-            >
-              <i className="fa-solid fa-times"></i>
-            </button>
-            <div className="modal-body">
+            <div className="modal-body p-2">
               <div className="mb-3">
                 <label htmlFor="newCategory" className="form-label">
                   Category Name
@@ -365,7 +364,7 @@ const AddFood = () => {
               </div>
               <div className="mb-3">
                 <label htmlFor="newCategoryImage" className="form-label">
-                  Food Icon
+                  Icon
                 </label>
                 <input
                   type="file"
@@ -384,7 +383,14 @@ const AddFood = () => {
                 )}
               </div>
             </div>
-            <div style={{ width: "100%" }}>
+            <div
+              className="modal-footer p-2"
+              style={{
+                display: "flex",
+                alignItems: "flex-start",
+                justifyContent: "flex-start",
+              }}
+            >
               <button
                 type="button"
                 className="btn btn-secondary"
@@ -395,14 +401,16 @@ const AddFood = () => {
               <button
                 type="button"
                 className="btn ms-2"
-                style={{ backgroundColor: "#002538", color: "white" }}
+                style={{
+                  backgroundColor: "#002538",
+                  color: "white",
+                  marginLeft: "10px",
+                }}
                 onClick={handleSaveCategory}
               >
                 Save Category
               </button>
             </div>
-          </div>
-          <div className="mt-3 modal-content animated-modal">
             <table className="table mt-2 table-bordered table-hover dt-responsive">
               <thead>
                 <tr>
@@ -423,13 +431,14 @@ const AddFood = () => {
                     <td>
                       <button
                         className="btn btn-warning"
+                        style={{ padding: "2px 6px" }}
                         onClick={() => handleEditCategory(index)}
                       >
                         Edit
                       </button>
                       <button
                         className="btn btn-danger"
-                        style={{ marginLeft: "10px" }}
+                        style={{ marginLeft: "10px", padding: "2px 6px" }}
                         onClick={() => handleDeleteCategory(index)}
                       >
                         Delete

@@ -465,7 +465,7 @@ const AddBlogs = () => {
                 Save Category
               </button>
             </div>
-            <table className="table mt-3 table-bordered table-hover dt-responsive">
+            <table className="table mt-4 table-bordered table-hover dt-responsive">
               <thead>
                 <tr>
                   <th>Sr.No</th>
