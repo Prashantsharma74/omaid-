@@ -52,7 +52,16 @@ const ManageProgram = () => {
       const users = [
         {
           srNum: 1,
-          title: "Title 1",
+          title: "HCG Program",
+          description: "Description for Title 1",
+          image:
+            "https://images.unsplash.com/photo-1576158113928-4c240eaaf360?w=500&auto=format&fit=crop&q=60",
+          duration: "2 hours",
+          status: "Active",
+        },
+        {
+          srNum: 2,
+          title: "Weightloss Program",
           description: "Description for Title 1",
           image:
             "https://images.unsplash.com/photo-1576158113928-4c240eaaf360?w=500&auto=format&fit=crop&q=60",
