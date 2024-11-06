@@ -25,6 +25,14 @@ const DietMeal = () => {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [showAddButton, setShowAddButton] = useState(false);
 
+  const customSelectStyles = {
+    control: (base, state) => ({
+      ...base,
+      borderColor: errors.food ? "red" : base.borderColor,
+      "&:hover": { borderColor: errors.food ? "red" : base.borderColor },
+    }),
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -190,6 +198,8 @@ const DietMeal = () => {
                       onCreateOption={handleFoodCreate}
                       placeholder="Enter or select food"
                       classNamePrefix="react-select"
+                      styles={customSelectStyles} // Apply custom styles here
+                      className={errors.food ? "is-invalid" : ""} // Conditional class
                     />
                     {errors.food && (
                       <div className="invalid-feedback">{errors.food}</div>
