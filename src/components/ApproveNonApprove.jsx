@@ -127,9 +127,9 @@ const ApproveNonApprove = () => {
       prevData.map((item) =>
         item.SNo === sNo
           ? {
-            ...item,
-            Status: item.Status === "Active" ? "Inactive" : "Active",
-          }
+              ...item,
+              Status: item.Status === "Active" ? "Inactive" : "Active",
+            }
           : item
       )
     );
@@ -259,10 +259,11 @@ const ApproveNonApprove = () => {
                             <td>{user.FoodType}</td>
                             <td>
                               <span
-                                className={`badge ${user.Approved === "Approved"
+                                className={`badge ${
+                                  user.Approved === "Approved"
                                     ? "badge-success"
                                     : "badge-warning"
-                                  }`}
+                                }`}
                               >
                                 {user.Approved}
                               </span>
@@ -279,7 +280,10 @@ const ApproveNonApprove = () => {
                               </div>
                             </td>
                             <td>
-                              <div className="dropdown text-center" ref={dropdownRef}>
+                              <div
+                                className="dropdown text-center"
+                                ref={dropdownRef}
+                              >
                                 <button
                                   className="dropdown-button"
                                   onClick={() => handleDropdownToggle(index)}

@@ -124,9 +124,6 @@ const AddProgram = () => {
               <h4 className="mt-2">Add Program</h4>
             </div>
             <div className="tile-body p-3">
-              <div className="bs-component mb-3">
-                
-              </div>
               <form onSubmit={handleSubmit}>
                 <div className="row">
                   <div className="mb-3 col-md-12">
