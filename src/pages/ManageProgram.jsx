@@ -256,13 +256,10 @@ const ManageProgram = () => {
                                   />
                                 </div>
                               </td>
-                              <td>
+                              <td style={{display:"flex",alignItems:"center",justifyContent:"center"}}>
                                 <Link
-                                  className="btn"
+                                  className="btns btns-first"
                                   to="/manage-program/manage"
-                                  style={{
-                                    borderBottom: "3px solid #002538",
-                                  }}
                                   title="Manage Program"
                                 >
                                   Open Program
