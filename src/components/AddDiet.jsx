@@ -1,4 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import "dropify/dist/css/dropify.css";
+import $ from "jquery";
+import "dropify";
+import Swal from "sweetalert2";
 
 const AddDiet = () => {
   const [formData, setFormData] = useState({
@@ -6,73 +10,87 @@ const AddDiet = () => {
     description: "",
     file: null,
   });
-
   const [errors, setErrors] = useState({});
-  const [isAlert, setIsAlert] = useState(false);
 
-  const handleChange = (e) => {
-    const { id, value } = e.target;
+  useEffect(() => {
+    // Initialize Dropify
+    $(".dropify").dropify();
+  }, []);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const formErrors = {};
+
+    if (!formData.title) formErrors.title = "Title is required.";
+    if (!formData.description) formErrors.description = "Description is required.";
+    if (!formData.file) formErrors.file = "File upload is required.";
+
+    if (formData.file) {
+      const file = formData.file[0];
+      const validTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+      if (!validTypes.includes(file.type)) {
+        formErrors.file = "Invalid file type. Allowed types are JPG, PNG, GIF, and WEBP.";
+      }
+      if (file.size > 6 * 1024 * 1024) {
+        formErrors.file = "File size is too large. Maximum size is 6MB.";
+      }
+    }
+
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
+    } else {
+      console.log("Form data submitted successfully:", formData);
+      setErrors({});
+
+      // Success message with SweetAlert
+      Swal.fire({
+        title: "Success!",
+        text: "Diet added successfully.",
+        icon: "success",
+        confirmButtonText: "OK",
+      });
+
+      // Clear form data
+      setFormData({ title: "", description: "", file: null });
+
+      // Reset Dropify
+      const dropifyElement = $(".dropify").dropify();
+      dropifyElement.data("dropify").resetPreview();
+      dropifyElement.data("dropify").clearElement();
+    }
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
-      [id]: value,
+      [name]: value,
     }));
   };
 
   const handleFileChange = (e) => {
-    const selectedFile = e.target.files[0];
+    const files = e.target.files;
     setFormData((prevData) => ({
       ...prevData,
-      file: selectedFile,
+      file: files,
     }));
-  };
 
-  const validateForm = () => {
-    const newErrors = {};
-    if (!formData.title) {
-      newErrors.title = "Title is required.";
+    if (files.length > 0) {
+      setErrors((prevErrors) => {
+        const newErrors = { ...prevErrors };
+        delete newErrors.file;
+        return newErrors;
+      });
     }
-    if (!formData.description) {
-      newErrors.description = "Description is required.";
-    }
-    if (!formData.file) {
-      newErrors.file = "File upload is required.";
-    } else if (!/\.(jpg|jpeg|png|gif|webp|pdf)$/.test(formData.file.name)) {
-      newErrors.file = "Invalid file type. Please upload an image or PDF.";
-    } else if (formData.file.size > 6 * 1024 * 1024) {
-      // 6MB limit
-      newErrors.file = "File size exceeds 6MB.";
-    }
-    return newErrors;
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const validationErrors = validateForm();
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      setIsAlert(true);
-    } else {
-      setErrors({});
-      console.log("Form submitted successfully:", formData);
-      // Reset the form if needed
-      setFormData({ title: "", description: "", file: null });
-    }
-  };
-
-  const handleCross = () => {
-    setIsAlert(false);
-  };
-
-  const handleBack = () => {
-    window.history.back();
   };
 
   return (
     <main className="app-content">
       <div className="app-title tile p-3">
         <div>
-          <h1 className="">
-            <span className="mr-4 fw-bold">&nbsp; Add Diet Plan</span>
+          <h1>
+            <span className="mr-4">&nbsp; Add Diet</span>
           </h1>
         </div>
       </div>
@@ -80,16 +98,17 @@ const AddDiet = () => {
         className="btn mb-2 ms-2"
         style={{ backgroundColor: "#002538", color: "white" }}
         type="button"
-        onClick={handleBack}
+        onClick={() => window.history.back()}
       >
-        <i className="fa-solid fa-arrow-left" style={{ color: "#fff" }}></i> &nbsp;Previous
+        <i className="fa-solid fa-arrow-left" style={{ color: "#fff" }}></i>{" "}
+        &nbsp;Previous
       </button>
 
-      <div className="row justify-content-center">
-        <div className="col-md-8 px-5">
-          <div className="tile">
+      <div className="row">
+        <div className="col-md-10 px-5 w-100 d-flex align-items-center justify-content-center">
+          <div className="tile w-75">
             <div
-              className="case-status d-flex justify-content-center"
+              className="case-status d-flex justify-content-center text-align-center"
               style={{
                 backgroundColor: "#002538",
                 color: "#fff",
@@ -101,121 +120,63 @@ const AddDiet = () => {
               <h4 className="mt-2">Add Diet</h4>
             </div>
             <div className="tile-body p-3">
-              {isAlert && (
-                <div className="alert alert-dismissible alert-success">
-                  <button
-                    className="btn-close"
-                    type="button"
-                    data-bs-dismiss="alert"
-                    onClick={handleCross}
-                  ></button>
-                  <strong>Well done!</strong> Diet added successfully.
-                </div>
-              )}
               <form onSubmit={handleSubmit}>
-                <div className="row">
-                  <div className="mb-3 col-md-12">
+                <div>
+                  <div className="mb-3 w-100">
                     <label className="form-label">Title</label>
                     <input
-                      className={`form-control ${
-                        errors.title ? "is-invalid" : ""
-                      }`}
-                      id="title"
+                      className="form-control"
                       type="text"
-                      placeholder="Enter title"
+                      placeholder="Enter Title Here"
+                      name="title"
                       value={formData.title}
-                      onChange={handleChange}
+                      onChange={handleInputChange}
                     />
                     {errors.title && (
-                      <div className="invalid-feedback">{errors.title}</div>
+                      <small className="text-danger">{errors.title}</small>
                     )}
                   </div>
-                  <div className="mb-3 col-md-6 w-100">
+                  <div className="mb-3 w-100">
                     <label className="form-label">Description</label>
                     <textarea
-                      id="description" // Set the id here
                       rows={6}
-                      className={`form-control ${
-                        errors.description ? "is-invalid" : ""
-                      }`}
-                      placeholder="Enter Description"
+                      className="form-control"
+                      placeholder="Enter description"
+                      name="description"
                       value={formData.description}
-                      onChange={handleChange}
-                    />
+                      onChange={handleInputChange}
+                    ></textarea>
                     {errors.description && (
-                      <div className="invalid-feedback">
-                        {errors.description}
-                      </div>
+                      <small className="text-danger">{errors.description}</small>
                     )}
                   </div>
+                </div>
 
-                  <div className="form-group mb-0 pb-0">
-                    <label htmlFor="pdf_file" className="form-label">
-                      Upload Document
-                    </label>
-                    <div
-                      className="dropify-wrapper"
-                      style={{ height: "110px" }}
-                    >
-                      <div className="dropify-message">
-                        <span className="file-icon"></span>
-                        <p>Drag Or Upload Your Document Here</p>
-                      </div>
-                      <div className="dropify-loader"></div>
-                      <div className="dropify-errors-container">
-                        <ul></ul>
-                      </div>
-                      <input
-                        name="pdf_file[]"
-                        id="pdf_file"
-                        type="file"
-                        className={`form-control dropify ${
-                          errors.file ? "is-invalid" : ""
-                        }`}
-                        data-height="100"
-                        required
-                        multiple // Ensure state handles this if multiple files are needed
-                        onChange={handleFileChange}
-                        accept=".jpg,.jpeg,.png,.gif,.webp,.pdf"
-                      />
-                      <button
-                        type="button"
-                        className="dropify-clear"
-                        style={{ display: "none" }}
-                      >
-                        Remove
-                      </button>
-                      <div className="dropify-preview">
-                        <span className="dropify-render"></span>
-                        <div className="dropify-infos">
-                          <div className="dropify-infos-inner">
-                            <p className="dropify-filename">
-                              <span className="file-icon"></span>
-                              <span className="dropify-filename-inner"></span>
-                            </p>
-                            <p className="dropify-infos-message">
-                              Drag and drop or click to replace
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    {errors.file && (
-                      <div className="invalid-feedback">{errors.file}</div>
-                    )}
-                    <small className="form-text text-muted upload-info mt-2 mb-2">
-                      Maximum Document Size: Up to 6MB per upload
-                    </small>
-                  </div>
+                <div className="form-group mb-0">
+                  <label className="form-label">Upload Icon</label>
+                  <input
+                    type="file"
+                    className="dropify"
+                    data-height="100"
+                    multiple
+                    accept=".jpg,.jpeg,.png,.gif,.webp,.pdf"
+                    onChange={handleFileChange}
+                  />
+                  {errors.file && (
+                    <small className="text-danger">{errors.file}</small>
+                  )}
+                  <small className="form-text text-muted upload-info mt-2 mb-2">
+                    Maximum Icon Size: Up to 6MB per upload
+                  </small>
+                </div>
 
-                  <div className="mb-2 mt-2 col-lg-12 text-center">
-                    <button
-                      className="btn custom-btn text-white w-50"
-                      type="submit"
-                    >
-                      <i className="fa-thin fa-paper-plane"></i> &nbsp; Submit
-                    </button>
-                  </div>
+                <div className="mb-3 text-center mt-3">
+                  <button
+                    className="btn custom-btn text-white w-25"
+                    type="submit"
+                  >
+                    <i className="fa-thin fa-paper-plane"></i> &nbsp; Add Diet
+                  </button>
                 </div>
               </form>
             </div>
