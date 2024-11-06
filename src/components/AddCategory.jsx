@@ -3,6 +3,7 @@ import "dropify/dist/css/dropify.css";
 import $ from "jquery";
 import "dropify";
 import { useLocation } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const AddCategory = () => {
   const [formData, setFormData] = useState({
@@ -11,71 +12,75 @@ const AddCategory = () => {
     file: null,
   });
   const [errors, setErrors] = useState({});
-  const [isAlert, setIsAlert] = useState(false);
   const location = useLocation();
   const [isEditMode, setIsEditMode] = useState(false);
 
-  // Initialize Dropify for file upload
   useEffect(() => {
+    // Initialize Dropify
     $(".dropify").dropify();
   }, []);
 
-  // Check if editing existing category
   useEffect(() => {
     if (location.state?.row) {
       setFormData({
         title: location.state.row.title || "",
         description: location.state.row.description || "",
-        file: location.state.row.file || null, // Assuming you have a file property
+        file: location.state.row.file || null,
       });
       setIsEditMode(true);
     }
   }, [location.state]);
 
-  // Modify form submission to validate file upload
   const handleSubmit = (e) => {
     e.preventDefault();
 
     const formErrors = {};
 
-    // Validate Title
-    if (!formData.title) {
-      formErrors.title = "Title is required.";
-    }
-
-    // Validate Description
-    if (!formData.description) {
+    if (!formData.title) formErrors.title = "Title is required.";
+    if (!formData.description)
       formErrors.description = "Description is required.";
-    }
+    if (!formData.file) formErrors.file = "An icon is required.";
 
-    // Validate File Upload
-    if (!formData.file || formData.file.length === 0) {
-      formErrors.file = "An icon is required.";
-    } else {
+    if (formData.file) {
+      const file = formData.file[0];
       const validTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
-      const file = formData.file[0]; // Get the first file
       if (!validTypes.includes(file.type)) {
         formErrors.file =
           "Invalid file type. Allowed types are JPG, PNG, GIF, and WEBP.";
       }
       if (file.size > 6 * 1024 * 1024) {
-        // 6MB limit
         formErrors.file = "File size is too large. Maximum size is 6MB.";
       }
     }
 
-    // If there are errors, set the error state and do not submit
     if (Object.keys(formErrors).length > 0) {
       setErrors(formErrors);
-      return;
-    }
+    } else {
+      console.log("Form data submitted successfully:", formData);
+      setErrors({});
 
-    // If no errors, proceed with form submission (e.g., API call)
-    console.log("Form data submitted successfully:", formData);
-    setErrors({}); // Clear errors on successful submission
+      // SweetAlert Success Message
+      Swal.fire({
+        title: "Success!",
+        text: "Your form has been submitted successfully.",
+        icon: "success",
+        confirmButtonText: "OK",
+      });
+
+      // Clear form data after successful submission
+      setFormData({
+        title: "",
+        description: "",
+        file: null,
+      });
+
+      // Clear the Dropify input
+      const dropifyElement = $(".dropify").dropify();
+      dropifyElement.data("dropify").resetPreview(); // Clears preview
+      dropifyElement.data("dropify").clearElement(); // Clears the file input
+    }
   };
 
-  // Handle input change
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -84,27 +89,20 @@ const AddCategory = () => {
     }));
   };
 
-  // File change handler
   const handleFileChange = (e) => {
     const files = e.target.files;
     setFormData((prev) => ({
       ...prev,
-      file: files, // Update file state
+      file: files,
     }));
 
-    // Reset file error if the user selects a file
     if (files.length > 0) {
       setErrors((prevErrors) => {
         const newErrors = { ...prevErrors };
-        delete newErrors.file; // Clear any previous file error
+        delete newErrors.file;
         return newErrors;
       });
     }
-  };
-
-  // Handle back button
-  const handleBack = () => {
-    window.history.back();
   };
 
   return (
@@ -120,21 +118,14 @@ const AddCategory = () => {
         className="btn mb-2 ms-2"
         style={{ backgroundColor: "#002538", color: "white" }}
         type="button"
-        onClick={handleBack}
+        onClick={() => window.history.back()}
       >
         <i className="fa-solid fa-arrow-left" style={{ color: "#fff" }}></i>{" "}
         &nbsp;Previous
       </button>
 
       <div className="row">
-        <div
-          className="col-md-10 px-5 w-100"
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
+        <div className="col-md-10 px-5 w-100 d-flex align-items-center justify-content-center">
           <div className="tile w-75">
             <div
               className="case-status d-flex justify-content-center text-align-center"
@@ -151,7 +142,7 @@ const AddCategory = () => {
             <div className="tile-body p-3">
               <form onSubmit={handleSubmit}>
                 <div>
-                  <div className="mb-3 col-md-6 col-sm-12 col-xs-12 col-lg-6 w-100">
+                  <div className="mb-3 w-100">
                     <label className="form-label">Title</label>
                     <input
                       className="form-control"
@@ -165,7 +156,7 @@ const AddCategory = () => {
                       <small className="text-danger">{errors.title}</small>
                     )}
                   </div>
-                  <div className="mb-3 col-md-6 col-sm-12 col-xs-12 col-lg-6 w-100">
+                  <div className="mb-3 w-100">
                     <label className="form-label">Description</label>
                     <textarea
                       rows={6}
@@ -183,32 +174,28 @@ const AddCategory = () => {
                   </div>
                 </div>
 
-                <div className="form-group mb-0 pb-0">
+                <div className="form-group mb-0">
                   <label className="form-label">Upload Icon</label>
                   <input
-                    name="pdf_file[]"
                     type="file"
                     className="dropify"
                     data-height="100"
-                    required
                     multiple
                     accept=".jpg,.jpeg,.png,.gif,.webp,.pdf"
-                    onChange={handleFileChange} // Call file change handler
+                    onChange={handleFileChange}
                   />
                   {errors.file && (
                     <small className="text-danger">{errors.file}</small>
-                  )}{" "}
-                  {/* Display file error */}
+                  )}
                   <small className="form-text text-muted upload-info mt-2 mb-2">
                     Maximum Icon Size: Up to 6MB per upload
                   </small>
                 </div>
 
-                <div className="mb-3 col-lg-12 col-sm-12 col-xs-12 col-md-12 text-center mt-3">
+                <div className="mb-3 text-center mt-3">
                   <button
                     className="btn custom-btn text-white w-50"
                     type="submit"
-                    disabled={Object.keys(errors).length > 0} // Disable submit if there are errors
                   >
                     <i className="fa-thin fa-paper-plane"></i> &nbsp; Submit
                   </button>
