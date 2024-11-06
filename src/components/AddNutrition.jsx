@@ -71,7 +71,7 @@ const AddNutrition = ({ onClose, onSubmit }) => {
 
   return (
     <>
-      <div ref={formRef}
+      <div
         className="case-status d-flex justify-content-center text-align-center"
         style={{
           backgroundColor: "#002538",
