@@ -197,7 +197,7 @@ const AddFitzone = () => {
 
                 <div className="mb-3 col-lg-12 text-center mt-3">
                   <button
-                    className="btn custom-btn text-white w-25"
+                    className="btn custom-btn text-white"
                     type="submit"
                   >
                     <i className="fa-thin fa-paper-plane"></i> &nbsp; Submit
