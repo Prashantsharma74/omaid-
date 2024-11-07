@@ -356,7 +356,7 @@ const AddBlogs = () => {
 
                 <div className="mb-3 text-center mt-3">
                   <button
-                    className="btn custom-btn text-white w-25"
+                    className="btn custom-btn text-white"
                     type="submit"
                   >
                     <i className="fa-light fa-blog"></i>&nbsp; Add Blog
