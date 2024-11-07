@@ -16,7 +16,7 @@ const AddSubAdmin = ({ user, onClose }) => {
     name: "",
     email: "",
     hospital: "",
-    location: "",
+    location: null,
     phone: "",
     designation: "",
     password: "",
@@ -40,49 +40,52 @@ const AddSubAdmin = ({ user, onClose }) => {
 
   const formRef = useRef(null);
 
-// Inside useEffect, update formData to set location as an object when editing
-useEffect(() => {
-  if (user) {
-    setFormData({
-      name: user.username,
-      email: user.email,
-      hospital: user.hospital,
-      location: user.location ? { value: user.location, label: user.location } : "", // Ensure location is an object for editing
-      phone: user.phone,
-      designation: user.designation,
-      password: user.password,
-    });
-    setIsEditMode(true);
-  }
+  // Inside useEffect, update formData to set location as an object when editing
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        name: user.username,
+        email: user.email,
+        hospital: user.hospital,
+        location: user.location
+          ? { value: user.location, label: user.location }
+          : null, // Ensure location is an object
+        phone: user.phone,
+        designation: user.designation,
+        password: user.password,
+      });
+      setIsEditMode(true);
+    }
 
-  const handleClickOutside = (event) => {
-    if (
-      formRef.current &&
-      !formRef.current.contains(event.target) &&
-      !closRef.current.contains(event.target)
-    ) {
-      onClose();
+    const handleClickOutside = (event) => {
+      if (
+        formRef.current &&
+        !formRef.current.contains(event.target) &&
+        !closRef.current.contains(event.target)
+      ) {
+        onClose();
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [user, onClose]);
+
+  // Handle location change in CreatableSelect
+  const handleLocationChange = (selectedOption) => {
+    setLocation(selectedOption);
+    setFormData({
+      ...formData,
+      location: selectedOption
+        ? { value: selectedOption.value, label: selectedOption.label }
+        : null,
+    });
+    if (selectedOption) {
+      setErrors({ ...errors, location: "" });
     }
   };
-
-  document.addEventListener("mousedown", handleClickOutside);
-  return () => {
-    document.removeEventListener("mousedown", handleClickOutside);
-  };
-}, [user, onClose]);
-
-// Handle location change in CreatableSelect
-const handleLocationChange = (selectedOption) => {
-  setLocation(selectedOption);
-  setFormData({
-    ...formData,
-    location: selectedOption ? selectedOption.value : "", // Ensure we store the location as a string
-  });
-  if (selectedOption) {
-    setErrors({ ...errors, location: "" });
-  }
-};
-
 
   const customSelectStyles = {
     control: (base, state) => ({
@@ -303,7 +306,7 @@ const handleLocationChange = (selectedOption) => {
                   setLocation(newLocation);
                   setFormData({
                     ...formData,
-                    location: inputValue,
+                    location: newLocation,
                   });
                 }}
                 onClear={handleClearLocation}
