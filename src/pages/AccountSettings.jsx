@@ -16,7 +16,7 @@ const AccountSettings = () => {
       </div>
 
       <div className="row">
-        <div className="col-md-6 px-5 mx-auto w-75">
+        <div className="col-md-6 px-5 mx-auto w-75 account">
           <div className="tile">
             <div
               className="case-status d-flex justify-content-center text-align-center"

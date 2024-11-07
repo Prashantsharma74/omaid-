@@ -73,199 +73,199 @@ const SubAdmin = () => {
     setTimeout(() => {
       const users = [
         {
-            srNum: 1,
-            createdAt: "2023-01-01",
-            username: "John Doe",
-            email: "john.doe@example.com",
-            hospital: "Hospital A",
-            location: "India",
-            phone: "1234567801",
-            designation: "Doctor",
-            password: "password123",
-            status: "Active",
+          srNum: 1,
+          createdAt: "2023-01-01",
+          username: "John Doe",
+          email: "john.doe@example.com",
+          hospital: "Hospital A",
+          location: "India",
+          phone: "1234567801",
+          designation: "Doctor",
+          password: "password123",
+          status: "Active",
         },
         {
-            srNum: 2,
-            createdAt: "2023-01-02",
-            username: "Jane Smith",
-            email: "jane.smith@example.com",
-            hospital: "Hospital B",
-            location: "India",
-            phone: "1234567802",
-            designation: "Nurse",
-            password: "password234",
-            status: "Active",
+          srNum: 2,
+          createdAt: "2023-01-02",
+          username: "Jane Smith",
+          email: "jane.smith@example.com",
+          hospital: "Hospital B",
+          location: "India",
+          phone: "1234567802",
+          designation: "Nurse",
+          password: "password234",
+          status: "Active",
         },
         {
-            srNum: 3,
-            createdAt: "2023-01-03",
-            username: "Michael Johnson",
-            email: "michael.johnson@example.com",
-            hospital: "Hospital C",
-            location: "India",
-            phone: "1234567803",
-            designation: "Surgeon",
-            password: "password345",
-            status: "Inactive",
+          srNum: 3,
+          createdAt: "2023-01-03",
+          username: "Michael Johnson",
+          email: "michael.johnson@example.com",
+          hospital: "Hospital C",
+          location: "India",
+          phone: "1234567803",
+          designation: "Surgeon",
+          password: "password345",
+          status: "Inactive",
         },
         {
-            srNum: 4,
-            createdAt: "2023-01-04",
-            username: "Emily Davis",
-            email: "emily.davis@example.com",
-            hospital: "Hospital A",
-            location: "India",
-            phone: "1234567804",
-            designation: "Pediatrician",
-            password: "password456",
-            status: "Active",
+          srNum: 4,
+          createdAt: "2023-01-04",
+          username: "Emily Davis",
+          email: "emily.davis@example.com",
+          hospital: "Hospital A",
+          location: "India",
+          phone: "1234567804",
+          designation: "Pediatrician",
+          password: "password456",
+          status: "Active",
         },
         {
-            srNum: 5,
-            createdAt: "2023-01-05",
-            username: "Daniel Brown",
-            email: "daniel.brown@example.com",
-            hospital: "Hospital B",
-            location: "India",
-            phone: "1234567805",
-            designation: "Radiologist",
-            password: "password567",
-            status: "Active",
+          srNum: 5,
+          createdAt: "2023-01-05",
+          username: "Daniel Brown",
+          email: "daniel.brown@example.com",
+          hospital: "Hospital B",
+          location: "India",
+          phone: "1234567805",
+          designation: "Radiologist",
+          password: "password567",
+          status: "Active",
         },
         {
-            srNum: 6,
-            createdAt: "2023-01-06",
-            username: "Olivia Wilson",
-            email: "olivia.wilson@example.com",
-            hospital: "Hospital C",
-            location: "India",
-            phone: "1234567806",
-            designation: "Anesthesiologist",
-            password: "password678",
-            status: "Active",
+          srNum: 6,
+          createdAt: "2023-01-06",
+          username: "Olivia Wilson",
+          email: "olivia.wilson@example.com",
+          hospital: "Hospital C",
+          location: "India",
+          phone: "1234567806",
+          designation: "Anesthesiologist",
+          password: "password678",
+          status: "Active",
         },
         {
-            srNum: 7,
-            createdAt: "2023-01-07",
-            username: "James Garcia",
-            email: "james.garcia@example.com",
-            hospital: "Hospital A",
-            location: "India",
-            phone: "1234567807",
-            designation: "Pharmacist",
-            password: "password789",
-            status: "Inactive",
+          srNum: 7,
+          createdAt: "2023-01-07",
+          username: "James Garcia",
+          email: "james.garcia@example.com",
+          hospital: "Hospital A",
+          location: "India",
+          phone: "1234567807",
+          designation: "Pharmacist",
+          password: "password789",
+          status: "Inactive",
         },
         {
-            srNum: 8,
-            createdAt: "2023-01-08",
-            username: "Sophia Martinez",
-            email: "sophia.martinez@example.com",
-            hospital: "Hospital B",
-            location: "India",
-            phone: "1234567808",
-            designation: "Cardiologist",
-            password: "password890",
-            status: "Active",
+          srNum: 8,
+          createdAt: "2023-01-08",
+          username: "Sophia Martinez",
+          email: "sophia.martinez@example.com",
+          hospital: "Hospital B",
+          location: "India",
+          phone: "1234567808",
+          designation: "Cardiologist",
+          password: "password890",
+          status: "Active",
         },
         {
-            srNum: 9,
-            createdAt: "2023-01-09",
-            username: "Benjamin Rodriguez",
-            email: "benjamin.rodriguez@example.com",
-            hospital: "Hospital C",
-            location: "India",
-            phone: "1234567809",
-            designation: "Dermatologist",
-            password: "password901",
-            status: "Active",
+          srNum: 9,
+          createdAt: "2023-01-09",
+          username: "Benjamin Rodriguez",
+          email: "benjamin.rodriguez@example.com",
+          hospital: "Hospital C",
+          location: "India",
+          phone: "1234567809",
+          designation: "Dermatologist",
+          password: "password901",
+          status: "Active",
         },
         {
-            srNum: 10,
-            createdAt: "2023-01-10",
-            username: "Mia Lee",
-            email: "mia.lee@example.com",
-            hospital: "Hospital A",
-            location: "India",
-            phone: "1234567810",
-            designation: "Physical Therapist",
-            password: "password012",
-            status: "Inactive",
+          srNum: 10,
+          createdAt: "2023-01-10",
+          username: "Mia Lee",
+          email: "mia.lee@example.com",
+          hospital: "Hospital A",
+          location: "India",
+          phone: "1234567810",
+          designation: "Physical Therapist",
+          password: "password012",
+          status: "Inactive",
         },
         {
-            srNum: 11,
-            createdAt: "2023-01-11",
-            username: "Ethan Hernandez",
-            email: "ethan.hernandez@example.com",
-            hospital: "Hospital B",
-            location: "India",
-            phone: "1234567811",
-            designation: "Emergency Physician",
-            password: "password1234",
-            status: "Active",
+          srNum: 11,
+          createdAt: "2023-01-11",
+          username: "Ethan Hernandez",
+          email: "ethan.hernandez@example.com",
+          hospital: "Hospital B",
+          location: "India",
+          phone: "1234567811",
+          designation: "Emergency Physician",
+          password: "password1234",
+          status: "Active",
         },
         {
-            srNum: 12,
-            createdAt: "2023-01-12",
-            username: "Isabella Young",
-            email: "isabella.young@example.com",
-            hospital: "Hospital C",
-            location: "India",
-            phone: "1234567812",
-            designation: "Oncologist",
-            password: "password2345",
-            status: "Active",
+          srNum: 12,
+          createdAt: "2023-01-12",
+          username: "Isabella Young",
+          email: "isabella.young@example.com",
+          hospital: "Hospital C",
+          location: "India",
+          phone: "1234567812",
+          designation: "Oncologist",
+          password: "password2345",
+          status: "Active",
         },
         {
-            srNum: 13,
-            createdAt: "2023-01-13",
-            username: "Alexander King",
-            email: "alexander.king@example.com",
-            hospital: "Hospital A",
-            location: "India",
-            phone: "1234567813",
-            designation: "Neurologist",
-            password: "password3456",
-            status: "Active",
+          srNum: 13,
+          createdAt: "2023-01-13",
+          username: "Alexander King",
+          email: "alexander.king@example.com",
+          hospital: "Hospital A",
+          location: "India",
+          phone: "1234567813",
+          designation: "Neurologist",
+          password: "password3456",
+          status: "Active",
         },
         {
-            srNum: 14,
-            createdAt: "2023-01-14",
-            username: "Charlotte Wright",
-            email: "charlotte.wright@example.com",
-            hospital: "Hospital B",
-            location: "India",
-            phone: "1234567814",
-            designation: "Gastroenterologist",
-            password: "password4567",
-            status: "Inactive",
+          srNum: 14,
+          createdAt: "2023-01-14",
+          username: "Charlotte Wright",
+          email: "charlotte.wright@example.com",
+          hospital: "Hospital B",
+          location: "India",
+          phone: "1234567814",
+          designation: "Gastroenterologist",
+          password: "password4567",
+          status: "Inactive",
         },
         {
-            srNum: 15,
-            createdAt: "2023-01-15",
-            username: "Liam Scott",
-            email: "liam.scott@example.com",
-            hospital: "Hospital C",
-            location: "India",
-            phone: "1234567815",
-            designation: "Ophthalmologist",
-            password: "password5678",
-            status: "Active",
+          srNum: 15,
+          createdAt: "2023-01-15",
+          username: "Liam Scott",
+          email: "liam.scott@example.com",
+          hospital: "Hospital C",
+          location: "India",
+          phone: "1234567815",
+          designation: "Ophthalmologist",
+          password: "password5678",
+          status: "Active",
         },
         {
-            srNum: 16,
-            createdAt: "2023-01-16",
-            username: "Ava Green",
-            email: "ava.green@example.com",
-            hospital: "Hospital A",
-            location: "India",
-            phone: "1234567816",
-            designation: "Urologist",
-            password: "password6789",
-            status: "Active",
+          srNum: 16,
+          createdAt: "2023-01-16",
+          username: "Ava Green",
+          email: "ava.green@example.com",
+          hospital: "Hospital A",
+          location: "India",
+          phone: "1234567816",
+          designation: "Urologist",
+          password: "password6789",
+          status: "Active",
         },
-    ];
-    
+      ];
+
       setTableData(users);
       setLoading(false);
     }, 1000);
@@ -339,24 +339,20 @@ const SubAdmin = () => {
     (currentPage + 1) * itemsPerPage
   );
 
-useEffect(() => {
-  const handleClickOutside = (event) => {
-    if (
-      dropdownRef.current &&
-      !dropdownRef.current.contains(event.target)
-    ) {
-      if (openDropdown === selectedUser?.srNum) {
-        setOpenDropdown(null);
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        if (openDropdown === selectedUser?.srNum) {
+          setOpenDropdown(null);
+        }
       }
-    }
-  };
+    };
 
-  document.addEventListener("mousedown", handleClickOutside);
-  return () => {
-    document.removeEventListener("mousedown", handleClickOutside);
-  };
-}, [openDropdown, selectedUser]);
-
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [openDropdown, selectedUser]);
 
   return (
     <main className="app-content">
@@ -409,7 +405,9 @@ useEffect(() => {
                       <option value={25}>25</option>
                       <option value={50}>50</option>
                     </select>
-                    <span className="entries-text ml-2">&nbsp;entries per page</span>
+                    <span className="entries-text ml-2">
+                      &nbsp;entries per page
+                    </span>
                   </div>
                   <div className="search-container">
                     <span className="search-text mr-2">Search:&nbsp;</span>
@@ -422,7 +420,10 @@ useEffect(() => {
                   </div>
                 </div>
                 {loading ? (
-                  <div className="d-flex justify-content-center align-items-center" style={{ height: "200px" }}>
+                  <div
+                    className="d-flex justify-content-center align-items-center"
+                    style={{ height: "200px" }}
+                  >
                     <div className="loader"></div>
                   </div>
                 ) : (
@@ -445,7 +446,9 @@ useEffect(() => {
                         {paginatedData.map((user, index) => (
                           <tr key={user.srNum}>
                             <td>{index + 1 + currentPage * itemsPerPage}</td>
-                            <td>{format(new Date(user.createdAt), "dd MMMM yyyy")}</td>
+                            <td>
+                              {format(new Date(user.createdAt), "dd MMMM yyyy")}
+                            </td>
                             <td>{user.username}</td>
                             <td>{user.email}</td>
                             <td>{user.hospital}</td>
@@ -457,12 +460,20 @@ useEffect(() => {
                                   className="form-check-input"
                                   type="checkbox"
                                   checked={user.status === "Active"}
-                                  onChange={() => handleToggleStatus(user.srNum)}
+                                  onChange={() =>
+                                    handleToggleStatus(user.srNum)
+                                  }
                                 />
                               </div>
                             </td>
                             <td>
-                              <TableSubAdmin openDropdown={openDropdown} setOpenDropdown={setOpenDropdown} user={user} handleDelete={handleDelete} handleEdit={handleEdit}/>
+                              <TableSubAdmin
+                                openDropdown={openDropdown}
+                                setOpenDropdown={setOpenDropdown}
+                                user={user}
+                                handleDelete={handleDelete}
+                                handleEdit={handleEdit}
+                              />
                             </td>
                           </tr>
                         ))}
@@ -470,36 +481,76 @@ useEffect(() => {
                     </table>
                     <div className="pagination mt-4 mb-2 d-flex align-items-start justify-content-between">
                       <span className="pagination-info">
-                        Showing {currentPage * itemsPerPage + 1} to {Math.min((currentPage + 1) * itemsPerPage, filteredData.length)} of {filteredData.length} entries
+                        Showing {currentPage * itemsPerPage + 1} to{" "}
+                        {Math.min(
+                          (currentPage + 1) * itemsPerPage,
+                          filteredData.length
+                        )}{" "}
+                        of {filteredData.length} entries
                       </span>
-                      <div>
-                        <button  style={{
+                      <div
+                        className="page"
+                        style={{
+                          position: "absolute",
+                          right: "12px",
+                          margin: "-10px 0px 0px 0px",
+                        }}
+                      >
+                        <button
+                          style={{
                             padding: "7px 10px",
                             backgroundColor: "#e9ecef",
                             color: "#002538",
                             border: "1px solid lightgrey",
                             borderRadius: "5px 0px 0px 5px",
-                          }} className="page-btn" onClick={() => handlePageChange(0)} disabled={currentPage === 0}>&laquo;</button>
-                        <button style={{
+                          }}
+                          className="page-btn"
+                          onClick={() => handlePageChange(0)}
+                          disabled={currentPage === 0}
+                        >
+                          &laquo;
+                        </button>
+                        <button
+                          style={{
                             padding: "7px 10px",
                             backgroundColor: "#e9ecef",
                             color: "#002538",
                             border: "1px solid lightgrey",
-                          }} className="page-btn" onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 0}>&#x3c;</button>
+                          }}
+                          className="page-btn"
+                          onClick={() => handlePageChange(currentPage - 1)}
+                          disabled={currentPage === 0}
+                        >
+                          &#x3c;
+                        </button>
                         {getPaginationButtons()}
-                        <button  style={{
+                        <button
+                          style={{
                             padding: "7px 10px",
                             backgroundColor: "#e9ecef",
                             color: "#002538",
                             border: "1px solid lightgrey",
-                          }} className="page-btn" onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage >= totalPages - 1}>&#x3e;</button>
-                        <button style={{
+                          }}
+                          className="page-btn"
+                          onClick={() => handlePageChange(currentPage + 1)}
+                          disabled={currentPage >= totalPages - 1}
+                        >
+                          &#x3e;
+                        </button>
+                        <button
+                          style={{
                             padding: "7px 10px",
                             backgroundColor: "#e9ecef",
                             color: "#002538",
                             border: "1px solid lightgrey",
                             borderRadius: "0px 5px 5px 0px",
-                          }} className="page-btn" onClick={() => handlePageChange(totalPages - 1)} disabled={currentPage >= totalPages - 1}>&raquo;</button>
+                          }}
+                          className="page-btn"
+                          onClick={() => handlePageChange(totalPages - 1)}
+                          disabled={currentPage >= totalPages - 1}
+                        >
+                          &raquo;
+                        </button>
                       </div>
                     </div>
                   </div>

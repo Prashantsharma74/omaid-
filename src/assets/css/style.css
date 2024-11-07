@@ -363,8 +363,19 @@ td.dt-type-date {
   }
 
   .switch-item {
-    flex: 1;
+    padding: 8px 15px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 1180px) {
+  .switch-button {
     width: 100%;
+  }
+
+  .switch-item {
+    padding: 8px 15px;
+    font-size: 13px;
   }
 }
 
@@ -730,4 +741,74 @@ a {
   &:hover {
     box-shadow: 0 0 40px 40px #fff inset;
   }
+}
+
+@media (max-width: 480px) {
+  .modal-content {
+    width: 90%;
+  }
+  .responsive {
+    margin-top: 60px;
+  }
+
+  .row .text-div {
+    margin: 0px;
+  }
+}
+
+@media (max-width: 830px) {
+  .modal-content {
+    margin-top: 45px;
+    width: 95%;
+    /* height: 130vh; */
+  }
+  .responsive {
+    margin-top: 60px;
+  }
+}
+
+/* For Account Seting Responsiveness */
+
+@media (max-width: 450px) {
+  .switch-item {
+    padding: 8px 15px;
+    font-size: 13px;
+  }
+}
+
+/* For FAQ Section Responsiveness */
+
+@media (max-width: 450px) {
+  .faq-res {
+    min-width: 90%;
+  }
+}
+
+@media (max-width: 768px) {
+  .faq-res {
+    min-width: 90%;
+  }
+}
+
+/* For Blogs Category Responsiveness */
+
+@media (max-width: 768px) {
+  .blog-category {
+    min-width: 100%;
+  }
+}
+
+/* For Blogs Add Responsiveness */
+
+@media (max-width: 768px) {
+  .blogs-add {
+    /* padding: 0px 0px 0px 0px;   */
+  }
+}
+
+.blogs-form{
+  padding: 0px 0px 0px 0px;  
+}
+.blogs-add {
+  width: 75%;
 }

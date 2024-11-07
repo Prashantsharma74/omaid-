@@ -12,7 +12,7 @@ const ManageBlogsCategory = () => {
   const [openDropdown, setOpenDropdown] = useState(null);
   const navigate = useNavigate();
 
-  const dropdownRef = useRef(null)
+  const dropdownRef = useRef(null);
   const visiblePages = 4;
 
   const getPaginationButtons = () => {
@@ -95,9 +95,9 @@ const ManageBlogsCategory = () => {
       prevData.map((item) =>
         item.srNum === srNum
           ? {
-            ...item,
-            status: item.status === "Active" ? "Inactive" : "Active",
-          }
+              ...item,
+              status: item.status === "Active" ? "Inactive" : "Active",
+            }
           : item
       )
     );
@@ -251,7 +251,10 @@ const ManageBlogsCategory = () => {
                               </div>
                             </td>
                             <td>
-                              <div className="dropdown text-center" ref={dropdownRef}>
+                              <div
+                                className="dropdown text-center"
+                                ref={dropdownRef}
+                              >
                                 <button
                                   className="dropdown-button"
                                   onClick={() =>
@@ -265,10 +268,11 @@ const ManageBlogsCategory = () => {
                                   aria-expanded={openDropdown === row.srNum}
                                 >
                                   <i
-                                    className={`fa fa-ellipsis-v ${openDropdown === row.srNum
+                                    className={`fa fa-ellipsis-v ${
+                                      openDropdown === row.srNum
                                         ? "rotate-icon"
                                         : ""
-                                      }`}
+                                    }`}
                                   ></i>
                                 </button>
                                 {openDropdown === row.srNum && (
@@ -315,7 +319,13 @@ const ManageBlogsCategory = () => {
                         )}{" "}
                         of {filteredData.length} entries
                       </span>
-                      <div>
+                      <div
+                        style={{
+                          position: "absolute",
+                          right: "12px",
+                          margin: "0px 0px 0px 0px",
+                        }}
+                      >
                         <button
                           style={{
                             padding: "7px 10px",

@@ -208,7 +208,7 @@ const Faq = () => {
             justifyContent: "center",
           }}
         >
-          <div className="tile w-75">
+          <div className="tile faq-res w-75">
             <div
               className="case-status d-flex justify-content-center text-align-center"
               style={{
@@ -404,7 +404,13 @@ const Faq = () => {
                     )}{" "}
                     of {filteredData.length} entries
                   </span>
-                  <div>
+                  <div
+                    style={{
+                      position: "absolute",
+                      right: "12px",
+                      margin: "0px 0px 0px 0px",
+                    }}
+                  >
                     <button
                       style={{
                         padding: "7px 10px",

@@ -219,7 +219,7 @@ const CmsManagement = () => {
     setErrors({ pageName: "", editorContent: "" });
     setEditingItem(null);
     if (editorRef.current) {
-      editorRef.current.setContent(""); // Clear editor content
+      editorRef.current.setContent("");
     }
   };
 
@@ -384,7 +384,13 @@ const CmsManagement = () => {
                         )}{" "}
                         of {filteredData.length} entries
                       </span>
-                      <div>
+                      <div
+                        style={{
+                          position: "absolute",
+                          right: "12px",
+                          margin: "0px 0px 0px 0px",
+                        }}
+                      >
                         <button
                           style={{
                             padding: "7px 10px",

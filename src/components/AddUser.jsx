@@ -189,11 +189,14 @@ const AddUser = ({ user, onClose }) => {
       >
         <h4 className="mt-2">{isEditMode ? "Edit" : "Add"} User</h4>
       </div>
-      <div className="tile-body p-3">
+      <div
+        className="tile-body p-3"
+        // style={{ maxHeight: "100vh"}}
+      >
         <form onSubmit={handleSubmit}>
           <div className="row">
             {/** Input fields */}
-            <div className="mb-3 col-md-6">
+            <div className="mb-3 col-md-6 text-div">
               <label className="form-label">Name</label>
               <input
                 className="form-control"
@@ -204,9 +207,8 @@ const AddUser = ({ user, onClose }) => {
                 onChange={handleChange}
               />
               {errors.name && <div className="text-danger">{errors.name}</div>}{" "}
-              {/* Error message */}
             </div>
-            <div className="mb-3 col-md-6">
+            <div className="mb-3 col-md-6 text-div">
               <label className="form-label">User Default ID</label>
               <input
                 className="form-control"
@@ -221,7 +223,7 @@ const AddUser = ({ user, onClose }) => {
               )}{" "}
               {/* Error message */}
             </div>
-            <div className="mb-3 col-md-6">
+            <div className="mb-3 col-md-6 text-div">
               <label className="form-label">Email address</label>
               <input
                 className="form-control"
@@ -236,7 +238,7 @@ const AddUser = ({ user, onClose }) => {
               )}{" "}
               {/* Error message */}
             </div>
-            <div className="mb-3 col-md-6">
+            <div className="mb-3 col-md-6 text-div">
               <label className="form-label">Phone Number</label>
               <input
                 className="form-control"
@@ -259,7 +261,7 @@ const AddUser = ({ user, onClose }) => {
               )}{" "}
               {/* Error message */}
             </div>
-            <div className="mb-3 col-md-6">
+            <div className="mb-3 col-md-6 text-div">
               <label className="form-label">Assign Sub-Admin</label>
               <select
                 className="form-select"
@@ -276,7 +278,7 @@ const AddUser = ({ user, onClose }) => {
               )}{" "}
               {/* Error message */}
             </div>
-            <div className="mb-3 col-md-6">
+            <div className="mb-3 col-md-6 text-div">
               <label className="form-label">Date of Birth</label>
               <input
                 className="form-control"
@@ -288,7 +290,7 @@ const AddUser = ({ user, onClose }) => {
               {errors.dob && <div className="text-danger">{errors.dob}</div>}{" "}
               {/* Error message */}
             </div>
-            <div className="mb-3 col-md-6">
+            <div className="mb-3 col-md-6 text-div">
               <label className="form-label">Height (cm)</label>
               <input
                 className="form-control"
@@ -306,7 +308,7 @@ const AddUser = ({ user, onClose }) => {
               )}{" "}
               {/* Error message */}
             </div>
-            <div className="mb-3 col-md-6">
+            <div className="mb-3 col-md-6 text-div">
               <label className="form-label">Weight (kg)</label>
               <input
                 className="form-control"
@@ -324,7 +326,7 @@ const AddUser = ({ user, onClose }) => {
               )}{" "}
               {/* Error message */}
             </div>
-            <div className="mb-3 col-md-6">
+            <div className="mb-3 col-md-6 text-div">
               <label className="form-label">Gender</label>
               <select
                 className="form-select"
@@ -342,7 +344,7 @@ const AddUser = ({ user, onClose }) => {
               )}{" "}
               {/* Error message */}
             </div>
-            <div className="mb-3 col-md-6">
+            <div className="mb-3 col-md-6 text-div">
               <label className="form-label">Password</label>
               <div className="input-group">
                 <input
@@ -381,7 +383,7 @@ const AddUser = ({ user, onClose }) => {
               )}{" "}
               {/* Error message */}
             </div>
-            <div className="mb-3 col-lg-12 text-center">
+            <div className="mb-3 col-lg-12 text-center text-div">
               <button className="btn custom-btn text-white w-25" type="submit">
                 <i className="fa-thin fa-paper-plane"></i> &nbsp;
                 {isEditMode ? "Update User" : "Submit"}

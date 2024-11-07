@@ -23,14 +23,6 @@ const AddBlogs = () => {
   const editorRef = useRef(null);
   const api_key = "3e4i7xmjvw1ebtnzlwcfxtlk0tuwjfui4s1w0l2pibtj6egn";
 
-  const openEditModal = (index) => {
-    const category = categories[index];
-    setNewCategory(category.name);
-    setNewCategoryImage(category.icon);
-    setEditIndex(index);
-    setShowModal(true);
-  };
-
   const handleSaveCategory = () => {
     if (newCategory) {
       const updatedCategories = [...categories];
@@ -176,16 +168,16 @@ const AddBlogs = () => {
         &nbsp;Previous
       </button>
 
-      <div className="row">
+      <div className="row ">
         <div
-          className="col-md-10 px-5 w-100"
+          className="col-md-10 blogs-form w-100"
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
           }}
         >
-          <div className="tile w-75">
+          <div className="tile blogs-add ">
             <div
               className="case-status d-flex justify-content-center"
               style={{

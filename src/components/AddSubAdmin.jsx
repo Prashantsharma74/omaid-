@@ -374,7 +374,7 @@ const handleLocationChange = (selectedOption) => {
           <div className="mb-3 col-lg-12 text-center">
             <button
               className={`btn custom-btn text-white ${
-                isEditMode ? "w-50" : "w-25"
+                isEditMode ? "w-50" : "w-50"
               }`}
               type="submit"
             >

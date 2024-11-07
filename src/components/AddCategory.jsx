@@ -126,7 +126,7 @@ const AddCategory = () => {
 
       <div className="row">
         <div className="col-md-10 px-5 w-100 d-flex align-items-center justify-content-center">
-          <div className="tile w-75">
+          <div className="tile w-75 blog-category">
             <div
               className="case-status d-flex justify-content-center text-align-center"
               style={{

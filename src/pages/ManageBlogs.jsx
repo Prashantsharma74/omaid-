@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2"; // Import SweetAlert2
 import ManageBlogsTable from "../components/TableFitzone/ManageBlogsTable";
-import notfound from "../assets/images/notfound.png"
+import notfound from "../assets/images/notfound.png";
 
 const ManageBlogs = () => {
   const DEFAULT_ITEMS_PER_PAGE = 10;
@@ -348,7 +348,13 @@ const ManageBlogs = () => {
                         )}{" "}
                         of {filteredData.length} entries
                       </span>
-                      <div>
+                      <div
+                        style={{
+                          position: "absolute",
+                          right: "12px",
+                          margin: "0px 0px 0px 0px",
+                        }}
+                      >
                         <button
                           style={{
                             padding: "7px 10px",
