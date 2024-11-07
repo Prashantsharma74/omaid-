@@ -1,10 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { NavLink } from "react-router-dom";
 import profile from "../assets/images/profile.png";
 import $ from "jquery";
 import BlogDropDown from "./BlogDropDown";
 
 const Headers = ({ isSideBarOpen, setIsSideBarOpen }) => {
+  const sidebarRef = useRef(null);
+  const headerRef = useRef(null);
+
+  // Rest of your state and code...
+
   useEffect(() => {
     const treeviewMenu = $(".app-menu");
 
@@ -68,9 +73,32 @@ const Headers = ({ isSideBarOpen, setIsSideBarOpen }) => {
     setIsSideBarOpen((prev) => !prev);
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      console.log("Clicked outside:", event.target); // Debugging log
+  
+      // Check if clicked outside both header and sidebar
+      if (
+        sidebarRef.current &&
+        !sidebarRef.current.contains(event.target) && // Not clicked inside sidebar
+        headerRef.current &&
+        !headerRef.current.contains(event.target) // Not clicked inside header
+      ) {
+        setIsSideBarOpen(false); // Close the sidebar
+      }
+    };
+  
+    document.addEventListener("mousedown", handleClickOutside);
+  
+    // Cleanup function to remove event listener
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []); // Run only once when component mounts  
+
   return (
     <>
-      <header className="app-header d-lg-none d-sm-block d-md-none d-xl-none d-xs-block">
+      <header ref={headerRef} className="app-header d-lg-none d-sm-block d-md-none d-xl-none d-xs-block">
         <NavLink className="app-header__logo" to="/">
           <p className="mb-0">Fitness App</p>
         </NavLink>
@@ -84,7 +112,7 @@ const Headers = ({ isSideBarOpen, setIsSideBarOpen }) => {
       </header>
 
       <div className="app-sidebar__overlay"></div>
-      <aside className="app-sidebar">
+      <aside  ref={sidebarRef} className="app-sidebar">
         <div className="app-sidebar__user">
           <img
             className="app-sidebar__user-avatar"
