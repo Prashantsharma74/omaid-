@@ -193,7 +193,7 @@ const ManageBlogs = () => {
     <main className="app-content">
       <div className="app-title tile p-3">
         <div>
-          <h1>Manage Blogs</h1>
+          <h1 className="fw-bold">Manage Blogs</h1>
         </div>
       </div>
 

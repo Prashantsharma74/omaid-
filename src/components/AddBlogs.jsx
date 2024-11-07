@@ -155,7 +155,7 @@ const AddBlogs = () => {
     <main className="app-content">
       <div className="app-title tile p-3">
         <h1>
-          <span className="mr-4">&nbsp; Add Blogs</span>
+          <span className="mr-4 fw-bold">&nbsp; Add Blogs</span>
         </h1>
       </div>
       <button
@@ -208,24 +208,38 @@ const AddBlogs = () => {
                   )}
                 </div>
 
-                <div className="mb-3 w-100">
-                  <label className="form-label">Description</label>
-                  <Editor
-                    apiKey={api_key}
-                    value={editorContent}
-                    onEditorChange={(content, editor) =>
-                      setEditorContent(content)
-                    }
-                    init={{
-                      height: 250,
-                      menubar: false,
-                      plugins: "lists link image",
-                      toolbar:
-                        "bold italic | alignleft aligncenter alignright | bullist numlist",
-                    }}
-                  />
-                  {errors.description && (
-                    <div className="invalid-feedback">{errors.description}</div>
+                <div className="mb-3 col-lg-12 mt-2">
+                  <label className="form-label">Category</label>
+                  <div className="d-flex align-items-center">
+                    <select
+                      className={`form-select ${
+                        errors.selectedCategory ? "is-invalid" : ""
+                      }`}
+                      value={selectedCategory}
+                      onChange={(e) => setSelectedCategory(e.target.value)}
+                    >
+                      <option value="" disabled>
+                        Select a category
+                      </option>
+                      {categories.map((category, index) => (
+                        <option key={index} value={category.name}>
+                          {category.name}
+                        </option>
+                      ))}
+                    </select>
+                    <button
+                      className="btn ms-2"
+                      type="button"
+                      style={{ backgroundColor: "#002538", color: "white" }}
+                      onClick={() => setShowModal(true)}
+                    >
+                      <i className="fa fa-plus"></i>
+                    </button>
+                  </div>
+                  {errors.selectedCategory && (
+                    <div className="invalid-feedback">
+                      {errors.selectedCategory}
+                    </div>
                   )}
                 </div>
 
@@ -267,38 +281,24 @@ const AddBlogs = () => {
                   )}
                 </div>
 
-                <div className="mb-3 col-lg-12 mt-2">
-                  <label className="form-label">Category</label>
-                  <div className="d-flex align-items-center">
-                    <select
-                      className={`form-select ${
-                        errors.selectedCategory ? "is-invalid" : ""
-                      }`}
-                      value={selectedCategory}
-                      onChange={(e) => setSelectedCategory(e.target.value)}
-                    >
-                      <option value="" disabled>
-                        Select a category
-                      </option>
-                      {categories.map((category, index) => (
-                        <option key={index} value={category.name}>
-                          {category.name}
-                        </option>
-                      ))}
-                    </select>
-                    <button
-                      className="btn ms-2"
-                      type="button"
-                      style={{ backgroundColor: "#002538", color: "white" }}
-                      onClick={() => setShowModal(true)}
-                    >
-                      <i className="fa fa-plus"></i>
-                    </button>
-                  </div>
-                  {errors.selectedCategory && (
-                    <div className="invalid-feedback">
-                      {errors.selectedCategory}
-                    </div>
+                <div className="mb-3 w-100">
+                  <label className="form-label">Description</label>
+                  <Editor
+                    apiKey={api_key}
+                    value={editorContent}
+                    onEditorChange={(content, editor) =>
+                      setEditorContent(content)
+                    }
+                    init={{
+                      height: 250,
+                      menubar: false,
+                      plugins: "lists link image",
+                      toolbar:
+                        "bold italic | alignleft aligncenter alignright | bullist numlist",
+                    }}
+                  />
+                  {errors.description && (
+                    <div className="invalid-feedback">{errors.description}</div>
                   )}
                 </div>
 
@@ -355,10 +355,7 @@ const AddBlogs = () => {
                 </div>
 
                 <div className="mb-3 text-center mt-3">
-                  <button
-                    className="btn custom-btn text-white"
-                    type="submit"
-                  >
+                  <button className="btn custom-btn text-white" type="submit">
                     <i className="fa-light fa-blog"></i>&nbsp; Add Blog
                   </button>
                 </div>

@@ -3,6 +3,7 @@ import "dropify/dist/css/dropify.css";
 import $ from "jquery";
 import "dropify";
 import Swal from "sweetalert2";
+import Select from "react-select";
 
 const AddFitzoneSession = () => {
   const [formData, setFormData] = useState({
@@ -14,7 +15,6 @@ const AddFitzoneSession = () => {
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    // Initialize Dropify
     $(".dropify").dropify();
   }, []);
 
@@ -26,6 +26,14 @@ const AddFitzoneSession = () => {
     });
   };
 
+  const handleSelectChange = (selectedOption) => {
+    console.log("Selected Option:", selectedOption);
+    setFormData((prevData) => ({
+      ...prevData,
+      category: selectedOption.value,
+    }));
+  };
+
   const handleFileChange = (e) => {
     const files = e.target.files;
     setFormData((prevData) => ({
@@ -33,7 +41,6 @@ const AddFitzoneSession = () => {
       video: files,
     }));
 
-    // Remove file-related errors if file is selected
     if (files.length > 0) {
       setErrors((prevErrors) => {
         const newErrors = { ...prevErrors };
@@ -48,18 +55,18 @@ const AddFitzoneSession = () => {
 
     const formErrors = {};
 
-    // Validate input fields
     if (!formData.title) formErrors.title = "Title is required.";
     if (!formData.category) formErrors.category = "Category is required.";
-    if (!formData.description) formErrors.description = "Description is required.";
+    if (!formData.description)
+      formErrors.description = "Description is required.";
 
-    // Validate file input
     if (!formData.video) formErrors.video = "Video upload is required.";
     if (formData.video) {
       const file = formData.video[0];
       const validTypes = ["video/mp4", "video/avi", "video/mov"];
       if (!validTypes.includes(file.type)) {
-        formErrors.video = "Invalid file type. Allowed types are MP4, AVI, and MOV.";
+        formErrors.video =
+          "Invalid file type. Allowed types are MP4, AVI, and MOV.";
       }
     }
 
@@ -69,7 +76,6 @@ const AddFitzoneSession = () => {
       console.log("Form data submitted successfully:", formData);
       setErrors({});
 
-      // Success message with SweetAlert
       Swal.fire({
         title: "Success!",
         text: "Session added successfully.",
@@ -77,10 +83,8 @@ const AddFitzoneSession = () => {
         confirmButtonText: "OK",
       });
 
-      // Clear form data
       setFormData({ title: "", video: null, category: "", description: "" });
 
-      // Reset Dropify
       const dropifyElement = $(".dropify").dropify();
       dropifyElement.data("dropify").resetPreview();
       dropifyElement.data("dropify").clearElement();
@@ -90,6 +94,15 @@ const AddFitzoneSession = () => {
   const handleBack = () => {
     window.history.back();
   };
+
+  const categoryOptions = [
+    { value: "Category 1", label: "Category 1" },
+    { value: "Category 2", label: "Category 2" },
+    { value: "Category 3", label: "Category 3" },
+    { value: "Category 4", label: "Category 4" },
+    { value: "Category 5", label: "Category 5" },
+    { value: "Category 6", label: "Category 6" },
+  ];
 
   return (
     <main className="app-content">
@@ -147,6 +160,8 @@ const AddFitzoneSession = () => {
                   )}
                 </div>
 
+               
+
                 <div className="mb-3 w-100">
                   <label className="form-label">Video</label>
                   <input
@@ -161,19 +176,20 @@ const AddFitzoneSession = () => {
                     <small className="text-danger">{errors.video}</small>
                   )}
                 </div>
-
-                <div className="mb-3 w-100">
+                <div className="mb-3 col-md-12">
                   <label className="form-label">Category</label>
-                  <input
-                    className="form-control"
-                    type="text"
+                  <Select
+                    options={categoryOptions}
                     placeholder="Enter Category Here"
-                    name="category"
-                    value={formData.category}
-                    onChange={handleInputChange}
+                    onChange={handleSelectChange}
+                    value={
+                      categoryOptions.find(
+                        (option) => option.value === formData.category
+                      ) || null
+                    }
                   />
                   {errors.category && (
-                    <small className="text-danger">{errors.category}</small>
+                    <div className="text-danger">{errors.category}</div>
                   )}
                 </div>
 
