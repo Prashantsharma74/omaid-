@@ -769,7 +769,7 @@ a {
 
 /* For Account Seting Responsiveness */
 
-@media (max-width: 450px) {
+@media (max-width: 390px) {
   .switch-item {
     padding: 8px 15px;
     font-size: 13px;
