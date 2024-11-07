@@ -162,10 +162,10 @@ const NutritionFood = () => {
       <div className="row mb-5">
         <div className="col-md-12 px-5">
           <div className="bt-ad-emp">
-            <a className="add-btt btn" onClick={handleAddNutrition}>
+            <a className="add-btt btn add" onClick={handleAddNutrition}>
               <i className="fa-regular fa-plus"></i> Add Nutrition
             </a>
-            <a className="add-btt btn" style={{ marginLeft: "30px" }}>
+            <a className="add-btt btn add" style={{ marginLeft: "30px" }}>
               <label htmlFor="upload-excel">
                 Upload Nutrition &nbsp;
                 <i className="fa-regular fa-file-csv"></i>
