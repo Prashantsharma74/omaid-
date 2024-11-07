@@ -125,7 +125,7 @@ const AddFitzone = () => {
       </div>
       <div className="row">
         <div
-          className="col-md-10 px-5 w-100"
+          className="col-md-10 w-100"
           style={{
             display: "flex",
             alignItems: "center",

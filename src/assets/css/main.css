@@ -16001,8 +16001,8 @@ input[type="checkbox"]:checked + .more-btn + .more-menu {
     justify-content: flex-end;
     flex-wrap: wrap;
   }
-  
-  .upload-excel{    
+
+  .upload-excel {
     width: 40%;
   }
 }

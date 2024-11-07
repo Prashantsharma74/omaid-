@@ -236,7 +236,13 @@ const FitzoneManagement = () => {
                                 />
                               </div>
                             </td>
-                            <td style={{display:"flex",alignItems:"center",justifyContent:"center"}}>
+                            <td
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                              }}
+                            >
                               <Link
                                 className="btns btns-first"
                                 to="/fitzone-manage/manage"
